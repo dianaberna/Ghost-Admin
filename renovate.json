@@ -8,12 +8,13 @@
     "normalize.css",
     "validator",
     "ember-in-viewport",
-    "codemirror"
+    "codemirror",
+    "broccoli-concat"
   ],
   "ignorePaths": ["lib/koenig-editor/package.json"],
   "travis": { "enabled": true },
   "node": {
-    "supportPolicy": ["lts_latest"]
+    "supportPolicy": ["lts"]
   },
   "separateMinorPatch": true,
   "patch": {

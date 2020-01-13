@@ -43,7 +43,7 @@ export default Service.extend({
 
     handleNotification(message, delayed) {
         // If this is an alert message from the server, treat it as html safe
-        if (typeof message.toJSON === 'function' && message.get('status') === 'alert') {
+        if (message.constructor.modelName === 'notification' && message.get('status') === 'alert') {
             message.set('message', htmlSafe(message.get('message')));
         }
 
@@ -156,7 +156,7 @@ export default Service.extend({
     closeNotification(notification) {
         let content = this.content;
 
-        if (typeof notification.toJSON === 'function') {
+        if (notification.constructor.modelName === 'notification') {
             notification.deleteRecord();
             notification.save().finally(() => {
                 content.removeObject(notification);
