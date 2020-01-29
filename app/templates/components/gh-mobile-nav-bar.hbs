@@ -1,9 +1,9 @@
-{{#link-to "editor.new" "post" data-test-mobile-nav="new-post"}}{{svg-jar "pen"}}{{t "New post"}}{{/link-to}}
+<LinkTo @route="editor.new" @model="post" data-test-mobile-nav="new-post">{{svg-jar "pen"}}{{t "New post"}}</LinkTo>
 {{#if (eq this.router.currentRouteName "posts")}}
-    {{#link-to "posts" (query-params type=null) classNames="active" data-test-mobile-nav="posts"}}{{svg-jar "content"}}{{t "Posts"}}{{/link-to}}
+    <LinkTo @route="posts" @query={{hash type=null}} @classNames="active" data-test-mobile-nav="posts">{{svg-jar "content"}}{{t "Posts"}}</LinkTo>
 {{else}}
-    {{#link-to "posts"}}{{svg-jar "content" data-test-mobile-nav="posts"}}{{t "Posts"}}{{/link-to}}
+    <LinkTo @route="posts">{{svg-jar "content" data-test-mobile-nav="posts"}}{{t "Posts"}}</LinkTo>
 {{/if}}
-{{#link-to "staff" classNames="gh-nav-main-users" data-test-mobile-nav="staff"}}{{svg-jar "account-group"}}{{t "Staff"}}{{/link-to}}
+<LinkTo @route="staff" @classNames="gh-nav-main-users" data-test-mobile-nav="staff">{{svg-jar "account-group"}}{{t "Staff"}}</LinkTo>
 <div class="gh-mobile-nav-bar-more" {{action "openMobileMenu" target=this.ui data-test-mobile-nav="more"}}>{{svg-jar "icon" class="icon-gh"}}{{t "common.More"}}</div>
 {{yield}}

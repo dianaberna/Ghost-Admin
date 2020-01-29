@@ -1,13 +1,13 @@
 <div class="gh-canvas">
     <header class="gh-canvas-header">
         <h2 class="gh-canvas-title" data-test-screen-title>
-            {{#link-to "settings.integrations"}}{{t "Integrations"}}{{/link-to}}
+            <LinkTo @route="settings.integrations">{{t "Integrations"}}</LinkTo>
             <span>{{svg-jar "arrow-right"}}</span>
             {{t "Unsplash"}}
         </h2>
     </header>
 
     <div class="gh-content">
-        {{gh-loading-spinner}}
+        <GhLoadingSpinner />
     </div>
 </div>

@@ -9,5 +9,5 @@
 
 <div class="modal-footer">
     <button {{action "closeModal"}} class="gh-btn"><span>{{t "common.Cancel"}}</span></button>
-    {{gh-task-button (t "taskButton.Suspend") successText=(t "taskButton.Suspended") task=this.suspendUser class="gh-btn gh-btn-red gh-btn-icon" data-test-modal-confirm=true}}
+    <GhTaskButton @buttonText={{t "taskButton.Suspend"}} @successText={{t "taskButton.Suspended"}} @task={{this.suspendUser}} @class="gh-btn gh-btn-red gh-btn-icon" data-test-modal-confirm="true" />
 </div>

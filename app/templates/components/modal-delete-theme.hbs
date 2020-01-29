@@ -10,5 +10,5 @@
 
 <div class="modal-footer">
     <button {{action "closeModal"}} class="gh-btn" data-test-cancel-button><span>{{t "common.Cancel"}}</span></button>
-    {{gh-task-button (t "taskButton.Delete") successText=(t "taskButton.Deleted") task=this.deleteTheme class="gh-btn gh-btn-red gh-btn-icon" data-test-delete-button=true}}
+    <GhTaskButton @buttonText={{t "taskButton.Delete"}} @successText={{t "taskButton.Deleted"}} @task={{this.deleteTheme}} @class="gh-btn gh-btn-red gh-btn-icon" data-test-delete-button="true" />
 </div>

@@ -1,7 +1,7 @@
 import BaseValidator from 'ghost-admin/validators/base';
-export function initialize(application) {
+export function initialize(applicationInstance) {
     //dirty hack to "inject" intl into objects without containers
-    BaseValidator.reopen({intl: application.__container__.lookup('service:intl')});
+    BaseValidator.reopen({intl: applicationInstance.lookup('service:intl')});
 }
 
 export default {

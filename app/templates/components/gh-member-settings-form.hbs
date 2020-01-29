@@ -2,56 +2,55 @@
 <div class="br4 shadow-1 bg-grouped-table mt2 flex flex-column items-stretch gh-member-basic-settings-form">
     <div class="pa5 pb0 pt4 flex flex-column flex-row-ns justify-between">
         <div class="flex flex-column items-start mr8 w-100 w-50-ns">
-            {{#gh-form-group errors=member.errors hasValidated=member.hasValidated property="name"}}
+            <GhFormGroup @errors={{this.member.errors}} @hasValidated={{this.member.hasValidated}} @property="name">
                 <label for="member-name">{{t "member.Name"}}</label>
-                {{gh-text-input
-                    id="member-name"
-                    name="name"
-                    value=this.scratchMember.name
-                    tabindex="1"
-                    focus-out=(action 'setProperty' 'name' this.scratchMember.name)}}
+                <GhTextInput
+                    @id="member-name"
+                    @name="name"
+                    @value={{this.scratchMember.name}}
+                    @tabindex="1"
+                    @focus-out={{action "setProperty" "name" this.scratchMember.name}} />
                 <GhErrorMessage @errors={{member.errors}} @property="name" />
-            {{/gh-form-group}}
+            </GhFormGroup>
 
-            {{#gh-form-group errors=member.errors hasValidated=member.hasValidated property="email"}}
+            <GhFormGroup @errors={{this.member.errors}} @hasValidated={{this.member.hasValidated}} @property="email">
                 <label for="member-email">{{t "member.Email"}}</label>
                 {{#if this.canEditEmail}}
-                    {{gh-text-input
-                        value=this.scratchMember.email
-                        id="member-email"
-                        name="email"
-                        tabindex="2"
-                        autocapitalize="off"
-                        autocorrect="off"
-                        autocomplete="off"
-                        focus-out=(action 'setProperty' 'email' this.scratchMember.email)}}
-                    <GhErrorMessage @errors={{member.errors}} @property="email" />
+                    <GhTextInput
+                        @value={{this.scratchMember.email}}
+                        @id="member-email"
+                        @name="email"
+                        @tabindex="2"
+                        @autocapitalize="off"
+                        @autocorrect="off"
+                        @autocomplete="off"
+                        @focus-out={{action "setProperty" "email" this.scratchMember.email}} />
+                    <GhErrorMessage @errors={{this.member.errors}} @property="email" />
                 {{else}}
-                    {{gh-text-input
-                        name="email-disabled"
-                        disabled=true
-                        value=this.scratchMember.email}}
+                    <GhTextInput
+                        @name="email-disabled"
+                        @disabled={{true}}
+                        @value={{this.scratchMember.email}} />
                 {{/if}}
-            {{/gh-form-group}}
+            </GhFormGroup>
         </div>
         <div class="mb6 mb0-ns w-100 w-50-ns">
-            {{#gh-form-group errors=member.errors hasValidated=member.hasValidated property="note"}}
+            <GhFormGroup @errors={{this.member.errors}} @hasValidated={{this.member.hasValidated}} @property="note">
                 <label for="member-note">{{t "member.Note"}}</label>
-                {{gh-textarea
-                    id="member-note"
-                    name="note"
-                    class="gh-member-details-textarea"
-                    tabindex="3"
-                    value=this.scratchMember.note
-                    focus-out=(action 'setProperty' 'note' this.scratchMember.note)
-                }}
-                <GhErrorMessage @errors={{member.errors}} @property="note" />
+                <GhTextarea
+                    @id="member-note"
+                    @name="note"
+                    @class="gh-member-details-textarea"
+                    @tabindex="3"
+                    @value={{this.scratchMember.note}}
+                    @focus-out={{action "setProperty" "note" this.scratchMember.note}} />
+                <GhErrorMessage @errors={{this.member.errors}} @property="note" />
                 <p>{{{t "member.subscription.Not visible to member. <p>Maximum: <b>500</b> characters. You’ve used {countdown}</p>" countdown=(gh-count-down-characters this.scratchMember.note 500)}}}</p>
-            {{/gh-form-group}}
+            </GhFormGroup>
         </div>
     </div>
     <div class="pa5 pb0 pt4 flex flex-column justify-between bt b--whitegrey">
-        {{#gh-form-group classNames="gh-members-subscribed-checkbox"}}
+        <GhFormGroup @classNames="gh-members-subscribed-checkbox">
             <div class="flex justify-between items-center">
                 <div>
                     <h4 class="gh-setting-title">{{t "member.Subscribed to newsletter"}}</h4>
@@ -64,10 +63,11 @@
                     </label>
                 </div>
             </div>
-        {{/gh-form-group}}
+        </GhFormGroup>
     </div>
 </div>
 
+{{#unless this.member.isNew}}
 <h4 class="midlightgrey f-small fw5 ttu mt12">{{t "member.Stripe info"}}</h4>
 
 {{#if this.isLoading}}
@@ -77,8 +77,8 @@
         </div>
     </div>
 {{else}}
-    {{#if this.subscriptions}}
-        <div class="br4 shadow-1 bg-grouped-table mt2">
+    <div class="br4 shadow-1 bg-grouped-table mt2">
+        {{#if this.subscriptions}}
             {{#if this.hasMultipleSubscriptions}}
                 <div class="pa2 flex flex-column flex-row-ns items-center justify-center f7 fw5 bg-whitegrey-l2 bb b--whitegrey br4 br--top">
                     {{svg-jar "info" class="gh-member-info-icon mr2 fill-darkgrey"}} {{t "member.Member has multiple Stripe subscriptions"}}
@@ -177,10 +177,27 @@
                     </div>
                 </section>
             {{/each}}
+        {{else}}
+            <div class="pa20">
+                <p class="ma0 pa0 tc midgrey">{{t "member.Member doesn't have an active Stripe subscription"}}</p>
+            </div>
+        {{/if}}
+        <div class="pa5 pb0 pt4 flex flex-column justify-between bt b--whitegrey">
+            <GhFormGroup @classNames="gh-members-comped-checkbox">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h4 class="gh-setting-title">{{t "member.Complimentary premium plan"}}</h4>
+                        <p class="gh-setting-desc">{{t "member.If enabled, member will be placed onto a free of charge premium subscription"}}</p>
+                    </div>
+                    <div class="for-switch">
+                        <label class="switch" for="comped-checkbox">
+                            <Input @checked={{this.member.comped}} @type="checkbox" @id="comped-checkbox" @name="comped" />
+                            <span class="input-toggle-component"></span>
+                        </label>
+                    </div>
+                </div>
+            </GhFormGroup>
         </div>
-    {{else}}
-        <div class="pa20 br4 shadow-1 bg-grouped-table mt2">
-            <p class="ma0 pa0 tc midgrey">{{t "member.subscription.Member doesn't have Stripe subscription"}}</p>
-        </div>
-    {{/if}}
+    </div>
 {{/if}}
+{{/unless}}

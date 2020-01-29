@@ -9,5 +9,5 @@
 </div>
 <div class="modal-footer">
     <button {{action "closeModal"}} class="gh-btn"><span>{{t "common.Cancel"}}</span></button>
-    {{gh-task-button (t "taskButton.Delete Integration") successText=(t "taskButton.Deleted") task=this.deleteIntegration class="gh-btn gh-btn-red gh-btn-icon"}}
+    <GhTaskButton @buttonText={{t "taskButton.Delete Integration"}} successText={{t "taskButton.Deleted"}} task={{this.deleteIntegration}} @class="gh-btn gh-btn-red gh-btn-icon" />
 </div>

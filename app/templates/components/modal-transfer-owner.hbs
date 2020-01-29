@@ -11,5 +11,5 @@
 
 <div class="modal-footer">
     <button {{action "closeModal"}} class="gh-btn"><span>{{t "common.Cancel"}}</span></button>
-    {{gh-task-button (t "taskButton.Yep - I'm sure") task=this.transferOwnership class="gh-btn gh-btn-red gh-btn-icon"}}
+    <GhTaskButton @buttonText={{t "taskButton.Yep - I'm sure"}} @task={{this.transferOwnership}} @class="gh-btn gh-btn-red gh-btn-icon" />
 </div>

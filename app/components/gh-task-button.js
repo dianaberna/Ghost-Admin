@@ -169,8 +169,4 @@ const GhTaskButton = Component.extend({
     })
 });
 
-GhTaskButton.reopenClass({
-    positionalParams: ['buttonText']
-});
-
 export default GhTaskButton;

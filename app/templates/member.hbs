@@ -5,7 +5,7 @@
                 <LinkTo @route="members" data-test-link="members-back">{{t "Members"}}</LinkTo>
                 <span>{{svg-jar "arrow-right"}}</span>
                 {{#if this.member.isNew}}
-                    New member
+                    {{t "New member"}}
                 {{else}}
                     {{or this.member.name this.member.email}}
                 {{/if}}
