@@ -167,6 +167,7 @@
   "{blog} <span class=\"gh-og-preview-footer-left-divider\">|</span> by <span class=\"gh-og-preview-footer-author\">{name}</span>": "{blog} <span class=\"gh-og-preview-footer-left-divider\">|</span> by <span class=\"gh-og-preview-footer-author\">{name}</span>",
   "Page": "Page",
   "by <span class=\"gh-content-entry-author\">{authors}</span>": "by <span class=\"gh-content-entry-author\">{authors}</span>",
+  "By <span class=\"midgrey-l2 fw5\">{authorNames}</span>": "By <span class=\"midgrey-l2 fw5\">{authorNames}</span>",
   "Last edited {date}": "Last edited {date}",
   "Will go live {date}": "Will go live {date}",
   "moment": {
@@ -615,7 +616,17 @@
     "Incorrect password": "Incorrect password",
     "{email} is not a valid email.": "{email} is not a valid email.",
     "{email} was invalid: {message}": "{email} was invalid: {message}",
-    "Please select a role.": "Please select a role."
+    "Please select a role.": "Please select a role.",
+    "Please enter a name": "Please enter a name",
+    "Has already been used": "Has already been used"
+  },
+  "views": {
+    "Drafts": "Drafts",
+    "Scheduled": "Scheduled",
+    "Published": "Published",
+    "No @title provided": "No @title provided",
+    "Edit current view...": "Edit current view...",
+    "Save as view...": "Save as view..."
   },
   "pageTitle": {
     "About": "About",
@@ -967,6 +978,15 @@
     "Members Actions": "Members Actions",
     "No members found!": "No members found!",
     "No members yet": "No members yet",
-    "Member details": "Member details"
-  }
+    "Member details": "Member details",
+    "Subscribed to emails": "Subscribed to emails",
+    "If disabled, member will <em>not</em> receive newsletter emails": "If disabled, member will <em>not</em> receive newsletter emails",
+    "New view": "New view",
+    "Edit view": "Edit view",
+    "View name": "View name",
+    "Breaking news": "Breaking news",
+    "Saved views appear in the app sidebar.": "Saved views appear in the app sidebar.",
+    "Icon color": "Icon color"
+  },
+  "Post has been sent by email": "Post has been sent by email"
 }

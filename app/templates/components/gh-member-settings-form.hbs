@@ -45,7 +45,7 @@
                     @value={{this.scratchMember.note}}
                     @focus-out={{action "setProperty" "note" this.scratchMember.note}} />
                 <GhErrorMessage @errors={{this.member.errors}} @property="note" />
-                <p>{{{t "member.subscription.Not visible to member. <p>Maximum: <b>500</b> characters. You’ve used {countdown}</p>" countdown=(gh-count-down-characters this.scratchMember.note 500)}}}</p>
+                <p>{{{t "members.subscription.Not visible to member. <p>Maximum: <b>500</b> characters. You’ve used {countdown}</p>" countdown=(gh-count-down-characters this.scratchMember.note 500)}}}</p>
             </GhFormGroup>
         </div>
     </div>
@@ -53,8 +53,8 @@
         <GhFormGroup @classNames="gh-members-subscribed-checkbox">
             <div class="flex justify-between items-center">
                 <div>
-                    <h4 class="gh-setting-title">{{t "member.Subscribed to newsletter"}}</h4>
-                    <p class="gh-setting-desc">{{{t "member.If disabled, member will <em>not</em> receive newsletter emails"}}}</p>
+                    <h4 class="gh-setting-title">{{t "members.Subscribed to emails"}}</h4>
+                    <p class="gh-setting-desc">{{{t "members.If disabled, member will <em>not</em> receive newsletter emails"}}}</p>
                 </div>
                 <div class="for-switch">
                     <label class="switch" for="subscribed-checkbox">
@@ -68,7 +68,7 @@
 </div>
 
 {{#unless this.member.isNew}}
-<h4 class="midlightgrey f-small fw5 ttu mt12">{{t "member.Stripe info"}}</h4>
+<h4 class="midlightgrey f-small fw5 ttu mt12">{{t "members.Stripe info"}}</h4>
 
 {{#if this.isLoading}}
     <div class="pa20 br4 shadow-1 bg-grouped-table mt2">
@@ -81,50 +81,50 @@
         {{#if this.subscriptions}}
             {{#if this.hasMultipleSubscriptions}}
                 <div class="pa2 flex flex-column flex-row-ns items-center justify-center f7 fw5 bg-whitegrey-l2 bb b--whitegrey br4 br--top">
-                    {{svg-jar "info" class="gh-member-info-icon mr2 fill-darkgrey"}} {{t "member.Member has multiple Stripe subscriptions"}}
+                    {{svg-jar "info" class="gh-member-info-icon mr2 fill-darkgrey"}} {{t "members.Member has multiple Stripe subscriptions"}}
                 </div>
             {{/if}}
             {{#each this.subscriptions as |subscription|}}
                 <section class="gh-member-stripe-info pa5 pb0 pt4 flex flex-column flex-row-ns items-start justify-between">
                     <div class="flex items-start w-100">
                         <div class="w-50 flex-auto mr8">
-                            <h4 class="f8 fw6">{{t "member.subscription.Customer data"}}</h4>
+                            <h4 class="f8 fw6">{{t "members.subscription.Customer data"}}</h4>
                             <table class="gh-member-stripe-table">
                                 <tr>
-                                    <td class="gh-member-stripe-label">{{t "member.subscription.Stripe customer ID"}}</td>
+                                    <td class="gh-member-stripe-label">{{t "members.subscription.Stripe customer ID"}}</td>
                                     <td class="gh-member-stripe-data">
-                                        <a href="https://dashboard.stripe.com/customers/{{subscription.customer.id}}" target="_blank" rel="noopener" data-tooltip="{{t "member.subscription.View on Stripe"}}">
+                                        <a href="https://dashboard.stripe.com/customers/{{subscription.customer.id}}" target="_blank" rel="noopener" data-tooltip="{{t "members.subscription.View on Stripe"}}">
                                             {{subscription.customer.id}}
                                         </a>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="gh-member-stripe-label">{{t "member.subscription.Name"}}</td>
+                                    <td class="gh-member-stripe-label">{{t "members.subscription.Name"}}</td>
                                     <td class="gh-member-stripe-data">
                                         {{#if subscription.customer.name}}
                                             {{subscription.customer.name}}
                                         {{else}}
-                                            <span class="midlightgrey-l2">{{t "member.subscription.No name"}}</span>
+                                            <span class="midlightgrey-l2">{{t "members.subscription.No name"}}</span>
                                         {{/if}}
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="gh-member-stripe-label">{{t "member.subscription.Email"}}</td>
+                                    <td class="gh-member-stripe-label">{{t "members.subscription.Email"}}</td>
                                     <td class="gh-member-stripe-data">
                                         {{#if subscription.customer.email}}
                                             {{subscription.customer.email}}
                                         {{else}}
-                                            <span class="midlightgrey-l2">{{t "member.subscription.No email"}}</span>
+                                            <span class="midlightgrey-l2">{{t "members.subscription.No email"}}</span>
                                         {{/if}}
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="gh-member-stripe-label">{{t "member.subscription.Customer since"}}</td>
+                                    <td class="gh-member-stripe-label">{{t "members.subscription.Customer since"}}</td>
                                     <td class="gh-member-stripe-data">
                                         {{#if subscription.startDate}}
                                             {{subscription.startDate}}
                                         {{else}}
-                                            <span class="midlightgrey-l2">{{t "member.subscription.No data"}}</span>
+                                            <span class="midlightgrey-l2">{{t "members.subscription.No data"}}</span>
                                         {{/if}}
                                     </td>
                                 </tr>
@@ -132,19 +132,19 @@
                         </div>
 
                         <div class="w-50 flex-auto">
-                            <h4 class="f8 fw6">{{t "member.subscription.Subscription data"}}</h4>
+                            <h4 class="f8 fw6">{{t "members.subscription.Subscription data"}}</h4>
                             <table class="gh-member-stripe-table">
                                 <tr>
-                                    <td class="gh-member-stripe-label">{{t "member.subscription.Stripe subscription ID"}}</td>
+                                    <td class="gh-member-stripe-label">{{t "members.subscription.Stripe subscription ID"}}</td>
                                     <td class="gh-member-stripe-data">
                                         <a href="https://dashboard.stripe.com/subscriptions/{{subscription.id}}" target="_blank" rel="noopener"
-                                            data-tooltip="{{t "member.subscription.View on Stripe"}}">
+                                            data-tooltip="{{t "members.subscription.View on Stripe"}}">
                                             {{subscription.id}}
                                         </a>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="gh-member-stripe-label">{{t "member.subscription.Plan"}}</td>
+                                    <td class="gh-member-stripe-label">{{t "members.subscription.Plan"}}</td>
                                     <td class="gh-member-stripe-data">
                                         {{subscription.plan.nickname}}
                                         <span class="midgrey">({{subscription.dollarAmount}}
@@ -153,20 +153,20 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="gh-member-stripe-label">{{t "member.subscription.Current status"}}</td>
+                                    <td class="gh-member-stripe-label">{{t "members.subscription.Current status"}}</td>
                                     <td class="gh-member-stripe-data">
                                         {{#if subscription.cancelAtPeriodEnd}}
-                                            <span class="gh-member-cancels-on-label">{{t "memeber.subscription.Cancels on {validUntil}" validUntil=subscription.validUntil}}</span>
+                                            <span class="gh-member-cancels-on-label">{{t "members.subscription.Cancels on {validUntil}" validUntil=subscription.validUntil}}</span>
                                         {{else}}
                                             <span class="gh-member-stripe-status">{{subscription.status}}</span>
                                         {{/if}}
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="gh-member-stripe-label">{{t "member.subscription.Next renewal date"}}</td>
+                                    <td class="gh-member-stripe-label">{{t "members.subscription.Next renewal date"}}</td>
                                     <td class="gh-member-stripe-data">
                                         {{#if subscription.cancelAtPeriodEnd}}
-                                            {{t "member.subscription.No further renewal"}}
+                                            {{t "members.subscription.No further renewal"}}
                                         {{else}}
                                             {{subscription.validUntil}}
                                         {{/if}}
@@ -179,15 +179,15 @@
             {{/each}}
         {{else}}
             <div class="pa20">
-                <p class="ma0 pa0 tc midgrey">{{t "member.Member doesn't have an active Stripe subscription"}}</p>
+                <p class="ma0 pa0 tc midgrey">{{t "members.Member doesn't have an active Stripe subscription"}}</p>
             </div>
         {{/if}}
         <div class="pa5 pb0 pt4 flex flex-column justify-between bt b--whitegrey">
             <GhFormGroup @classNames="gh-members-comped-checkbox">
                 <div class="flex justify-between items-center">
                     <div>
-                        <h4 class="gh-setting-title">{{t "member.Complimentary premium plan"}}</h4>
-                        <p class="gh-setting-desc">{{t "member.If enabled, member will be placed onto a free of charge premium subscription"}}</p>
+                        <h4 class="gh-setting-title">{{t "members.Complimentary premium plan"}}</h4>
+                        <p class="gh-setting-desc">{{t "members.If enabled, member will be placed onto a free of charge premium subscription"}}</p>
                     </div>
                     <div class="for-switch">
                         <label class="switch" for="comped-checkbox">
