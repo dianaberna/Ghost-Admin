@@ -4,18 +4,17 @@
 <a class="close" href="" title="{{t "common.Close"}}" {{action "closeModal"}}>{{svg-jar "close"}}<span class="hidden">{{t "common.Close"}}</span></a>
 
 <div class="modal-body">
-    <p>{{{t "<strong>WARNING:</strong> You are about to delete the user '<strong>{name}</strong>'. There is no way to recover this." name=this.user.name}}}</p>
     {{#if this.user.count.posts}}
-        <ul>
-            <li>{{t "The user will not have access to this blog anymore"}}</li>
-            <li>{{{t "<strong>{posts, plural}</strong> created by this user will be deleted" posts=this.user.count.posts}}}</li>
-            <li>{{t "All other user data will be deleted"}}</li>
-        </ul>
+        <p>
+            {{{t "<strong>{user}</strong> and their <strong>{posts, plural}</strong> will be permanently deleted. If you don’t want to lose these posts, you should assign them to a different author." user=this.user.name posts=this.user.count.posts}}}
+        </p>
+        <p>
+            {{t "A backup will be automatically downloaded to your device before deletion."}}
+        </p>
     {{else}}
-        <ul>
-            <li>{{t "User will not have access to this blog anymore"}}</li>
-            <li>{{t "All user data will be deleted."}}</li>
-        </ul>
+        <p>
+            {{{t "<strong>{user}</strong> will be permanently deleted. A backup will be automatically downloaded to your device before deletion." user=this.user.name}}}
+        </p>
     {{/if}}
 </div>
 
@@ -23,7 +22,7 @@
     <button {{action "closeModal"}} class="gh-btn" data-test-button="cancel-delete-user">
         <span>{{t "common.Cancel"}}</span>
     </button>
-    <GhTaskButton @buttonText={{if this.user.count.posts (t "taskButton.Delete user and their posts") (t "taskButton.Delete user")}}
+    <GhTaskButton @buttonText={{t "taskButton.Download backup & delete user"}}
         @successText={{t "taskButton.Deleted"}}
         @task={{this.deleteUser}}
         @class="gh-btn gh-btn-red gh-btn-icon"

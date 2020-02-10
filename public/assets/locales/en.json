@@ -757,7 +757,7 @@
     "Sent": "Sent",
     "Delete": "Delete",
     "Deleted": "Deleted",
-    "Delete user and their posts": "Delete user and their posts",
+    "Download backup & delete user": "Download backup & delete user",
     "Delete user": "Delete user",
     "Send invitation now": "Send invitation now",
     "Add": "Add",
@@ -988,5 +988,8 @@
     "Saved views appear in the app sidebar.": "Saved views appear in the app sidebar.",
     "Icon color": "Icon color"
   },
-  "Post has been sent by email": "Post has been sent by email"
+  "Post has been sent by email": "Post has been sent by email",
+  "A backup will be automatically downloaded to your device before deletion.": "A backup will be automatically downloaded to your device before deletion.",
+  "<strong>{user}</strong> will be permanently deleted. A backup will be automatically downloaded to your device before deletion.": "<strong>{user}</strong> will be permanently deleted. A backup will be automatically downloaded to your device before deletion.",
+  "<strong>{user}</strong> and their <strong>{posts, plural}</strong> will be permanently deleted. If you don’t want to lose these posts, you should assign them to a different author.": "<strong>{user}</strong> and their <strong>{posts, plural, =1{a post} other{# posts}}</strong> will be permanently deleted. If you don’t want to lose these posts, you should assign them to a different author."
 }
