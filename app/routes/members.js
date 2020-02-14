@@ -5,6 +5,10 @@ export default AuthenticatedRoute.extend({
     intl: service(),
     config: service(),
 
+    queryParams: {
+        label: {refreshModel: true}
+    },
+
     // redirect to posts screen if:
     // - TODO: members is disabled?
     // - logged in user isn't owner/admin
@@ -18,14 +22,25 @@ export default AuthenticatedRoute.extend({
         });
     },
 
+    // trigger a background load of labels for filter dropdown
     setupController(controller) {
         this._super(...arguments);
         controller.fetchMembers.perform();
+        if (!controller._hasLoadedLabels) {
+            this.store.query('label', {limit: 'all'}).then(() => {
+                controller._hasLoadedLabels = true;
+            });
+        }
     },
 
+    deactivate() {
+        this._super(...arguments);
+        this.controller.modalLabel && this.controller.modalLabel.rollbackAttributes();
+    },
     buildRouteInfoMetadata() {
         return {
             titleToken: this.intl.t('pageTitle.Members')
         };
     }
+
 });
