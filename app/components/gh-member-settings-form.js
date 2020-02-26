@@ -1,10 +1,11 @@
 import Component from '@ember/component';
 import moment from 'moment';
 import {computed} from '@ember/object';
-import {gt, reads} from '@ember/object/computed';
+import {gt} from '@ember/object/computed';
 import {inject as service} from '@ember/service';
 
 export default Component.extend({
+    settings: service(),
     feature: service(),
     config: service(),
     mediaQueries: service(),
@@ -12,9 +13,17 @@ export default Component.extend({
     // Allowed actions
     setProperty: () => {},
 
-    canEditEmail: reads('member.isNew'),
-
     hasMultipleSubscriptions: gt('member.stripe', 1),
+    canShowStripeInfo: computed('member.isNew', 'settings.membersSubscriptionSettings', function () {
+        let membersSubscriptionSettings = this.settings.parseSubscriptionSettings(this.get('settings.membersSubscriptionSettings'));
+        let stripeEnabled = membersSubscriptionSettings && !!(membersSubscriptionSettings.paymentProcessors[0].config.secret_token) && !!(membersSubscriptionSettings.paymentProcessors[0].config.public_token);
+
+        if (this.member.isNew || !stripeEnabled) {
+            return false;
+        } else {
+            return true;
+        }
+    }),
 
     subscriptions: computed('member.stripe', function () {
         let subscriptions = this.member.get('stripe');

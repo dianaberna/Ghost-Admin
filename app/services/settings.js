@@ -9,6 +9,7 @@ const {_ProxyMixin} = Ember;
 
 export default Service.extend(_ProxyMixin, ValidationEngine, {
     store: service(),
+    intl: service(),
 
     // will be set to the single Settings model, it's a reference so any later
     // changes to the settings object in the store will be reflected
@@ -69,8 +70,44 @@ export default Service.extend(_ProxyMixin, ValidationEngine, {
     rollbackAttributes() {
         return this.content.rollbackAttributes();
     },
-    
+
     changedAttributes() {
         return this.content.changedAttributes();
+    },
+
+    parseSubscriptionSettings(settingsString) {
+        try {
+            return JSON.parse(settingsString);
+        } catch (e) {
+            return {
+                isPaid: false,
+                allowSelfSignup: true,
+                fromAddress: 'noreply',
+                paymentProcessors: [{
+                    adapter: 'stripe',
+                    config: {
+                        secret_token: '',
+                        public_token: '',
+                        product: {
+                            name: this.settings.get('title')
+                        },
+                        plans: [
+                            {
+                                name: this.intl.t('Monthly'),
+                                currency: 'usd',
+                                interval: 'month',
+                                amount: ''
+                            },
+                            {
+                                name: this.intl.t('Yearly'),
+                                currency: 'usd',
+                                interval: 'year',
+                                amount: ''
+                            }
+                        ]
+                    }
+                }]
+            };
+        }
     }
 });

@@ -28,7 +28,7 @@
             </div>
         </div>
     </section>
-    {{#if this.session.user.isOwnerOrAdmin}}
+    {{#if showSendEmail}}
         {{#unless this.post.email}}
             <section class="gh-publishmenu-section">
                 <div class="gh-publishmenu-radio gh-publishmenu-email">
@@ -38,7 +38,7 @@
                     <div class="gh-publishmenu-email-label">
                         <label class="gh-publishmenu-radio-label pe-none midgrey"
                             for="email-when-published-checkbox">{{t "Send by email"}}</label>
-                        {{#if this.memberCount}}
+                        {{#if (or this.memberCount this.session.user.isEditor)}}
                         <div class="gh-publishmenu-radio-desc">{{t "Deliver post to members"}}</div>
                         {{else}}
                         <div class="gh-publishmenu-radio-desc">{{t "You haven't got any members"}}</div>

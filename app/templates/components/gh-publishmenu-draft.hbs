@@ -29,15 +29,15 @@
         </div>
     </div>
 
-    {{#if (and this.canSendEmail this.session.user.isOwnerOrAdmin)}}
+    {{#if (and this.canSendEmail showSendEmail)}}
         <div class="gh-publishmenu-section">
             <div class="gh-publishmenu-radio gh-publishmenu-email">
                 {{#if this.backgroundLoader.isRunning}}
                     <div class="gh-loading-spinner" style="zoom: 50%"></div>
                 {{else}}
                     <div class="gh-publishmenu-email-label {{if this.disableEmailOption "pe-none"}}">
-                        <label class="gh-publishmenu-radio-label {{unless this.memberCount "midgrey"}}" for="email-when-published-checkbox">{{t "Send by email"}}</label>
-                        {{#if this.memberCount}}
+                        <label class="gh-publishmenu-radio-label {{if this.disableEmailOption "midgrey"}}" for="email-when-published-checkbox">{{t "Send by email"}}</label>
+                        {{#if (or this.memberCount this.session.user.isEditor)}}
                             <div class="gh-publishmenu-radio-desc">{{t "Deliver post to members"}}</div>
                         {{else}}
                             <div class="gh-publishmenu-radio-desc">{{t "You haven't got any members"}}</div>

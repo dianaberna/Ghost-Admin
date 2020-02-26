@@ -526,9 +526,13 @@ export default Controller.extend({
 
     // load supplementel data such as the members count in the background
     backgroundLoader: task(function* () {
-        if (this.feature.members) {
-            let membersResponse = yield this.store.query('member', {limit: 1, filter: 'subscribed:true'});
-            this.set('memberCount', get(membersResponse, 'meta.pagination.total'));
+        try {
+            if (this.feature.members) {
+                let membersResponse = yield this.store.query('member', {limit: 1, filter: 'subscribed:true'});
+                this.set('memberCount', get(membersResponse, 'meta.pagination.total'));
+            }
+        } catch (error) {
+            this.set('memberCount', 0);
         }
     }).restartable(),
 
