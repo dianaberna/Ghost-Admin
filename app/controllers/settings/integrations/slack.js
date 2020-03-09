@@ -121,7 +121,7 @@ export default Controller.extend({
         try {
             yield this.save.perform();
             yield this.ajax.post(slackApi);
-            notifications.showNotification(this.intl.t('Check your Slack channel for the test message!'), {type: 'info', key: 'slack-test.send.success'});
+            notifications.showNotification(this.intl.t('Test notification sent'), {type: 'info', key: 'slack-test.send.success', description: this.intl.t('Check your Slack channel for the test message')});
             return true;
         } catch (error) {
             notifications.showAPIError(error, {key: 'slack-test:send'});

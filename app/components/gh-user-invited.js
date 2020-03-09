@@ -52,7 +52,7 @@ export default Component.extend({
                 if (result.invites[0].status === 'invited-pending') {
                     notifications.showAlert(this.intl.t('Invitation email was not sent.  Please try resending.'), {type: 'error', key: 'invite.resend.not-sent'});
                 } else {
-                    notifications.showNotification(notificationText, {key: 'invite.resend.success'});
+                    notifications.showNotification(notificationText, {icon: 'send-email', key: 'invite.resend.success'});
                 }
             }).catch((error) => {
                 notifications.showAPIError(error, {key: 'invite.resend'});
@@ -69,8 +69,7 @@ export default Component.extend({
             // reload the invite to get the most up-to-date information
             invite.reload().then(() => {
                 invite.destroyRecord().then(() => {
-                    let notificationText = `Invitation revoked. (${email})`;
-                    notifications.showNotification(notificationText, {key: 'invite.revoke.success'});
+                    notifications.showNotification(this.intl.t('Invitation revoked'), {key: 'invite.revoke.success', description: `${email}`});
                 }).catch((error) => {
                     notifications.showAPIError(error, {key: 'invite.revoke'});
                 });

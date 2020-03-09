@@ -1,26 +1,38 @@
 <section class="gh-canvas">
-    <form class="mb10 member-basic-info-form">
-        <GhCanvasHeader class="gh-canvas-header">
-            <h2 class="gh-canvas-title" data-test-screen-title>
-                <LinkTo @route="members" data-test-link="members-back">{{t "Members"}}</LinkTo>
-                <span>{{svg-jar "arrow-right"}}</span>
-                {{#if this.member.isNew}}
-                    {{t "New member"}}
-                {{else}}
-                    {{or this.member.name this.member.email}}
-                {{/if}}
-            </h2>
-            <section class="view-actions">
-                <GhTaskButton @class="gh-btn gh-btn-blue gh-btn-icon" @type="button" @task={{this.save}} @data-test-button="save" />
-            </section>
-        </GhCanvasHeader>
 
+    <GhCanvasHeader class="gh-canvas-header">
+        <h2 class="gh-canvas-title" data-test-screen-title>
+            <LinkTo @route="members" data-test-link="members-back">{{t "members.Members"}}</LinkTo>
+            <span>{{svg-jar "arrow-right"}}</span>
+            {{#if this.member.isNew}}
+                {{t "members.New member"}}
+            {{else}}
+                {{or this.member.name this.member.email}}
+            {{/if}}
+        </h2>
+
+        <section class="view-actions">
+            {{#if this.session.user.isOwner}}
+                {{#unless this.member.isNew}}
+                    <button
+                        class="gh-btn gh-btn-white gh-btn-icon mr2"
+                        {{on "click" (action "toggleImpersonateMemberModal")}}>
+                        <span>{{t "members.Impersonate"}}</span>
+                    </button>
+                {{/unless}}
+            {{/if}}
+
+            <GhTaskButton @class="gh-btn gh-btn-blue gh-btn-icon" @type="button" @task={{this.save}} @data-test-button="save" />
+        </section>
+    </GhCanvasHeader>
+
+    <form class="mb10 member-basic-info-form">
         <div class="flex items-center mb10 bt b--lightgrey-d1 pt8">
             {{#if (or this.member.name this.member.email)}}
                 <GhMemberAvatar
                     @member={{this.member}}
                     @sizeClass={{if this.member.name 'f-subheadline fw4 lh-zero tracked-1' 'f-headline fw4 lh-zero tracked-1'}}
-                    @containerClass="w18 h18 mr4 gh-member-detail-avatar"
+                    @containerClass="w20 h20 mr4 gh-member-detail-avatar"
                 />
             {{else}}
                 <div class="flex items-center justify-center br-100 w18 h18 mr4 gh-new-member-avatar">
@@ -35,11 +47,21 @@
                     {{#if (and this.member.name this.member.email)}}
                         <span class="darkgrey fw5">{{this.member.email}}</span>
                     {{/if}}
-                    {{#unless this.member.isNew}}
-                        {{if (and this.member.name this.member.email) "–"}}
-                        {{t "Created on {subscribeAt}" subscribeAt=this.subscribedAt}}
-                    {{/unless}}
                 </p>
+                {{#unless this.member.isNew}}
+                <p class="f7 pa0 ma0 midgrey-d1 {{if this.member.name "nudge-bottom--2"}}">
+                    {{#if this.member.geolocation}}
+                        {{#if (eq this.member.geolocation.country_code "US")}}
+                            {{this.member.geolocation.region}}, US
+                        {{else}}
+                            {{this.member.geolocation.country}}
+                        {{/if}}
+                    {{else}}
+                        {{t "members.Unknown location"}}
+                    {{/if}}
+                    – {{t "members.Created on {subscribeAt}" subscribeAt=this.subscribedAt}}
+                </p>
+                {{/unless}}
             </div>
         </div>
 
@@ -76,5 +98,13 @@
         @model={{this.member}}
         @confirm={{action "deleteMember"}}
         @close={{action "toggleDeleteMemberModal"}}
+        @modifier="action wide" />
+{{/if}}
+
+{{#if this.showImpersonateMemberModal}}
+    <GhFullscreenModal
+        @modal="impersonate-member"
+        @model={{this.member}}
+        @close={{action "toggleImpersonateMemberModal"}}
         @modifier="action wide" />
 {{/if}}

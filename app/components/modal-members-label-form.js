@@ -7,6 +7,7 @@ import {task} from 'ember-concurrency';
 export default ModalComponent.extend({
     router: service(),
     notifications: service(),
+    intl: service(),
     model: null,
     showDeleteLabelModal: false,
 
@@ -47,7 +48,7 @@ export default ModalComponent.extend({
             });
 
             if (duplicateLabel) {
-                label.errors.add('name', 'A label with the same name already exists');
+                label.errors.add('name', this.intl.t('members.A label with the same name already exists'));
                 label.hasValidated.pushObject('name');
                 // label.invalidate();
 
@@ -73,6 +74,7 @@ export default ModalComponent.extend({
         try {
             yield label.destroyRecord();
             let routeName = this.router.currentRouteName;
+            this.notifications.showNotification(this.intl.t('members.Label deleted').htmlSafe());
             this.send('closeModal');
             this.router.transitionTo(routeName, {queryParams: resetQueryParams(routeName)});
         } catch (error) {

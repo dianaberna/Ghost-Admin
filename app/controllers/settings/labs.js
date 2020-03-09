@@ -105,7 +105,7 @@ export default Controller.extend({
                     this.set('session.user', store.findRecord('user', currentUserId));
 
                     // TODO: keep as notification, add link to view content
-                    notifications.showNotification(this.intl.t('Import successful.'), {key: 'import.upload.success'});
+                    notifications.showNotification(this.intl.t('Import successful'), {key: 'import.upload.success'});
 
                     // reload settings
                     return this.settings.reload().then((settings) => {

@@ -316,7 +316,8 @@
   "\"{themeName}\" uploaded successfully but some {type} were detected.": "\"{themeName}\" uploaded successfully but some {type} were detected.",
   "Sorry, there was an error in the application. Please let the Ghost team know what happened.": "Sorry, there was an error in the application. Please let the Ghost team know what happened.",
   "Unknown Error": "Unknown Error",
-  "Invitation email was not sent.  Please try resending.": "Invitation email was not sent.  Please try resending.",
+  "Invitation email was not sent.": "Invitation email was not sent.",
+  "Please try resending.": "Please try resending.",
   "This invite has been revoked or a user has already accepted the invitation.": "This invite has been revoked or a user has already accepted the invitation.",
   "Check your email for the test message.": "Check your email for the test message.",
   "All content deleted from database.": "All content deleted from database.",
@@ -330,7 +331,7 @@
   "You need to sign out to register as a new user.": "You need to sign out to register as a new user.",
   "Invalid token.": "Invalid token.",
   "The invitation does not exist or is no longer valid.": "The invitation does not exist or is no longer valid.",
-  "Check your Slack channel for the test message!": "Check your Slack channel for the test message!",
+  "Check your Slack channel for the test message": "Check your Slack channel for the test message",
   "Sorry, Ghost is currently undergoing maintenance, please wait a moment then try again.": "Sorry, Ghost is currently undergoing maintenance, please wait a moment then try again.",
   "Ghost has been upgraded, please copy any unsaved data and refresh the page to continue.": "Ghost has been upgraded, please copy any unsaved data and refresh the page to continue.",
   "Ownership successfully transferred to {user}": "Ownership successfully transferred to {user}",
@@ -517,7 +518,7 @@
     "Draft": "Draft",
     "Featured": "Featured"
   },
-  "Invitation sent! ({email})": "Invitation sent! ({email})",
+  "Invitation sent!": "Invitation sent!",
   "Image URI is not valid": "Image URI is not valid",
   "Sorry, the default Casper theme cannot be overwritten.<br>Please rename your zip file and try again.": "Sorry, the default Casper theme cannot be overwritten.<br>Please rename your zip file and try again.",
   "New tag": "New tag",
@@ -536,7 +537,7 @@
   "Invitation resent! ({email})": "Invitation resent! ({email})",
   "Page not found": "Page not found",
   "Internal Server Error": "Internal Server Error",
-  "Password updated.": "Password updated.",
+  "Password updated": "Password updated",
   "There was a problem on the server, please try again.": "There was a problem on the server, please try again.",
   "tour": {
     "Getting started with Ghost": "Getting started with Ghost",
@@ -650,7 +651,8 @@
     "Subscribers": "Subscribers",
     "Settings - Tags": "Settings - Tags",
     "Staff - User": "Staff - User",
-    "Unsplash": "Unsplash"
+    "Unsplash": "Unsplash",
+    "Billing": "Billing"
   },
   "postStatus": {
     "Saving...": "Saving...",
@@ -799,7 +801,9 @@
     "Uploaded": "Uploaded",
     "Upload Failed": "Upload Failed",
     "Upload routes YAML": "Upload routes YAML",
-    "Upload redirects JSON": "Upload redirects JSON"
+    "Upload redirects JSON": "Upload redirects JSON",
+    "Copy link": "Copy link",
+    "Link copied": "Link copied"
   },
   "Publication info": "Publication info",
   "Title &amp; description": "Title &amp; description",
@@ -994,6 +998,8 @@
     "Loading...": "Loading...",
     "{matches, plural} current filter": "{matches, plural, =1{1 match} other{# matches}} current filter",
     "All labels": "All labels",
+    "Label deleted": "Label deleted",
+    "A label with the same name already exists": "A label with the same name already exists",
     "Maximum: <b>{maximum}</b> characters. You’ve used {countdown}": "Maximum: <b>{maximum}</b> characters. You’ve used {countdown}",
     "Note": "Note",
     "(not visible to member)": "(not visible to member)",
@@ -1002,9 +1008,21 @@
     "You're about to delete label \"<strong>{name}</strong>\". This is permanent! We warned you, k?": "You're about to delete label \"<strong>{name}</strong>\". This is permanent! We warned you, k?",
     "New label": "New label",
     "Edit label": "Edit label",
-    "Label name": "Label name"
+    "Label name": "Label name",
+    "Member added": "Member added",
+    "You've successfully added yourself as a member.": "You've successfully added yourself as a member.",
+    "Unknown": "Unknown",
+    "Impersonate": "Impersonate",
+    "This link is only valid for the next <strong>10 minutes</strong>": "This link is only valid for the next <strong>10 minutes</strong>",
+    "This is an authentication link to sign into <strong>{blogTitle}</strong> as <strong>{email}</strong>, you can send it to them if they need it, or use it to sign into their account for customer support.": "This is an authentication link to sign into <strong>{blogTitle}</strong> as <strong>{email}</strong>, you can send it to them if they need it, or use it to sign into their account for customer support.",
+    "Created on {subscribeAt}": "Created on {subscribeAt}",
+    "Unknown location": "Unknown location"
   },
+  "Invitation revoked": "Invitation revoked",
   "Post has been sent by email": "Post has been sent by email",
+  "Test notification sent": "Test notification sent",
+  "<span class=\"ttu\">{currency}</span>/month": "<span class=\"ttu\">{currency}</span>/month",
+  "<span class=\"ttu\">{currency}</span>/year": "<span class=\"ttu\">{currency}</span>/year",
   "A backup will be automatically downloaded to your device before deletion.": "A backup will be automatically downloaded to your device before deletion.",
   "<strong>{user}</strong> will be permanently deleted. A backup will be automatically downloaded to your device before deletion.": "<strong>{user}</strong> will be permanently deleted. A backup will be automatically downloaded to your device before deletion.",
   "<strong>{user}</strong> and their <strong>{posts, plural}</strong> will be permanently deleted. If you don’t want to lose these posts, you should assign them to a different author.": "<strong>{user}</strong> and their <strong>{posts, plural, =1{a post} other{# posts}}</strong> will be permanently deleted. If you don’t want to lose these posts, you should assign them to a different author."

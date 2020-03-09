@@ -760,19 +760,15 @@ export default Controller.extend({
     _showSaveNotification(prevStatus, status, delay) {
         let message = this.intl.t(`editor.success.post.${prevStatus}.${status}`);
         let notifications = this.notifications;
-        let type, path;
+        let actions, type, path;
 
-        if (status === 'published') {
-            type = 'view';
-            path = this.get('post.url');
-        } else {
-            type = 'preview';
-            path = this.get('post.previewUrl');
-        }
+        type = this.get('post.page') ? 'page' : 'post';
+        path = status === 'published' || status === 'scheduled'
+            ? this.get('post.url')
+            : this.get('post.previewUrl');
+        actions = `<a href="${path}" target="_blank">${this.intl.t(`${this.get('post.displayName')}.notification.${type}`)}</a>`;
 
-        message += `&nbsp;<a href="${path}" target="_blank">${this.intl.t(`${this.get('post.displayName')}.notification.${type}`)}</a>`;
-
-        notifications.showNotification(message.htmlSafe(), {delayed: delay});
+        notifications.showNotification(message, {type: 'success', actions: actions.htmlSafe(), delayed: delay});
     },
 
     _showErrorAlert(prevStatus, status, error, delay) {

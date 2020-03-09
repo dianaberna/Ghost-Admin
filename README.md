@@ -14,7 +14,7 @@ Same when some translation key is missing or has an error it will fallback to ke
 #NOTE: TESTS are totally broken
 Maybe one day I'll try to fix it. But for now see no reason due to https://github.com/TryGhost/Ghost-Admin/pull/1017#issuecomment-420310841 
 
-[![Build Status](https://travis-ci.org/TryGhost/Ghost-Admin.svg?branch=master)](https://travis-ci.org/TryGhost/Ghost-Admin)
+![](https://github.com/TryGhost/Ghost-Admin/workflows/Test%20Suite/badge.svg?branch=master)
 
 This is the home of Ember.js based admin client that ships with [Ghost](https://github.com/tryghost/ghost).
 

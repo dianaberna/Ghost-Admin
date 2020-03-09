@@ -6,6 +6,7 @@ export default Component.extend({
     session: service(),
     store: service(),
     notifications: service(),
+    intl: service(),
 
     actions: {
         addYourself() {
@@ -22,7 +23,11 @@ export default Component.extend({
         try {
             // NOTE: has to be before member.save() is performed otherwise component is
             //       destroyed before notification is shown
-            this.notifications.showNotification('You\'ve successfully added yourself as a member!'.htmlSafe());
+            this.notifications.showNotification(this.intl.t('members.Member added').htmlSafe(),
+                {
+                    description: this.intl.t('members.You\'ve successfully added yourself as a member.')
+                }
+            );
 
             return yield member.save();
         } catch (error) {
