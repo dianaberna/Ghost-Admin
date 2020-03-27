@@ -1,7 +1,8 @@
 {
   "extends": [
     "@tryghost:base",
-    "@tryghost:automergeSilentTestLintNonMajor"
+    "@tryghost:automergeSilentTestLintNonMajor",
+    "@tryghost:automergePatchBranch"
   ],
   "ignoreDeps": [
     "ember-source",
@@ -13,14 +14,6 @@
     "broccoli-concat"
   ],
   "ignorePaths": ["lib/koenig-editor/package.json"],
-  "travis": { "enabled": true },
-  "node": {
-    "supportPolicy": ["lts"]
-  },
-  "separateMinorPatch": true,
-  "patch": {
-    "automerge": true
-  },
   "packageRules": [
     {
       "groupName": "ember-basic-dropdown addons",

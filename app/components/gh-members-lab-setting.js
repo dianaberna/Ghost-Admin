@@ -64,7 +64,7 @@ export default Component.extend({
             return (proc.adapter === 'stripe');
         });
         let monthlyPlan = stripeProcessor.config.plans.find(plan => plan.interval === 'month');
-        let yearlyPlan = stripeProcessor.config.plans.find(plan => plan.interval === 'year');
+        let yearlyPlan = stripeProcessor.config.plans.find(plan => plan.interval === 'year' && plan.name !== 'Complimentary');
 
         // NOTE: need to be careful about division by zero if we introduce zero decimal currencies
         //       ref.: https://stripe.com/docs/currencies#zero-decimal
@@ -128,16 +128,13 @@ export default Component.extend({
             stripeConfig.product = {
                 name: this.settings.get('title')
             };
-            // TODO: this flag has to be removed as it doesn't serve any purpose
-            if (key === 'isPaid') {
-                subscriptionSettings.isPaid = event;
-            }
+
             if (key === 'secret_token' || key === 'public_token') {
                 stripeConfig[key] = event.target.value;
             }
             if (key === 'month' || key === 'year') {
                 stripeConfig.plans = stripeConfig.plans.map((plan) => {
-                    if (key === plan.interval) {
+                    if (key === plan.interval && plan.name !== 'Complimentary') {
                         plan.amount = parseInt(event.target.value) ? (event.target.value * 100) : 0;
                     }
                     return plan;
