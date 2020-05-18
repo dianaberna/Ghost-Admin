@@ -18,6 +18,7 @@ export default class NavigationService extends Service {
 
     constructor() {
         super(...arguments);
+        this.settings = Object.assign({}, DEFAULT_SETTINGS);
         this.updateSettings();
     }
 
@@ -51,7 +52,7 @@ export default class NavigationService extends Service {
 
     async _saveNavigationSettings() {
         let user = await this.session.user;
-        let userSettings = JSON.parse(user.get('accessibility'));
+        let userSettings = JSON.parse(user.get('accessibility')) || {};
         userSettings.navigation = this.settings;
         user.set('accessibility', JSON.stringify(userSettings));
         return user.save();

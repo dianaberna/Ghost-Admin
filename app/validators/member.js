@@ -16,13 +16,13 @@ export default BaseValidator.create({
         let email = model.get('email');
 
         if (isBlank(email)) {
-            model.get('errors').add('email', this.t('validation.Please enter an email.'));
+            model.errors.add('email', this.t('validation.Please enter an email.'));
             this.invalidate();
         } else if (!validator.isEmail(email)) {
-            model.get('errors').add('email', 'Invalid Email.');
+            model.errors.add('email', 'Invalid Email.');
             this.invalidate();
         }
-        if (!validator.isLength(model.name || '', 0, 191)) {
+        if (!validator.isLength(model.email || '', 0, 191)) {
             model.errors.add('email', this.t('validation.Email cannot be longer than 191 characters.'));
             this.invalidate();
         }
@@ -34,7 +34,7 @@ export default BaseValidator.create({
         let note = model.get('note');
 
         if (!validator.isLength(note || '', 0, 500)) {
-            model.get('errors').add('note', this.t('validation.Note is too long.'));
+            model.errors.add('note', this.t('validation.Note is too long.'));
             this.invalidate();
         }
 

@@ -1,6 +1,6 @@
 import Component from '@ember/component';
 import config from 'ghost-admin/config/environment';
-import {computed} from '@ember/object';
+import {action, computed} from '@ember/object';
 import {isBlank} from '@ember/utils';
 import {reads} from '@ember/object/computed';
 import {inject as service} from '@ember/service';
@@ -163,6 +163,13 @@ const GhTaskButton = Component.extend({
             event.preventDefault();
         }
     },
+
+    handleReset: action(function () {
+        const isTaskSuccess = this.get('task.last.isSuccessful') && this.get('task.last.value');
+        if (this.autoReset && this.showSuccess && isTaskSuccess) {
+            this._resetButtonState.perform();
+        }
+    }),
 
     // when local validation fails there's no transition from failed->running
     // so we want to restart the retry spinner animation to show something

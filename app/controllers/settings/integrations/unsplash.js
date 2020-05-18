@@ -2,7 +2,7 @@
 import Controller from '@ember/controller';
 import {alias} from '@ember/object/computed';
 import {inject as service} from '@ember/service';
-import {task, timeout} from 'ember-concurrency';
+import {task} from 'ember-concurrency';
 
 export default Controller.extend({
     notifications: service(),
@@ -41,8 +41,8 @@ export default Controller.extend({
                 this.set('leaveSettingsTransition', transition);
 
                 // if a save is running, wait for it to finish then transition
-                if (this.get('save.isRunning')) {
-                    return this.get('save.last').then(() => {
+                if (this.save.isRunning) {
+                    return this.save.last.then(() => {
                         transition.retry();
                     });
                 }
@@ -69,7 +69,7 @@ export default Controller.extend({
         }
     },
 
-    saveTask: task(function* () {
+    save: task(function* () {
         let unsplash = this.unsplashSettings;
         let settings = this.settings;
 
@@ -83,15 +83,6 @@ export default Controller.extend({
                 this.notifications.showAPIError(error);
                 throw error;
             }
-        }
-    }).drop(),
-
-    save: task(function* () {
-        yield this.saveTask.perform();
-        yield timeout(2500);
-        if (this.get('saveTask.last.isSuccessful') && this.get('saveTask.last.value')) {
-            // Reset last task to bring button back to idle state
-            yield this.set('saveTask.last', null);
         }
     }).drop()
 });
