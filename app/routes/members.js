@@ -1,46 +1,36 @@
 import AuthenticatedRoute from 'ghost-admin/routes/authenticated';
 import {inject as service} from '@ember/service';
 
-export default AuthenticatedRoute.extend({
-    intl: service(),
-    config: service(),
+export default class MembersRoute extends AuthenticatedRoute {
+    @service config;
+    @service intl;
 
-    queryParams: {
+    queryParams = {
         label: {refreshModel: true}
-    },
+    };
 
     // redirect to posts screen if:
     // - TODO: members is disabled?
     // - logged in user isn't owner/admin
     beforeModel() {
-        this._super(...arguments);
-
+        super.beforeModel(...arguments);
         return this.session.user.then((user) => {
             if (!user.isOwnerOrAdmin) {
                 return this.transitionTo('home');
             }
         });
-    },
+    }
 
-    // trigger a background load of labels for filter dropdown
+    // trigger a background load of members plus labels for filter dropdown
     setupController(controller) {
-        this._super(...arguments);
-        controller.fetchMembers.perform();
-        if (!controller._hasLoadedLabels) {
-            this.store.query('label', {limit: 'all'}).then(() => {
-                controller._hasLoadedLabels = true;
-            });
-        }
-    },
+        super.setupController(...arguments);
+        controller.fetchMembersTask.perform();
+        controller.fetchLabelsTask.perform();
+    }
 
-    deactivate() {
-        this._super(...arguments);
-        this.controller.modalLabel && this.controller.modalLabel.rollbackAttributes();
-    },
     buildRouteInfoMetadata() {
         return {
             titleToken: this.intl.t('pageTitle.Members')
         };
     }
-
-});
+}

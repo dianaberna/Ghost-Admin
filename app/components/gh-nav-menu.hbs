@@ -77,8 +77,13 @@
             {{/if}}
             {{#if (and this.feature.members (gh-user-can-admin this.session.user))}}
                 <li>
-                    <LinkTo @route="members" @current-when="members member" @query={{hash label=null}} data-test-nav="members">{{svg-jar "members"}}{{t "Members"}}</LinkTo>
+                    <LinkTo @route="members-old" @current-when="members-old member-old" @query={{hash label=null}} data-test-nav="members">{{svg-jar "members"}}{{t "Members"}}</LinkTo>
                 </li>
+                {{#if this.config.enableDeveloperExperiments}}
+                    <li>
+                        <LinkTo @route="members" @current-when="members member" @query={{hash label=null}} data-test-nav="members-old">{{svg-jar "members"}}{{t "Members"}} (dev)</LinkTo>
+                    </li>
+                {{/if}}
             {{/if}}
             <li><LinkTo @route="staff" data-test-nav="staff">{{svg-jar "staff"}}{{t "Staff"}}</LinkTo></li>
         </ul>

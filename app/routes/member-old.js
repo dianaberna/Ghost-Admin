@@ -1,29 +1,24 @@
 import AuthenticatedRoute from 'ghost-admin/routes/authenticated';
-import classic from 'ember-classic-decorator';
-import {action} from '@ember/object';
+import CurrentUserSettings from 'ghost-admin/mixins/current-user-settings';
 import {inject as service} from '@ember/service';
 
-@classic
-export default class MembersRoute extends AuthenticatedRoute {
-    @service router;
+export default AuthenticatedRoute.extend(CurrentUserSettings, {
+    router: service(),
 
-    _requiresBackgroundRefresh = true;
+    _requiresBackgroundRefresh: true,
 
     init() {
-        super.init(...arguments);
+        this._super(...arguments);
         this.router.on('routeWillChange', (transition) => {
             this.showUnsavedChangesModal(transition);
         });
-    }
+    },
 
     beforeModel() {
-        super.beforeModel(...arguments);
-        return this.session.user.then((user) => {
-            if (!user.isOwnerOrAdmin) {
-                return this.transitionTo('home');
-            }
-        });
-    }
+        this._super(...arguments);
+        return this.get('session.user')
+            .then(this.transitionAuthor());
+    },
 
     model(params) {
         this._requiresBackgroundRefresh = false;
@@ -33,30 +28,33 @@ export default class MembersRoute extends AuthenticatedRoute {
         } else {
             return this.store.createRecord('member');
         }
-    }
+    },
 
     setupController(controller, member) {
-        super.setupController(...arguments);
+        this._super(...arguments);
         if (this._requiresBackgroundRefresh) {
-            controller.fetchMemberTask.perform(member.get('id'));
+            controller.fetchMember.perform(member.get('id'));
         }
-    }
+    },
 
     deactivate() {
-        super.deactivate(...arguments);
+        this._super(...arguments);
+
         // clean up newly created records and revert unsaved changes to existing
         this.controller.member.rollbackAttributes();
-        this._requiresBackgroundRefresh = true;
-    }
 
-    @action
-    save() {
-        this.controller.save();
-    }
+        this._requiresBackgroundRefresh = true;
+    },
+
+    actions: {
+        save() {
+            this.controller.send('save');
+        }
+    },
 
     titleToken() {
-        return this.controller.member.name;
-    }
+        return this.controller.get('member.name');
+    },
 
     showUnsavedChangesModal(transition) {
         if (transition.from && transition.from.name === this.routeName && transition.targetName) {
@@ -67,9 +65,9 @@ export default class MembersRoute extends AuthenticatedRoute {
 
             if (!controller.member.isDeleted && isChanged) {
                 transition.abort();
-                controller.toggleUnsavedChangesModal(transition);
+                controller.send('toggleUnsavedChangesModal', transition);
                 return;
             }
         }
     }
-}
+});

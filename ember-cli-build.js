@@ -146,6 +146,10 @@ module.exports = function (defaults) {
                 }
             }
         },
+        minifyCSS: {
+            // postcss already handles minification and this was stripping required CSS
+            enabled: false
+        },
         nodeAssets: {
             codemirror: codemirrorAssets(),
             simplemde: simplemdeAssets(),

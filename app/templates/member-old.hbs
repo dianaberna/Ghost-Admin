@@ -1,11 +1,10 @@
 <section class="gh-canvas">
-
     <GhCanvasHeader class="gh-canvas-header">
         <h2 class="gh-canvas-title" data-test-screen-title>
-            <LinkTo @route="members" data-test-link="members-back">{{t "members.Members"}}</LinkTo>
+            <LinkTo @route="members-old" data-test-link="members-back">Members</LinkTo>
             <span>{{svg-jar "arrow-right"}}</span>
             {{#if this.member.isNew}}
-                {{t "members.New member"}}
+                New member
             {{else}}
                 {{or this.member.name this.member.email}}
             {{/if}}
@@ -16,13 +15,13 @@
                 {{#unless this.member.isNew}}
                     <button
                         class="gh-btn gh-btn-white gh-btn-icon mr2"
-                        {{on "click" this.toggleImpersonateMemberModal}}>
-                        <span>{{t "members.Impersonate"}}</span>
+                        {{on "click" (action "toggleImpersonateMemberModal")}}>
+                        <span>Impersonate</span>
                     </button>
                 {{/unless}}
             {{/if}}
 
-            <GhTaskButton @class="gh-btn gh-btn-blue gh-btn-icon" @type="button" @task={{this.saveTask}} @autoReset={{true}} @data-test-button="save" />
+            <GhTaskButton @class="gh-btn gh-btn-blue gh-btn-icon" @type="button" @task={{this.save}} @autoReset={{true}} @data-test-button="save" />
         </section>
     </GhCanvasHeader>
 
@@ -57,9 +56,9 @@
                             {{this.member.geolocation.country}}
                         {{/if}}
                     {{else}}
-                        {{t "members.Unknown location"}}
+                        Unknown location
                     {{/if}}
-                    – {{t "members.Created on {subscribeAt}" subscribeAt=this.subscribedAt}}
+                    – Created on {{this.subscribedAt}}
                 </p>
                 {{/unless}}
             </div>
@@ -68,7 +67,7 @@
         <GhMemberSettingsForm
             @member={{this.member}}
             @scratchMember={{this.scratchMember}}
-            @setProperty={{this.setProperty}}
+            @setProperty={{action "setProperty"}}
             @isLoading={{this.isLoading}} />
     </form>
 
@@ -76,10 +75,10 @@
         <button
             type="button"
             class="gh-btn gh-btn-red gh-btn-icon mt3"
-            {{on "click" this.toggleDeleteMemberModal}}
+            {{on "click" (action "toggleDeleteMemberModal")}}
             data-test-button="delete-member"
         >
-            <span>{{t "Delete member"}}</span>
+            <span>Delete member</span>
         </button>
     {{/unless}}
 </section>
@@ -87,8 +86,8 @@
 {{#if this.showUnsavedChangesModal}}
     <GhFullscreenModal
         @modal="leave-settings"
-        @confirm={{this.leaveScreen}}
-        @close={{this.toggleUnsavedChangesModal}}
+        @confirm={{action "leaveScreen"}}
+        @close={{action "toggleUnsavedChangesModal"}}
         @modifier="action wide" />
 {{/if}}
 
@@ -96,8 +95,8 @@
     <GhFullscreenModal
         @modal="delete-member"
         @model={{this.member}}
-        @confirm={{this.deleteMember}}
-        @close={{this.toggleDeleteMemberModal}}
+        @confirm={{action "deleteMember"}}
+        @close={{action "toggleDeleteMemberModal"}}
         @modifier="action wide" />
 {{/if}}
 
@@ -105,6 +104,6 @@
     <GhFullscreenModal
         @modal="impersonate-member"
         @model={{this.member}}
-        @close={{this.toggleImpersonateMemberModal}}
+        @close={{action "toggleImpersonateMemberModal"}}
         @modifier="action wide" />
 {{/if}}

@@ -1,89 +1,81 @@
 import Controller from '@ember/controller';
 import ghostPaths from 'ghost-admin/utils/ghost-paths';
 import moment from 'moment';
-import {computed} from '@ember/object';
-import {get} from '@ember/object';
-import {pluralize} from 'ember-inflector';
+import {A} from '@ember/array';
+import {action} from '@ember/object';
 import {inject as service} from '@ember/service';
-import {task} from 'ember-concurrency';
+import {task} from 'ember-concurrency-decorators';
+import {tracked} from '@glimmer/tracking';
 
-/* eslint-disable ghost/ember/alias-model-in-controller */
-export default Controller.extend({
-    store: service(),
-    intl: service(),
+export default class MembersController extends Controller {
+    @service intl;
+    @service ellaSparse;
+    @service store;
 
-    queryParams: ['label'],
+    queryParams = ['label'];
 
-    label: null,
-    members: null,
-    searchText: '',
-    modalLabel: null,
-    showLabelModal: false,
+    @tracked searchText = '';
+    @tracked label = null;
+    @tracked members = null;
+    @tracked modalLabel = null;
+    @tracked showLabelModal = false;
 
-    _hasLoadedLabels: false,
-    _availableLabels: null,
+    @tracked _availableLabels = A([]);
 
-    init() {
-        this._super(...arguments);
-        this.set('members', this.store.peekAll('member'));
+    constructor() {
+        super(...arguments);
+        this.members = this.store.peekAll('member');
         this._availableLabels = this.store.peekAll('label');
-    },
+    }
 
-    showLoader: computed('filteredMembers.length', 'fetchMembers.isRunning', function () {
-        return (!this.get('filteredMembers.length') && this.get('fetchMembers.isRunning'));
-    }),
+    // Computed properties -----------------------------------------------------
 
-    listHeader: computed('selectedLabel', 'searchText', function () {
-        let {searchText, selectedLabel, filteredMembers} = this;
+    get listHeader() {
+        let {searchText, selectedLabel, members} = this;
         if (searchText) {
-            return 'Search result';
+            return this.intl.t('members.Search result');
         }
-        if (this.fetchMembers.lastSuccessful) {
-            let count = pluralize(filteredMembers.length, 'member');
+        if (this.fetchMembersTask.lastSuccessful) {
             if (selectedLabel && selectedLabel.slug) {
-                return this.intl.t('members.{matches, plural} current filter', {matches: count});
+                return this.intl.t('members.{matches, plural} current filter', {matches: members.length});
             }
-            return count;
+            return this.intl.t('members.{members, plural}', {members: members.length});
         }
         return this.intl.t('members.Loading...');
-    }),
+    }
 
-    showingAll: computed('label', 'searchText', function () {
-        let {searchText, label} = this;
+    get showingAll() {
+        return !this.searchText && !this.label;
+    }
 
-        return !searchText && !label;
-    }),
-
-    availableLabels: computed('_availableLabels.@each.isNew', function () {
+    get availableLabels() {
         let labels = this._availableLabels
-            .filter(label => !label.get('isNew'))
-            .filter(label => label.get('id') !== null)
+            .filter(label => !label.isNew)
+            .filter(label => label.id !== null)
             .sort((labelA, labelB) => labelA.name.localeCompare(labelB.name, undefined, {ignorePunctuation: true}));
         let options = labels.toArray();
 
         options.unshiftObject({name: this.intl.t('members.All labels'), slug: null});
 
         return options;
-    }),
+    }
 
-    selectedLabel: computed('label', 'availableLabels', function () {
-        let label = this.get('label');
-        let labels = this.get('availableLabels');
+    get selectedLabel() {
+        let {label, availableLabels} = this;
+        return availableLabels.findBy('slug', label);
+    }
 
-        return labels.findBy('slug', label);
-    }),
-
-    labelModalData: computed('modalLabel', 'availableLabels', function () {
-        let label = this.get('modalLabel');
-        let labels = this.get('availableLabels');
+    get labelModalData() {
+        let label = this.modalLabel;
+        let labels = this.availableLabels;
 
         return {
             label,
             labels
         };
-    }),
+    }
 
-    filteredMembers: computed('members.@each.{name,email}', 'searchText', 'label', function () {
+    get filteredMembers() {
         let {members, searchText, label} = this;
         searchText = searchText.toLowerCase();
 
@@ -103,77 +95,105 @@ export default Controller.extend({
                 return _label.slug === label;
             });
         }).sort((a, b) => {
-            return b.get('createdAtUTC').valueOf() - a.get('createdAtUTC').valueOf();
+            return b.createdAtUTC.valueOf() - a.createdAtUTC.valueOf();
         });
 
         return filtered;
-    }),
+    }
 
-    actions: {
-        exportData() {
-            let exportUrl = ghostPaths().url.api('members/csv');
-            let downloadURL = `${exportUrl}?limit=all`;
-            let iframe = document.getElementById('iframeDownload');
+    // Actions -----------------------------------------------------------------
 
-            if (!iframe) {
-                iframe = document.createElement('iframe');
-                iframe.id = 'iframeDownload';
-                iframe.style.display = 'none';
-                document.body.append(iframe);
-            }
-            iframe.setAttribute('src', downloadURL);
-        },
-        changeLabel(label, e) {
-            if (e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-            this.set('label', get(label, 'slug'));
-        },
-        addLabel(e) {
-            if (e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-            const newLabel = this.store.createRecord('label');
-            this.set('modalLabel', newLabel);
-            this.toggleProperty('showLabelModal');
-        },
-        editLabel(label, e) {
-            if (e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-            let labels = this.get('availableLabels');
+    @action
+    exportData() {
+        let exportUrl = ghostPaths().url.api('members/csv');
+        let downloadURL = `${exportUrl}?limit=all`;
+        let iframe = document.getElementById('iframeDownload');
 
-            let modalLabel = labels.findBy('slug', label);
-            this.set('modalLabel', modalLabel);
-            this.toggleProperty('showLabelModal');
-        },
-        toggleLabelModal() {
-            this.toggleProperty('showLabelModal');
+        if (!iframe) {
+            iframe = document.createElement('iframe');
+            iframe.id = 'iframeDownload';
+            iframe.style.display = 'none';
+            document.body.append(iframe);
         }
-    },
+        iframe.setAttribute('src', downloadURL);
+    }
 
-    fetchMembers: task(function* () {
-        let newFetchDate = new Date();
+    @action
+    changeLabel(label, e) {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        this.label = label.slug;
+    }
 
-        if (this._hasFetchedAll) {
-            // fetch any records modified since last fetch
-            yield this.store.query('member', {
-                limit: 'all',
-                filter: `updated_at:>='${moment.utc(this._lastFetchDate).format('YYYY-MM-DD HH:mm:ss')}'`,
-                order: 'created_at desc'
-            });
-        } else {
-            // fetch all records
-            yield this.store.query('member', {
-                limit: 'all',
-                order: 'created_at desc'
-            });
-            this._hasFetchedAll = true;
+    @action
+    addLabel(e) {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        const newLabel = this.store.createRecord('label');
+        this.modalLabel = newLabel;
+        this.showLabelModal = !this.showLabelModal;
+    }
+
+    @action
+    editLabel(label, e) {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        let modalLabel = this.availableLabels.findBy('slug', label);
+        this.modalLabel = modalLabel;
+        this.showLabelModal = !this.showLabelModal;
+    }
+
+    @action
+    toggleLabelModal() {
+        this.showLabelModal = !this.showLabelModal;
+    }
+
+    // Tasks -------------------------------------------------------------------
+
+    @task
+    *fetchMembersTask({forceReload = false} = {}) {
+        // use a fixed created_at date so that subsequent pages have a consistent index
+        let startDate = new Date();
+
+        // unless we have a forced reload, do not re-fetch the members list unless it's more than a minute old
+        // keeps navigation between list->details->list snappy
+        if (!forceReload && this._startDate && !(this._startDate - startDate > 1 * 60 * 1000)) {
+            return;
         }
 
-        this._lastFetchDate = newFetchDate;
-    })
-});
+        this._startDate = startDate;
+
+        this.members = yield this.ellaSparse.array((range = {}, query = {}) => {
+            query = Object.assign({
+                limit: range.length,
+                page: range.start / range.length,
+                order: 'created_at desc',
+                filter: `created_at:<='${moment.utc(this._startDate).format('YYYY-MM-DD HH:mm:ss')}'`
+            }, query);
+
+            return this.store.query('member', query).then((result) => {
+                return {
+                    data: result,
+                    total: result.meta.pagination.total
+                };
+            });
+        }, {
+            limit: 50
+        });
+    }
+
+    @task
+    *fetchLabelsTask() {
+        if (!this._hasLoadedLabels) {
+            yield this.store.query('label', {limit: 'all'}).then(() => {
+                this._hasLoadedLabels = true;
+            });
+        }
+    }
+}
