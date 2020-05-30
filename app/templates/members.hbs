@@ -2,7 +2,6 @@
     <GhCanvasHeader class="gh-canvas-header members-header">
         <h2 class="gh-canvas-title" data-test-screen-title>{{t "members.Members"}}</h2>
         <section class="view-actions">
-            {{!--
             <GhMembersContentfilter
                 @selectedLabel={{this.selectedLabel}}
                 @availableLabels={{this.availableLabels}}
@@ -15,10 +14,10 @@
                 <GhTextInput
                     placeholder={{t "members.Search members..."}}
                     @value={{this.searchText}}
-                    @input={{action (mut this.searchText) value="target.value"}}
+                    @input={{this.search}}
                     class="gh-members-list-searchfield {{if this.searchText "active"}}" />
             </div>
-            --}}
+
             <span class="dropdown">
                 <GhDropdownButton @dropdownName="members-actions-menu"
                     @classNames="gh-btn gh-btn-white gh-btn-icon only-has-icon gh-actions-cog" @title="Members Actions"
@@ -46,27 +45,25 @@
         </section>
     </GhCanvasHeader>
 
-    {{#if this.members}}
+    {{#unless this.members.loading}}
         <section class="view-container">
-            {{!--
-            {{#if this.filteredMembers}}
-                {{#if this.showingAll}}
-                    <section>
-                        <GhMembersChart @members={{members}} />
-                    </section>
-                {{/if}}
+            {{#if (and this.members this.showingAll)}}
+                <section>
+                    <GhMembersChart nightShift={{this.feature.nightShift}} />
+                </section>
             {{/if}}
-            --}}
+
             <section class="content-list">
                 <ol class="members-list gh-list {{unless this.members "no-posts"}}">
                     {{#if this.members}}
                         <li class="gh-list-row header">
                             <div class="gh-list-header">{{this.listHeader}}</div>
-                            <div class="gh-list-header gh-list-cellwidth-20 nowrap">{{t "members.Location"}}</div>
-                            <div class="gh-list-header gh-list-cellwidth-20 nowrap">{{t "members.Created"}}</div>
-                            <div class="gh-list-header gh-list-cellwidth-chevron"></div>
+                            <div class="gh-list-header gh-members-list-geolocation gh-list-cellwidth-20 nowrap">{{t "members.Location"}}</div>
+                            <div class="gh-list-header gh-members-list-subscribed-at gh-list-cellwidth-20 nowrap">{{t "members.Created"}}</div>
+                            <div class="gh-list-header gh-members-list-chevron gh-list-cellwidth-chevron"></div>
+
                         </li>
-                        <VerticalCollection @items={{this.members}} @key="id" @containerSelector=".gh-main" @estimateHeight={{69}} @staticHeight={{true}} @bufferSize={{5}} as |member|>
+                        <VerticalCollection @items={{this.members}} @key="id" @containerSelector=".gh-main" @estimateHeight={{69}} @staticHeight={{true}} @bufferSize={{20}} as |member|>
                             <GhMembersListItem @member={{member}} @data-test-member-id={{member.id}} />
                         </VerticalCollection>
                     {{else}}
@@ -89,7 +86,7 @@
         <div class="gh-content">
             <GhLoadingSpinner />
         </div>
-    {{/if}}
+    {{/unless}}
 </section>
 
 {{outlet}}

@@ -2,8 +2,8 @@
     <h1 style="margin: 0;">{{t "members.Impersonate"}}</h1>
 </header>
 {{!-- disable mouseDown so it doesn't trigger focus-out validations --}}
-<a class="close" href title={{t "commont.Close"}} {{action "closeModal"}} {{action (optional this.noop) on="mouseDown"}}>
-    {{svg-jar "close"}}<span class="hidden">{{t "commont.Close"}}</span>
+<a class="close" href role="button" title={{t "common.Close"}} {{action "closeModal"}} {{action (optional this.noop) on="mouseDown"}}>
+    {{svg-jar "close"}}<span class="hidden">{{t "common.Close"}}</span>
 </a>
 
 <div class="modal-body">

@@ -14,12 +14,6 @@
         @modifier="action wide" />
 {{/if}}
 
-{{#if this.showBillingModal}}
-    <GhFullscreenModal @modal="billing"
-        @close={{action "toggleBillingModal"}}
-        @modifier="full-overlay billing" />
-{{/if}}
-
 <section class="gh-nav-body">
     <div class="gh-nav-top">
         <ul class="gh-nav-list gh-nav-main">
@@ -40,7 +34,7 @@
                 <GhLinkToCustomViewsIndex @route="posts" @query={{reset-query-params "posts"}} data-test-nav="posts">{{svg-jar "posts"}}{{t "Posts"}}</GhLinkToCustomViewsIndex>
                 <LinkTo @route="editor.new" @model="post" @classNames="gh-secondary-action gh-nav-new-post" @alt={{t "New story"}} @title={{t "New story"}} data-test-nav="new-story"><span>{{svg-jar "add-stroke"}}</span></LinkTo>
                 {{#if this.customViews.forPosts}}
-                    <button type="button" class="absolute left-3 top-2 z-9999 flex items-center pl2 h4 gh-nav-button-expand {{if this.navigation.settings.expanded.posts "expanded"}}" {{on "click" (fn this.navigation.toggleExpansion "posts")}}>
+                    <button type="button" class="absolute left-3 top-2 z-9999 flex items-center pl2 h4 gh-nav-button-expand {{if this.navigation.settings.expanded.posts "expanded"}}" {{on "click" (fn this.navigation.toggleExpansion "posts")}} aria-label="{{if this.navigation.settings.expanded.posts "Collapse custom post types" "Expand custom post types"}}">
                         {{svg-jar (if this.navigation.settings.expanded.posts "arrow-down-stroke" "arrow-right-stroke")}}
                     </button>
                     {{#liquid-if this.navigation.settings.expanded.posts}}
@@ -67,7 +61,7 @@
             <li>
                 {{!-- clicking the Content link whilst on the content screen should reset the filter --}}
                 {{#if (eq this.router.currentRouteName "pages")}}
-                    <LinkTo @route="pages" @query={{hash type=null author=null tag=null order=null}} @classNames="active" data-test-nav="pages">{{svg-jar "page"}}{{t "Pages"}}</LinkTo>
+                    <LinkTo @route="pages" @query={{reset-query-params "pages"}} @classNames="active" data-test-nav="pages">{{svg-jar "page"}}{{t "Pages"}}</LinkTo>
                 {{else}}
                     <LinkTo @route="pages" data-test-nav="pages">{{svg-jar "page"}}{{t "Pages"}}</LinkTo>
                 {{/if}}
@@ -77,13 +71,12 @@
             {{/if}}
             {{#if (and this.feature.members (gh-user-can-admin this.session.user))}}
                 <li>
-                    <LinkTo @route="members-old" @current-when="members-old member-old" @query={{hash label=null}} data-test-nav="members">{{svg-jar "members"}}{{t "Members"}}</LinkTo>
+                    {{#if (eq this.router.currentRouteName "members.index")}}
+                        <LinkTo @route="members" @current-when="members member" @query={{reset-query-params "members.index"}} data-test-nav="members">{{svg-jar "members"}}{{t "Members"}}</LinkTo>
+                    {{else}}
+                        <LinkTo @route="members" @current-when="members member" data-test-nav="members">{{svg-jar "members"}}{{t "Members"}}</LinkTo>
+                    {{/if}}
                 </li>
-                {{#if this.config.enableDeveloperExperiments}}
-                    <li>
-                        <LinkTo @route="members" @current-when="members member" @query={{hash label=null}} data-test-nav="members-old">{{svg-jar "members"}}{{t "Members"}} (dev)</LinkTo>
-                    </li>
-                {{/if}}
             {{/if}}
             <li><LinkTo @route="staff" data-test-nav="staff">{{svg-jar "staff"}}{{t "Staff"}}</LinkTo></li>
         </ul>
@@ -103,7 +96,7 @@
                 {{#if this.showBilling}}
                     <li class="relative">
                         <a href="javascript:void(0)" {{action "toggleBillingModal"}} data-test-nav="billing">
-                            {{svg-jar "house"}} View billing
+                            {{svg-jar "credit-card"}} View billing
                         </a>
                     </li>
                     <li class="relative gh-nav-pro">
@@ -161,7 +154,7 @@
                             {{/if}}
                         </button>
                     </li>
-                    <li class="divider"></li>
+                    <li class="divider" role="separator"></li>
                     <li role="presentation">
                         <LinkTo @route="staff.user" @model={{this.session.user.slug}} @classNames="dropdown-item" @role="menuitem" @tabindex="-1" data-test-nav="user-profile">
                             {{svg-jar "user-circle"}} {{t "Your Profile"}}
@@ -185,12 +178,12 @@
                             {{svg-jar "book-open"}} {{t "How to Use Ghost"}}
                         </a>
                     </li>
-                    <li class="divider"></li>
+                    <li class="divider" role="separator"></li>
 
                     {{#if this.showDropdownExtension}}
                         {{#each this.config.clientExtensions.dropdown.items as |menuItem| }}
                             {{#if menuItem.divider}}
-                                <li class="divider"></li>
+                                <li class="divider" role="separator"></li>
                             {{else}}
                                 <li role="presentation">
                                     <a href="{{menuItem.href}}" target="_blank" class="dropdown-item {{menuItem.classes}}" role="menuitem" tabindex="-1">

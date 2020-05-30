@@ -802,7 +802,9 @@
     "Upload routes YAML": "Upload routes YAML",
     "Upload redirects JSON": "Upload redirects JSON",
     "Copy link": "Copy link",
-    "Link copied": "Link copied"
+    "Link copied": "Link copied",
+    "Regenerate {type} API Key": "Regenerate {type} API Key",
+    "Regenerated": "Regenerated"
   },
   "Publication info": "Publication info",
   "Title &amp; description": "Title &amp; description",
@@ -1032,5 +1034,7 @@
       "Unknown": "Unknown",
       "Edit current view...": "Edit current view...",
       "Save as view...": "Save as view..."
-  }
+  },
+  "You can regenerate <strong>{type} API Key</strong> any time, but any scripts or applications using it will need to be updated.": "You can regenerate <strong>{type} API Key</strong> any time, but any scripts or applications using it will need to be updated.",
+  "You will need to locate the Ghost App within your Zapier account and click on \"Reconnect\" to enter the new Admin API Key.": "You will need to locate the Ghost App within your Zapier account and click on \"Reconnect\" to enter the new Admin API Key."
 }

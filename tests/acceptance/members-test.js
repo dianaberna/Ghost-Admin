@@ -98,8 +98,8 @@ describe('Acceptance: Members', function () {
 
             await click('[data-test-button="save"]');
 
-            // // extra timeout needed for Travis - sometimes it doesn't update
-            // // quick enough and an extra wait() call doesn't help
+            // extra timeout needed for Travis - sometimes it doesn't update
+            // quick enough and an extra wait() call doesn't help
             await timeout(100);
 
             await click('[data-test-link="members-back"]');

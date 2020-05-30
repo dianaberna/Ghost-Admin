@@ -14,17 +14,16 @@
             {{/if}}
         </h1>
     </header>
-    <a class="close" href="#" title="{{t "common.Close"}}" {{action "closeModal"}}>{{svg-jar "close"}}<span class="hidden">{{t "common.Close"}}</span></a>
+    <a class="close" href="#" role="button" title={{t "common.Close"}} {{action "closeModal"}}>{{svg-jar "close"}}<span class="hidden">{{t "common.Close"}}</span></a>
 
     <div class="modal-body">
         {{#if this.theme}}
             {{#if this.hasWarningsOrErrors}}
                 <p>
                     {{#if this.canActivateTheme}}
-                        The theme <strong>"{{this.themeName}}"</strong> was uploaded successfully but we detected some {{#if this.validationErrors}}errors{{else}}warnings{{/if}}. You are still able to activate and use the theme but it is recommended to fix these {{#if this.validationErrors}}errors{{else}}warnings{{/if}} before you do so.
+                        {{{t "The theme <strong>\"{themeName}\"</strong> was uploaded successfully but we detected some {problems}. You are still able to activate and use the theme but it is recommended to fix these {problems} before you do so." themeName=this.themeName problems=(if this.validationErrors (t "errors") (t "warnings"))}}}
                     {{else}}
-                        The theme <strong>"{{this.themeName}}"</strong> was uploaded successfully but we detected some
-                        {{#if this.validationErrors}}errors{{else}}warnings{{/if}}.
+                        {{{t "The theme <strong>\"{themeName}\"</strong> was uploaded successfully but we detected some {problems}." themeName=this.themeName problems=(if this.validationErrors (t "errors") (t "warnings"))}}}
                     {{/if}}
                 </p>
 

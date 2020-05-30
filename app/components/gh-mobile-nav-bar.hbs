@@ -5,5 +5,5 @@
     <LinkTo @route="posts">{{svg-jar "content" data-test-mobile-nav="posts"}}{{t "Posts"}}</LinkTo>
 {{/if}}
 <LinkTo @route="staff" @classNames="gh-nav-main-users" data-test-mobile-nav="staff">{{svg-jar "account-group"}}{{t "Staff"}}</LinkTo>
-<div class="gh-mobile-nav-bar-more" {{action "openMobileMenu" target=this.ui data-test-mobile-nav="more"}}>{{svg-jar "icon" class="icon-gh"}}{{t "common.More"}}</div>
+<div role="button" class="gh-mobile-nav-bar-more" {{action "openMobileMenu" target=this.ui data-test-mobile-nav="more"}}>{{svg-jar "icon" class="icon-gh"}}{{t "common.More"}}</div>
 {{yield}}

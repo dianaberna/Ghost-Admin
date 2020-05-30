@@ -3,7 +3,7 @@
         <div class="{{if this.isViewingSubview 'settings-menu-pane-out-left' 'settings-menu-pane-in'}} settings-menu settings-menu-pane">
             <div class="settings-menu-header">
                 <h4>{{t (concat this.post.displayName ".settings.title")}}</h4>
-                <button class="close settings-menu-header-action" {{action "closeMenus" target=this.ui}} data-test-close-settings-menu>
+                <button aria-label={{t "common.Close"}} class="close settings-menu-header-action" {{action "closeMenus" target=this.ui}} data-test-close-settings-menu>
                     {{svg-jar "close"}}<span class="hidden">{{t "common.Close"}}</span>
                 </button>
             </div>
@@ -130,7 +130,7 @@
                         </button>
                         {{svg-jar "arrow-right"}}
                     </li>
-                    {{#if (and this.feature.members (eq this.post.displayName "post") this.session.user.isOwnerOrAdmin)}}
+                    {{#if (and this.feature.members (eq this.post.displayName "post") showEmailNewsletter)}}
                         <li class="nav-list-item" {{action "showSubview" "email-settings"}} data-test-button="email-settings">
                             <button type="button">
                                 <b>{{t "Email newsletter"}}</b>
@@ -181,7 +181,7 @@
                 {{#if this.isViewingSubview}}
                     {{#if (eq this.subview "meta-data")}}
                         <div class="settings-menu-header subview">
-                            <button {{action "closeSubview"}} class="back settings-menu-header-action" data-test-button="close-psm-subview">{{svg-jar "arrow-left"}}<span class="hidden">{{t "common.Back"}}</span></button>
+                            <button aria-label={{t "common.Back"}} {{action "closeSubview"}} class="back settings-menu-header-action" data-test-button="close-psm-subview">{{svg-jar "arrow-left"}}<span class="hidden">{{t "common.Back"}}</span></button>
                             <h4>{{t "Meta Data"}}</h4>
                             <div style="width:23px;"></div>
                         </div>
@@ -245,7 +245,7 @@
 
                     {{#if (eq this.subview "twitter-data")}}
                         <div class="settings-menu-header subview">
-                            <button {{action "closeSubview"}} class="back settings-menu-header-action" data-test-button="close-psm-subview">{{svg-jar "arrow-left"}}<span class="hidden">{{t "common.Back"}}</span></button>
+                            <button aria-label={{t "common.Back"}} {{action "closeSubview"}} class="back settings-menu-header-action" data-test-button="close-psm-subview">{{svg-jar "arrow-left"}}<span class="hidden">{{t "common.Back"}}</span></button>
                             <h4>{{t "Twitter Card"}}</h4>
                             <div style="width:23px;"></div>
                         </div>
@@ -325,7 +325,7 @@
 
                     {{#if (eq this.subview "facebook-data")}}
                         <div class="settings-menu-header subview">
-                            <button {{action "closeSubview"}} class="back settings-menu-header-action" data-test-button="close-psm-subview">{{svg-jar "arrow-left"}}<span class="hidden">{{t "common.Back"}}</span></button>
+                            <button aria-label={{t "common.Back"}} {{action "closeSubview"}} class="back settings-menu-header-action" data-test-button="close-psm-subview">{{svg-jar "arrow-left"}}<span class="hidden">{{t "common.Back"}}</span></button>
                             <h4>{{t "Facebook Card"}}</h4>
                             <div style="width:23px;"></div>
                         </div>
@@ -394,7 +394,7 @@
 
                     {{#if (eq this.subview "codeinjection")}}
                         <div class="settings-menu-header subview">
-                            <button {{action "closeSubview"}} class="back settings-menu-header-action" data-test-button="close-psm-subview">{{svg-jar "arrow-left"}}<span class="hidden">{{t "common.Back"}}</span></button>
+                            <button aria-label={{t "common.Back"}} {{action "closeSubview"}} class="back settings-menu-header-action" data-test-button="close-psm-subview">{{svg-jar "arrow-left"}}<span class="hidden">{{t "common.Back"}}</span></button>
                             <h4>{{t "Code injection"}}</h4>
                             <div style="width:23px;"></div>
                         </div>

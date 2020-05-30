@@ -1,22 +1,25 @@
 import Controller from '@ember/controller';
 import ghostPaths from 'ghost-admin/utils/ghost-paths';
-import moment from 'moment';
 import {A} from '@ember/array';
 import {action} from '@ember/object';
+import {alias} from '@ember/object/computed';
 import {inject as service} from '@ember/service';
 import {task} from 'ember-concurrency-decorators';
+import {timeout} from 'ember-concurrency';
 import {tracked} from '@glimmer/tracking';
 
 export default class MembersController extends Controller {
     @service intl;
-    @service ellaSparse;
+    @service feature;
     @service store;
 
-    queryParams = ['label'];
+    queryParams = ['label', {searchParam: 'search'}];
+
+    @alias('model') members;
 
     @tracked searchText = '';
+    @tracked searchParam = '';
     @tracked label = null;
-    @tracked members = null;
     @tracked modalLabel = null;
     @tracked showLabelModal = false;
 
@@ -24,7 +27,6 @@ export default class MembersController extends Controller {
 
     constructor() {
         super(...arguments);
-        this.members = this.store.peekAll('member');
         this._availableLabels = this.store.peekAll('label');
     }
 
@@ -32,20 +34,24 @@ export default class MembersController extends Controller {
 
     get listHeader() {
         let {searchText, selectedLabel, members} = this;
+
+        if (members.loading) {
+            return 'Loading...';
+        }
+
         if (searchText) {
             return this.intl.t('members.Search result');
         }
-        if (this.fetchMembersTask.lastSuccessful) {
-            if (selectedLabel && selectedLabel.slug) {
-                return this.intl.t('members.{matches, plural} current filter', {matches: members.length});
-            }
-            return this.intl.t('members.{members, plural}', {members: members.length});
+
+        if (selectedLabel && selectedLabel.slug) {
+            return this.intl.t('members.{matches, plural} current filter', {matches: members.length});
         }
-        return this.intl.t('members.Loading...');
+        return this.intl.t('members.{members, plural}', {members: members.length});
+
     }
 
     get showingAll() {
-        return !this.searchText && !this.label;
+        return !this.searchParam && !this.label;
     }
 
     get availableLabels() {
@@ -75,33 +81,12 @@ export default class MembersController extends Controller {
         };
     }
 
-    get filteredMembers() {
-        let {members, searchText, label} = this;
-        searchText = searchText.toLowerCase();
-
-        let filtered = members.filter((member) => {
-            if (!searchText) {
-                return true;
-            }
-
-            let {name, email} = member;
-            return (name && name.toLowerCase().indexOf(searchText) >= 0)
-                || (email && email.toLowerCase().indexOf(searchText) >= 0);
-        }).filter((member) => {
-            if (!label) {
-                return true;
-            }
-            return !!member.labels.find((_label) => {
-                return _label.slug === label;
-            });
-        }).sort((a, b) => {
-            return b.createdAtUTC.valueOf() - a.createdAtUTC.valueOf();
-        });
-
-        return filtered;
-    }
-
     // Actions -----------------------------------------------------------------
+
+    @action
+    search(e) {
+        this.searchTask.perform(e.target.value);
+    }
 
     @action
     exportData() {
@@ -156,36 +141,10 @@ export default class MembersController extends Controller {
 
     // Tasks -------------------------------------------------------------------
 
-    @task
-    *fetchMembersTask({forceReload = false} = {}) {
-        // use a fixed created_at date so that subsequent pages have a consistent index
-        let startDate = new Date();
-
-        // unless we have a forced reload, do not re-fetch the members list unless it's more than a minute old
-        // keeps navigation between list->details->list snappy
-        if (!forceReload && this._startDate && !(this._startDate - startDate > 1 * 60 * 1000)) {
-            return;
-        }
-
-        this._startDate = startDate;
-
-        this.members = yield this.ellaSparse.array((range = {}, query = {}) => {
-            query = Object.assign({
-                limit: range.length,
-                page: range.start / range.length,
-                order: 'created_at desc',
-                filter: `created_at:<='${moment.utc(this._startDate).format('YYYY-MM-DD HH:mm:ss')}'`
-            }, query);
-
-            return this.store.query('member', query).then((result) => {
-                return {
-                    data: result,
-                    total: result.meta.pagination.total
-                };
-            });
-        }, {
-            limit: 50
-        });
+    @task({restartable: true})
+    *searchTask(query) {
+        yield timeout(250); // debounce
+        this.searchParam = query;
     }
 
     @task
@@ -195,5 +154,11 @@ export default class MembersController extends Controller {
                 this._hasLoadedLabels = true;
             });
         }
+    }
+
+    // Internal ----------------------------------------------------------------
+
+    resetSearch() {
+        this.searchText = '';
     }
 }
