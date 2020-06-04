@@ -30,11 +30,13 @@ export default Component.extend({
     config: service(),
     mediaQueries: service(),
     intl: service(),
+    ghostPaths: service(),
 
     currencies: null,
 
     // passed in actions
     setMembersSubscriptionSettings() {},
+    setStripeConnectIntegrationTokenSetting() {},
 
     defaultContentVisibility: reads('settings.defaultContentVisibility'),
 
@@ -175,6 +177,14 @@ export default Component.extend({
             }
 
             this.setMembersSubscriptionSettings(subscriptionSettings);
+        },
+
+        setStripeConnectIntegrationToken(key, event) {
+            this.setStripeConnectIntegrationTokenSetting(event.target.value);
         }
+    },
+
+    get stripeConnectAuthUrl() {
+        return this.ghostPaths.url.api('members/stripe_connect');
     }
 });
