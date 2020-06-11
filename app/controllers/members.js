@@ -10,6 +10,7 @@ import {tracked} from '@glimmer/tracking';
 
 export default class MembersController extends Controller {
     @service intl;
+    @service ellaSparse;
     @service feature;
     @service membersStats;
     @service store;
@@ -157,14 +158,10 @@ export default class MembersController extends Controller {
 
     @task
     *fetchLabelsTask() {
-        if (!this._hasLoadedLabels) {
-            yield this.store.query('label', {limit: 'all'}).then(() => {
-                this._hasLoadedLabels = true;
-            });
-        }
+        yield this.store.query('label', {limit: 'all'});
     }
 
-    @task
+    @task({restartable: true})
     *fetchMembersTask(params) {
         // params is undefined when called as a "refresh" of the model
         let {label, searchParam} = typeof params === 'undefined' ? this : params;

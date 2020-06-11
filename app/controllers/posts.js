@@ -22,6 +22,20 @@ const TYPES = [{
     value: 'featured'
 }];
 
+const VISIBILITIES = [{
+    name: 'filter.All access',
+    value: null
+}, {
+    name: 'filter.Public',
+    value: 'public'
+}, {
+    name: 'filter.Members-only',
+    value: 'members'
+}, {
+    name: 'filter.Paid members-only',
+    value: 'paid'
+}];
+
 const ORDERS = [{
     name: 'order.Newest',
     value: null
@@ -34,12 +48,12 @@ const ORDERS = [{
 }];
 
 export default Controller.extend({
-
+    session: service(),
     store: service(),
     intl: service(),
 
     // default values for these are set in `init` and defined in `helpers/reset-query-params`
-    queryParams: ['type', 'author', 'tag', 'order'],
+    queryParams: ['type', 'access', 'author', 'tag', 'order'],
 
     _hasLoadedTags: false,
     _hasLoadedAuthors: false,
@@ -59,15 +73,24 @@ export default Controller.extend({
         return ORDERS.map(({name, value}) => Object({name: this.intl.t(name).toString(), value}));
     }),
 
-    showingAll: computed('type', 'author', 'tag', function () {
-        let {type, author, tag} = this.getProperties(['type', 'author', 'tag']);
+    availableVisibilities: computed('intl.locale', function () {
+        return VISIBILITIES.map(({name, value}) => Object({name: this.intl.t(name).toString(), value}));
+    }),
 
-        return !type && !author && !tag;
+    showingAll: computed('type', 'author', 'tag', function () {
+        let {type, author, tag, visibility} = this.getProperties(['type', 'visibility', 'author', 'tag']);
+
+        return !type && !visibility && !author && !tag;
     }),
 
     selectedType: computed('type', function () {
         let types = this.get('availableTypes');
         return types.findBy('value', this.get('type')) || {value: '!unknown'};
+    }),
+
+    selectedVisibility: computed('visibility', function () {
+        let visibilities = this.get('availableVisibilities');
+        return visibilities.findBy('value', this.get('visibility')) || {value: '!unknown'};
     }),
 
     selectedOrder: computed('order', function () {
@@ -120,6 +143,10 @@ export default Controller.extend({
     actions: {
         changeType(type) {
             this.set('type', get(type, 'value'));
+        },
+
+        changeVisibility(visibility) {
+            this.set('visibility', get(visibility, 'value'));
         },
 
         changeAuthor(author) {

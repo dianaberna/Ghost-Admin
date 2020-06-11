@@ -3,9 +3,13 @@
         <GhCustomViewTitle @title={{t "Pages"}} @query={{reset-query-params "posts"}} />
         <section class="view-actions">
             <GhContentfilter
+                @currentUser={{this.session.user}}
                 @selectedType={{this.selectedType}}
                 @availableTypes={{this.availableTypes}}
                 @onTypeChange={{action (mut k)}}
+                @selectedVisibility={{this.selectedVisibility}}
+                @availableVisibilities={{this.availableVisibilities}}
+                @onVisibilityChange={{action (mut k)}}
                 @selectedAuthor={{this.selectedAuthor}}
                 @availableAuthors={{this.availableAuthors}}
                 @onAuthorChange={{action (mut k)}}

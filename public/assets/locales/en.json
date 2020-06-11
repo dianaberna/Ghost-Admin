@@ -503,7 +503,11 @@
     "Draft pages": "Draft pages",
     "Published pages": "Published pages",
     "Scheduled pages": "Scheduled pages",
-    "Featured pages": "Featured pages"
+    "Featured pages": "Featured pages",
+    "All access": "All access",
+    "Public": "Public",
+    "Members-only": "Members-only",
+    "Paid members-only": "Paid members-only"
   },
   "order": {
     "Sort by": "Sort by",
@@ -804,7 +808,11 @@
     "Copy link": "Copy link",
     "Link copied": "Link copied",
     "Regenerate {type} API Key": "Regenerate {type} API Key",
-    "Regenerated": "Regenerated"
+    "Regenerated": "Regenerated",
+    "Save Stripe settings": "Save Stripe settings",
+    "Update from address": "Update from address",
+    "Sending...": "Sending...",
+    "Confirmation Email Sent": "Confirmation Email Sent"
   },
   "Publication info": "Publication info",
   "Title &amp; description": "Title &amp; description",
@@ -1033,7 +1041,8 @@
       "Unknown tag": "Unknown tag",
       "Unknown": "Unknown",
       "Edit current view...": "Edit current view...",
-      "Save as view...": "Save as view..."
+      "Save as view...": "Save as view...",
+      "Unknown visibility": "Unknown visibility"
   },
   "You can regenerate <strong>{type} API Key</strong> any time, but any scripts or applications using it will need to be updated.": "You can regenerate <strong>{type} API Key</strong> any time, but any scripts or applications using it will need to be updated.",
   "You will need to locate the Ghost App within your Zapier account and click on \"Reconnect\" to enter the new Admin API Key.": "You will need to locate the Ghost App within your Zapier account and click on \"Reconnect\" to enter the new Admin API Key."

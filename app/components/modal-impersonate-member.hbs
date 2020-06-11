@@ -29,14 +29,12 @@
             />
             {{#if signinUrl}}
                 <GhTaskButton
-                @autoReset={{true}}
                 @buttonText={{t "taskButton.Copy link"}}
                 @task={{this.copySigninUrl}}
                 @successText={{t "taskButton.Link copied"}}
                 @class="gh-btn gh-btn-blue gh-btn-icon" />
             {{else}}
                 <GhTaskButton
-                @autoReset={{true}}
                 @buttonText={{t "taskButton.Copy link"}}
                 @task={{this.copySigninUrl}}
                 @successText={{t "taskButton.Link copied"}}

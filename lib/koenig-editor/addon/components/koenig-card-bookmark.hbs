@@ -20,7 +20,7 @@
             <div class="koenig-embed-{{this.payload.type}} flex justify-center relative" data-kg-embed>
                 {{!-- <iframe class="bn miw-100" scrolling="no"></iframe> --}}
                 <figure class="kg-card kg-bookmark-card also-new-tag">
-                    <a href={{this.payload.metadata.url}} class="kg-bookmark-container">
+                    <a href={{this.payload.url}} class="kg-bookmark-container">
                         <div class="kg-bookmark-content">
                             <div class="kg-bookmark-title">{{this.payload.metadata.title}}</div>
                             <div class="kg-bookmark-description">{{this.payload.metadata.description}}</div>
@@ -60,7 +60,7 @@
             </div>
         {{else if this.hasError}}
             <div class="miw-100 flex flex-row pa2 pl3 ba br2 b--red-l3 red bg-error-red f7 fw4 lh-title h10 items-center">
-                <span class="mr3">{{t "koenig.bookmark.There was an error when parsing the URL."}}</span>
+                <span class="mr3">{{or this.errorMessage (t "koenig.bookmark.There was an error when parsing the URL.")}}</span>
                 <button type="button" class="red-d2 mr3 fw6 hover-red" {{action "retry"}}><span class="underline">{{t "koenig.bookmark.Retry"}}</span></button>
                 <button type="button" class="red-d2 mr-auto fw6 underline hover-red" {{action "insertAsLink"}}><span class="underline">{{t "koenig.bookmark.Paste URL as link"}}</span></button>
                 <button type="button" {{action this.deleteCard}} class="nudge-right--2">

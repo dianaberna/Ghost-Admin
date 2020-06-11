@@ -7,7 +7,7 @@
                 {{if this.tag.isNew (t "New tag") this.tag.name}}
             </h2>
             <section class="view-actions">
-                <GhTaskButton @task={{this.save}} @type="button" @class="gh-btn gh-btn-blue gh-btn-icon" @autoReset={{true}} @data-test-button="save" />
+                <GhTaskButton @task={{this.save}} @type="button" @class="gh-btn gh-btn-blue gh-btn-icon" @data-test-button="save" />
             </section>
         </GhCanvasHeader>
 
@@ -18,7 +18,7 @@
     </form>
 
     {{#unless this.tag.isNew}}
-        <button type="button" class="gh-btn gh-btn-red gh-btn-icon mb15" {{on "click" (action "toggleDeleteTagModal")}}>
+        <button type="button" class="gh-btn gh-btn-red gh-btn-icon mb15" {{on "click" (action "openDeleteTagModal")}}>
             <span>{{t "Delete tag"}}</span>
         </button>
     {{/unless}}
@@ -37,6 +37,6 @@
         @modal="delete-tag"
         @model={{this.tag}}
         @confirm={{action "deleteTag"}}
-        @close={{action "toggleDeleteTagModal"}}
+        @close={{action "closeDeleteTagModal"}}
         @modifier="action wide" />
 {{/if}}

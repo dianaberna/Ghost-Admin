@@ -38,7 +38,7 @@ const GhTaskButton = Component.extend({
     runningClass: '',
 
     showSuccess: true, // set to false if you want the spinner to show until a transition occurs
-    autoReset: false, // set to false if you want don't want task button to reset after timeout
+    autoReset: true, // set to false if you want don't want task button to reset after timeout
 
     successClass: 'gh-btn-green',
     failureClass: 'gh-btn-red',

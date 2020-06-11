@@ -54,7 +54,21 @@
             <div class="flex justify-between">
                 <div>
                     <h4 class="gh-setting-title">{{t "Connect to Stripe"}}</h4>
-                    <p class="gh-setting-desc pa0 ma0">{{t "Connect to Stripe to create subscriptions and take payments"}}</p>
+                    {{#if this.stripeConnectIntegration}}
+                        <p class="gh-setting-desc pa0 ma0">
+                            {{#if this.stripeConnectSuccess}}
+                                {{svg-jar "check-circle" class="stroke-green w4 h4 nudge-top--3"}} <span class="green-d1">{{t "Successfully connected to {name}" name=this.stripeConnectIntegration.name}}</span>
+                            {{else}}
+                                {{t "Connected to <a href=\"{url}\" target=\"_blank\">{name}</a>" url=(concat "https://dashboard.stripe.com/" this.stripeConnectIntegration.id) name=this.stripeConnectIntegration.name }}
+                            {{/if}}
+
+                            {{#unless this.stripeConnectIntegration.livemode}}
+                                <span class="gh-members-connect-testmodelabel">{{t "Test mode"}}</span>
+                            {{/unless}}
+                        </p>
+                    {{else}}
+                        <p class="gh-setting-desc pa0 ma0">{{t "Connect to Stripe to create subscriptions and take payments"}}</p>
+                    {{/if}}
                 </div>
                 <div>
                     <button type="button" class="gh-btn" {{action (toggle "membersStripeOpen" this)}} data-test-toggle-membersstripe><span>{{if this.membersStripeOpen (t "common.Close") (t "common.Expand")}}</span></button>
@@ -62,31 +76,49 @@
             </div>
 
             {{#liquid-if this.membersStripeOpen}}
-            <div class="flex flex-column flex-row-l items-start justify-between mb4 mt6">
-                <div class="w-100 w-50-l">
-                    <div class="mb4">
-                        <a href="{{this.stripeConnectAuthUrl}}" class="stripe-connect" target="_blank"><span>{{t "Connect with Stripe"}}</span></a>
-                    </div>
-                    <div class="nudge-top--3">
-                        <label class="fw6 f8 mt4">{{t "Stripe Connect authentication token"}}</label>
-                        <GhTextInput
-                            @type="password"
-                            @input={{action "setStripeConnectIntegrationToken" "stripe_connect_integration_token"}}
-                            @class="mt1 password"
-                        />
-                    </div>
-                </div>
-                <div class="ml0 ml5-l mt6">
-                    <div class="gh-members-stripe-info">
-                        <div class="gh-members-stripe-info-header">
-                            <h4>{{t "How you get paid"}}</h4>
-                            {{svg-jar "stripe-verified-partner-badge" class="gh-members-stripe-badge"}}
+            <div class="mb4 mt6">
+                <div class="flex flex-column flex-row-l items-start justify-between">
+                    <div class="w-100 w-50-l">
+                        <label class="fw6 f8">{{t "Generate secure key"}}</label>
+                        <div class="flex items-center mb4 justify-between gh-members-connectbutton-container mt2">
+                            <a href="{{if this.stripeConnectTestMode this.testStripeConnectAuthUrl this.liveStripeConnectAuthUrl}}" class="stripe-connect light-blue" target="_blank"><span>{{t "Connect with Stripe"}}</span></a>
+                            <div class="ml2 flex items-center flex-nowrap">
+                                <span class="mr2 f8 midgrey nowrap {{if this.stripeConnectTestMode "gh-members-connect-testmodeon"}}">{{#if this.stripeConnectTestMode}} {{t "Using test mode"}} {{else}} {{t "Use test mode"}} {{/if}}</span>
+                                <div class="for-switch small">
+                                    <label class="switch" for="stripe-connect-test-mode" {{action (toggle "stripeConnectTestMode" this) bubbles="false"}}>
+                                        <input type="checkbox" class="gh-input" checked={{this.stripeConnectTestMode}} onclick={{action (toggle "stripeConnectTestMode" this)}} data-test-checkbox="stripe-connect-test-mode">
+                                        <span class="input-toggle-component mt1"></span>
+                                    </label>
+                                </div>
+                            </div>
                         </div>
-                        <p class="f8 mt2 mb0">
-                            {{{t "Stripe is our exclusive direct payments partner.<br /> Ghost collects <strong>no fees</strong> on any payments! If you don’t have a Stripe account yet, you can <a href=\"https://stripe.com\" target=\"_blank\"  rel=\"noopener\" class=\"gh-members-stripe-link\">sign up here</a>."}}}
-                        </p>
+                        <div class="nudge-top--3">
+                            <GhTextarea
+                                @class="gh-members-stripe-connect-token"
+                                @placeholder="Paste your secure key here"
+                                @input={{action "setStripeConnectIntegrationToken" "stripe_connect_integration_token"}}
+                            />
+                            {{#if this.stripeConnectError}}<p class="mb0 mt2 f8 red">{{this.stripeConnectError}}</p>{{/if}}
+                        </div>
+                    </div>
+                    <div class="mt5 mt5-m mt8-l ml0 ml5-l">
+                        <div class="gh-members-stripe-info">
+                            <div class="gh-members-stripe-info-header">
+                                <h4>{{t "How you get paid"}}</h4>
+                                {{svg-jar "stripe-verified-partner-badge" class="gh-members-stripe-badge"}}
+                            </div>
+                            <p class="f8 mt2 mb0">
+                                {{{t "Stripe is our exclusive direct payments partner.<br /> Ghost collects <strong>no fees</strong> on any payments! If you don’t have a Stripe account yet, you can <a href=\"https://stripe.com\" target=\"_blank\"  rel=\"noopener\" class=\"gh-members-stripe-link\">sign up here</a>."}}}
+                            </p>
+                        </div>
                     </div>
                 </div>
+                <GhTaskButton @buttonText={{t "taskButton.Save Stripe settings"}}
+                                @task={{this.saveStripeSettings}}
+                                @successText={{t "taskButton.Saved"}}
+                                @runningText={{t "taskButton.Saving"}}
+                                @class="gh-btn gh-btn-blue gh-btn-icon mt6"
+                            />
             </div>
             {{/liquid-if}}
         {{/if}}
@@ -217,74 +249,102 @@
     <section class="bb b--whitegrey pa5">
         <div class="flex justify-between">
             <div>
-                <h4 class="gh-setting-title">{{t "Email settings"}}</h4>
-                <p class="gh-setting-desc pa0 ma0">{{t "Customise signup, signin and subscription emails"}}</p>
+                <h4 class="gh-setting-title">{{t "From address"}}</h4>
+                <p class="gh-setting-desc pa0 ma0">{{t "The email address your members receive newsletters from"}}</p>
             </div>
             <div>
-                <button type="button" class="gh-btn" {{action (toggle "membersEmailOpen" this)}} data-test-toggle-membersemail><span>{{if this.membersEmailOpen (t "common.Close") (t "common.Expand")}}</span></button>
+                <button type="button" class="gh-btn" {{action (toggle "membersFromOpen" this)}} data-test-toggle-membersFrom><span>{{if this.membersFromOpen (t "common.Close") (t "common.Expand")}}</span></button>
             </div>
         </div>
 
-        {{#liquid-if this.membersEmailOpen}}
-        <div class="flex flex-column w-100 w-50-l flex mt8">
-            <GhFormGroup>
-                <label class="fw6 f8">{{t "From Address"}}</label>
-                <div class="flex items-center justify-center mt1 gh-input-group">
-                    <GhTextInput
-                        @value={{readonly this.subscriptionSettings.fromAddress}}
-                        @input={{action "setSubscriptionSettings" "fromAddress"}}
-                        @class="w20"
-                    />
-                    <span class="gh-input-append"> @{{this.blogDomain}}</span>
-                </div>
-                <div class="f8 fw4 midgrey mt1">{{t "Your members will receive system emails from this address"}}</div>
-            </GhFormGroup>
-
-            {{#unless this.hasBulkEmailConfig}}
-                <div class="flex items-center">
-                    <GhFormGroup @class="gh-labs-mailgun-region">
-                        <label class="fw6 f8">{{t "Mailgun region"}}</label>
-                        <div class="mt1">
-                            <PowerSelect
-                                @options={{this.mailgunRegions}}
-                                @selected={{this.mailgunRegion}}
-                                @onChange={{action "setBulkEmailRegion"}}
-                                @searchEnabled={{false}}
-                                @triggerComponent="gh-power-select/trigger"
-                                as |region|
-                            >
-                                {{region.flag}} {{region.name}}
-                            </PowerSelect>
-                        </div>
-                    </GhFormGroup>
-                    <GhFormGroup>
-                        <label class="fw6 f8">{{t "Mailgun domain"}}</label>
-                        <GhTextInput
-                            @value={{readonly this.bulkEmailSettings.domain}}
-                            @input={{action "setBulkEmailSettings" "domain"}}
-                            @class="mt1"
-                        />
-                    </GhFormGroup>
-                </div>
-                <div class="nt5 mb5">
-                    <a href="https://app.mailgun.com/app/sending/domains" target="_blank" class="mt1 fw4 f8">
-                        {{{t "Find your Mailgun region and domain here &raquo;"}}}
-                    </a>
-                </div>
+        {{#liquid-if this.membersFromOpen}}
+            <div class="flex flex-column w-100 w-50-l flex mt8">
                 <GhFormGroup>
-                    <label class="fw6 f8">{{t "Mailgun API key"}}</label>
-                    <GhTextInput
-                        @type="password"
-                        @value={{readonly this.bulkEmailSettings.apiKey}}
-                        @input={{action "setBulkEmailSettings" "apiKey"}}
-                        @class="mt1 password" @autocomplete="new-password"
-                    />
-                    <a href="https://app.mailgun.com/app/account/security/api_keys" target="_blank" class="mt1 fw4 f8">
-                        {{{t "Find your Mailgun API keys here &raquo;"}}}
-                    </a>
+                    <div class="flex items-center justify-center mt1">
+                        <GhTextInput
+                            @value={{readonly this.fromAddress}}
+                            @input={{action "setFromAddress" value="target.value"}}
+                            @class="w20"
+                        />
+                        <GhTaskButton
+                            @buttonText={{t "taskButton.Update from address"}}
+                            @runningText={{t "Sending..."}}
+                            @successText={{t "Confirmation Email Sent"}}
+                            @disabled={{this.disableUpdateFromAddressButton}}
+                            @task={{this.updateFromAddress}}
+                            @class="gh-btn gh-btn-icon gh-btn-textfield-group ml2"
+                            data-test-button="update-from-address"
+                        />
+                    </div>
                 </GhFormGroup>
-            {{/unless}}
-        </div>
+                {{#if this.showFromAddressConfirmation}}
+                <div class="flex items-center green-d1 nt3 lh-1">
+                    {{svg-jar "check-circle" class="w4 h4 mr1 stroke-green-d1"}} <span class="nudge-left--2">{{t "Check your inbox and click the link to confirm"}}</span>
+                </div>
+                {{/if}}
+            </div>
         {{/liquid-if}}
     </section>
+    {{#unless this.hasBulkEmailConfig}}
+        <section class="bb b--whitegrey pa5">
+            <div class="flex justify-between">
+                <div>
+                    <h4 class="gh-setting-title">{{t "Mailgun settings"}}</h4>
+                    <p class="gh-setting-desc pa0 ma0">{{t "Customise signup, signin and subscription emails"}}</p>
+                </div>
+                <div>
+                    <button type="button" class="gh-btn" {{action (toggle "membersEmailOpen" this)}} data-test-toggle-membersemail>
+                        <span>{{if this.membersEmailOpen (t "common.Close") (t "common.Expand")}}</span>
+                    </button>
+                </div>
+            </div>
+
+            {{#liquid-if this.membersEmailOpen}}
+            <div class="flex flex-column w-100 w-50-l flex mt8">
+                    <div class="flex items-center">
+                        <GhFormGroup @class="gh-labs-mailgun-region">
+                            <label class="fw6 f8">{{t "Mailgun region"}}</label>
+                            <div class="mt1">
+                                <PowerSelect
+                                    @options={{this.mailgunRegions}}
+                                    @selected={{this.mailgunRegion}}
+                                    @onChange={{action "setBulkEmailRegion"}}
+                                    @searchEnabled={{false}}
+                                    @triggerComponent="gh-power-select/trigger"
+                                    as |region|
+                                >
+                                    {{region.flag}} {{region.name}}
+                                </PowerSelect>
+                            </div>
+                        </GhFormGroup>
+                        <GhFormGroup>
+                            <label class="fw6 f8">{{t "Mailgun domain"}}</label>
+                            <GhTextInput
+                                @value={{readonly this.bulkEmailSettings.domain}}
+                                @input={{action "setBulkEmailSettings" "domain"}}
+                                @class="mt1"
+                            />
+                        </GhFormGroup>
+                    </div>
+                    <div class="nt5 mb5">
+                        <a href="https://app.mailgun.com/app/sending/domains" target="_blank" class="mt1 fw4 f8">
+                            {{t "Find your Mailgun region and domain here &raquo;"}}
+                        </a>
+                    </div>
+                    <GhFormGroup>
+                        <label class="fw6 f8">{{t "Mailgun API key"}}</label>
+                        <GhTextInput
+                            @type="password"
+                            @value={{readonly this.bulkEmailSettings.apiKey}}
+                            @input={{action "setBulkEmailSettings" "apiKey"}}
+                            @class="mt1 password" @autocomplete="new-password"
+                        />
+                        <a href="https://app.mailgun.com/app/account/security/api_keys" target="_blank" class="mt1 fw4 f8">
+                            {{t "Find your Mailgun API keys here &raquo;"}}
+                        </a>
+                    </GhFormGroup>
+            </div>
+            {{/liquid-if}}
+        </section>
+    {{/unless}}
 </div>

@@ -5,9 +5,13 @@
 
         <section class="view-actions">
             <GhContentfilter
+                @currentUser={{this.session.user}}
                 @selectedType={{this.selectedType}}
                 @availableTypes={{this.availableTypes}}
                 @onTypeChange={{action "changeType"}}
+                @selectedVisibility={{this.selectedVisibility}}
+                @availableVisibilities={{this.availableVisibilities}}
+                @onVisibilityChange={{action "changeVisibility"}}
                 @selectedAuthor={{this.selectedAuthor}}
                 @availableAuthors={{this.availableAuthors}}
                 @onAuthorChange={{action "changeAuthor"}}

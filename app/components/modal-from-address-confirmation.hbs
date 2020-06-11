@@ -1,0 +1,12 @@
+<header class="modal-header">
+    <h1>{{t "Check your Inbox"}}</h1>
+</header>
+<a class="close" href="" role="button" title={{t "common.Close"}} {{action "closeModal"}}>{{svg-jar "close"}}<span class="hidden">{{t "common.Close"}}</span></a>
+
+<div class="modal-body">
+    {{t "We have sent an email to confirm you own <b>{fromAddress}</b>." fromAddress=this.fromAddress}}
+</div>
+
+<div class="modal-footer">
+    <button {{action "closeModal"}} class="gh-btn"><span>{{t "common.Close"}}</span></button>
+</div>

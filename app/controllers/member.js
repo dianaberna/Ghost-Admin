@@ -67,7 +67,7 @@ export default class MemberController extends Controller {
     @action
     deleteMember() {
         return this.member.destroyRecord().then(() => {
-            this.membersStats.invalidate();
+            this.members.refreshData();
             return this.transitionToRoute('members');
         }, (error) => {
             return this.notifications.showAPIError(error, {key: 'member.delete'});
@@ -116,13 +116,11 @@ export default class MemberController extends Controller {
         let scratchProps = scratchMember.getProperties(SCRATCH_PROPS);
         member.setProperties(scratchProps);
 
-        if (!member.isNew) {
-            this.membersStats.invalidate();
-        }
-
         try {
             yield member.save();
             member.updateLabels();
+            this.members.refreshData();
+
             // replace 'member.new' route with 'member' route
             this.replaceRoute('member', member);
 
