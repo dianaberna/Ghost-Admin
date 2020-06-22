@@ -983,6 +983,7 @@
   "New story": "New story",
   "members": {
     "{members, plural}": "{members, plural, =1{a member} other{# members}}",
+    "You're about to delete <strong data-test-text=\"delete-count\">{members, plural}</strong>. This is permanent! We warned you, k?": "You're about to delete <strong data-test-text=\"delete-count\">{members, plural, =1{a member} other{# members}}</strong>. This is permanent! We warned you, k?",
     "Members": "Members",
     "New member": "New member",
     "Member Labels": "Member Labels",

@@ -9,20 +9,23 @@ import {timeout} from 'ember-concurrency';
 import {tracked} from '@glimmer/tracking';
 
 const PAID_PARAMS = [{
-    name: 'All members',
+    name: 'members.All members',
     value: null
 }, {
-    name: 'Free members',
+    name: 'members.Free members',
     value: 'false'
 }, {
-    name: 'Paid members',
+    name: 'members.Paid members',
     value: 'true'
 }];
 
 export default class MembersController extends Controller {
     @service intl;
+    @service ajax;
+    @service config;
     @service ellaSparse;
     @service feature;
+    @service ghostPaths;
     @service membersStats;
     @service store;
 
@@ -33,16 +36,21 @@ export default class MembersController extends Controller {
     ];
 
     @tracked members = A([]);
+    @tracked allSelected = false;
     @tracked searchText = '';
     @tracked searchParam = '';
     @tracked paidParam = null;
     @tracked label = null;
     @tracked modalLabel = null;
+    @tracked isEditing = false;
     @tracked showLabelModal = false;
+    @tracked showDeleteMembersModal = false;
 
     @tracked _availableLabels = A([]);
 
-    paidParams = PAID_PARAMS;
+    get paidParams() {
+        return PAID_PARAMS.map(({name, value}) => Object({name: this.intl.t(name).toString(), value}));
+    }
 
     constructor() {
         super(...arguments);
@@ -55,7 +63,7 @@ export default class MembersController extends Controller {
         let {searchText, selectedLabel, members} = this;
 
         if (members.loading) {
-            return 'Loading...';
+            return this.intl.t('members.Loading...');
         }
 
         if (searchText) {
@@ -103,6 +111,20 @@ export default class MembersController extends Controller {
         return this.paidParams.findBy('value', this.paidParam) || {value: '!unknown'};
     }
 
+    get selectedCount() {
+        return this.allSelected ? this.members.length : 0;
+    }
+
+    get selectAllLabel() {
+        let {members} = this;
+
+        if (this.allSelected) {
+            return this.intl.t(`members.All items selected ({total})`, {total: members.length});
+        } else {
+            return this.intl.t(`members.Select all ({total})`, {total: members.length});
+        }
+    }
+
     // Actions -----------------------------------------------------------------
 
     @action
@@ -111,6 +133,23 @@ export default class MembersController extends Controller {
         this.fetchLabelsTask.perform();
         this.membersStats.invalidate();
         this.membersStats.fetch();
+    }
+
+    @action
+    toggleEditMode() {
+        if (this.isEditing) {
+            this.resetSelection();
+        } else {
+            this.isEditing = true;
+        }
+    }
+
+    @action
+    toggleSelectAll() {
+        if (this.members.length === 0) {
+            return this.allSelected = false;
+        }
+        this.allSelected = !this.allSelected;
     }
 
     @action
@@ -174,6 +213,16 @@ export default class MembersController extends Controller {
         this.paidParam = paid.value;
     }
 
+    @action
+    toggleDeleteMembersModal() {
+        this.showDeleteMembersModal = !this.showDeleteMembersModal;
+    }
+
+    @action
+    deleteMembers() {
+        return this.deleteMembersTask.perform();
+    }
+
     // Tasks -------------------------------------------------------------------
 
     @task({restartable: true})
@@ -191,6 +240,8 @@ export default class MembersController extends Controller {
     *fetchMembersTask(params) {
         // params is undefined when called as a "refresh" of the model
         let {label, paidParam, searchParam} = typeof params === 'undefined' ? this : params;
+
+        this.resetSelection();
 
         if (!searchParam) {
             this.resetSearch();
@@ -239,9 +290,36 @@ export default class MembersController extends Controller {
         });
     }
 
+    @task({drop: true})
+    *deleteMembersTask() {
+        let query = new URLSearchParams({all: true});
+        let url = `${this.ghostPaths.url.api('members')}?${query}`;
+
+        // response contains details of which members failed to be deleted
+        let response = yield this.ajax.del(url);
+
+        // reset and reload
+        this.store.unloadAll('member');
+        this.resetSelection();
+        this.reload();
+
+        return response.meta.stats;
+    }
+
     // Internal ----------------------------------------------------------------
 
     resetSearch() {
         this.searchText = '';
+    }
+
+    resetSelection() {
+        this.isEditing = false;
+        this.allSelected = false;
+    }
+
+    reload() {
+        this.membersStats.invalidate();
+        this.membersStats.fetch();
+        this.fetchMembersTask.perform();
     }
 }

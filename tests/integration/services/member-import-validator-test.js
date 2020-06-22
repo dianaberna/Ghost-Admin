@@ -42,18 +42,6 @@ describe('Integration: Service: member-import-validator', function () {
         expect(result[0].message).to.equal('File is empty, nothing to import. Please select a different file.');
     });
 
-    it('returns validation error for data with invalid email', async function () {
-        let service = this.owner.lookup('service:member-import-validator');
-
-        const result = await service.check([{
-            name: 'Egg',
-            email: 'notAnEmail'
-        }]);
-
-        expect(result.length).to.equal(1);
-        expect(result[0].message).to.equal('Emails in provided data don\'t appear to be valid email addresses.');
-    });
-
     it('returns validation error for data with stripe_customer_id but no connected Stripe', async function () {
         this.owner.register('service:membersUtils', Service.extend({
             isStripeEnabled: false
@@ -68,6 +56,6 @@ describe('Integration: Service: member-import-validator', function () {
         }]);
 
         expect(result.length).to.equal(1);
-        expect(result[0].message).to.equal('You need to connect to Stripe first to import Stripe data.');
+        expect(result[0].message).to.equal('You need to <a href="#/settings/labs">connect to Stripe</a> to import Stripe customers.');
     });
 });
