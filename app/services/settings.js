@@ -28,7 +28,7 @@ export default Service.extend(_ProxyMixin, ValidationEngine, {
     _loadSettings() {
         if (!this._loadingPromise) {
             this._loadingPromise = this.store
-                .queryRecord('setting', {type: 'blog,theme,private,members,bulk_email,portal'})
+                .queryRecord('setting', {group: 'site,theme,private,members,portal,email,amp,labs,slack,unsplash,views'})
                 .then((settings) => {
                     this._loadingPromise = null;
                     return settings;
@@ -72,40 +72,5 @@ export default Service.extend(_ProxyMixin, ValidationEngine, {
 
     changedAttributes() {
         return this.content.changedAttributes();
-    },
-
-    parseSubscriptionSettings(settingsString) {
-        try {
-            return JSON.parse(settingsString);
-        } catch (e) {
-            return {
-                allowSelfSignup: true,
-                fromAddress: 'noreply',
-                paymentProcessors: [{
-                    adapter: 'stripe',
-                    config: {
-                        secret_token: '',
-                        public_token: '',
-                        product: {
-                            name: this.settings.get('title')
-                        },
-                        plans: [
-                            {
-                                name: this.intl.t('Monthly'),
-                                currency: 'usd',
-                                interval: 'month',
-                                amount: ''
-                            },
-                            {
-                                name: this.intl.t('Yearly'),
-                                currency: 'usd',
-                                interval: 'year',
-                                amount: ''
-                            }
-                        ]
-                    }
-                }]
-            };
-        }
     }
 });

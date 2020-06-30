@@ -1,0 +1,16 @@
+<header class="modal-header">
+    <h1>{{t "Are you sure you want to disconnect?"}}</h1>
+</header>
+<a class="close" href="" role="button" title={{t "common.Close"}} {{action "closeModal"}}>{{svg-jar "close"}}<span class="hidden">{{t "common.Close"}}</span></a>
+
+<div class="modal-body">
+    {{t "You're about to disconnect your Stripe account ({accountName}) from this site. This will automatically turn off paid memberships on this site." accountName=this.stripeConnectAccountName}}
+</div>
+
+<div class="modal-footer">
+    <button {{action "closeModal"}} class="gh-btn"><span>{{t "common.Cancel"}}</span></button>
+    <GhTaskButton @buttonText={{t "taskButton.Disconnect"}}
+                  @successText={{t "taskButton.Disconnected"}}
+                  @task={{this.disconnectStripe}}
+                  @class="gh-btn gh-btn-red gh-btn-icon" />
+</div>

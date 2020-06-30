@@ -51,13 +51,13 @@ export default Controller.extend({
         return `${blogUrl}/${publicHash}/rss`;
     }),
 
-    backgroundStyle: computed('settings.brand.primaryColor', function () {
-        let color = this.get('settings.brand.primaryColor') || '#ffffff';
+    backgroundStyle: computed('settings.accentColor', function () {
+        let color = this.get('settings.accentColor') || '#ffffff';
         return htmlSafe(`background-color: ${color}`);
     }),
 
-    brandColor: computed('settings.brand.primaryColor', function () {
-        let color = this.get('settings.brand.primaryColor');
+    accentColor: computed('settings.accentColor', function () {
+        let color = this.get('settings.accentColor');
         if (color && color[0] === '#') {
             return color.slice(1);
         }
@@ -70,7 +70,7 @@ export default Controller.extend({
         },
 
         setTimezone(timezone) {
-            this.set('settings.activeTimezone', timezone.name);
+            this.set('settings.timezone', timezone.name);
         },
 
         removeImage(image) {
@@ -272,22 +272,23 @@ export default Controller.extend({
                 return;
             }
         },
-        validateBrandColor() {
-            let newColor = this.get('brandColor');
-            let oldColor = this.get('settings.brand.primaryColor');
+
+        validateAccentColor() {
+            let newColor = this.get('accentColor');
+            let oldColor = this.get('settings.accentColor');
             let errMessage = '';
 
             // reset errors and validation
-            this.get('settings.errors').remove('brandColor');
-            this.get('settings.hasValidated').removeObject('brandColor');
+            this.get('settings.errors').remove('accentColor');
+            this.get('settings.hasValidated').removeObject('accentColor');
 
             if (newColor === '') {
-                // Clear out the brand color
-                this.set('settings.brand.primaryColor', '');
+                // Clear out the accent color
+                this.set('settings.accentColor', '');
                 return;
             }
 
-            // brandColor will be null unless the user has input something
+            // accentColor will be null unless the user has input something
             if (!newColor) {
                 newColor = oldColor;
             }
@@ -297,14 +298,14 @@ export default Controller.extend({
             }
 
             if (newColor.match(/#[0-9A-Fa-f]{6}$/)) {
-                this.set('settings.brand.primaryColor', '');
+                this.set('settings.accentColor', '');
                 run.schedule('afterRender', this, function () {
-                    this.set('settings.brand.primaryColor', newColor);
+                    this.set('settings.accentColor', newColor);
                 });
             } else {
                 errMessage = 'The color should be in valid hex format';
-                this.get('settings.errors').add('brandColor', errMessage);
-                this.get('settings.hasValidated').pushObject('brandColor');
+                this.get('settings.errors').add('accentColor', errMessage);
+                this.get('settings.hasValidated').pushObject('accentColor');
                 return;
             }
         }
