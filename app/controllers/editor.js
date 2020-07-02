@@ -3,6 +3,7 @@ import PostModel from 'ghost-admin/models/post';
 import boundOneWay from 'ghost-admin/utils/bound-one-way';
 import config from 'ghost-admin/config/environment';
 import isNumber from 'ghost-admin/utils/isNumber';
+import moment from 'moment';
 import {alias, mapBy} from '@ember/object/computed';
 import {computed} from '@ember/object';
 import {inject as controller} from '@ember/controller';
@@ -45,6 +46,7 @@ export default Controller.extend({
     router: service(),
     slugGenerator: service(),
     session: service(),
+    settings: service(),
     ui: service(),
     intl: service(),
 
@@ -757,8 +759,13 @@ export default Controller.extend({
         return hasDirtyAttributes;
     },
 
-    _showSaveNotification(prevStatus, status, delay) {
+    _showSaveNotification(prevStatus, status, delayed) {
         let message = this.intl.t(`editor.success.post.${prevStatus}.${status}`);
+        // scheduled messaging is completely custom
+        if (status === 'scheduled') {
+            return this._showScheduledNotification(delayed);
+        }
+
         let notifications = this.notifications;
         let actions, type, path;
 
@@ -768,7 +775,45 @@ export default Controller.extend({
             : this.get('post.previewUrl');
         actions = `<a href="${path}" target="_blank">${this.intl.t(`${this.get('post.displayName')}.notification.${type}`)}</a>`;
 
-        notifications.showNotification(message, {type: 'success', actions: actions.htmlSafe(), delayed: delay});
+        notifications.showNotification(message, {type: 'success', actions: actions.htmlSafe(), delayed});
+    },
+
+    _showScheduledNotification(delayed) {
+        let {
+            publishedAtUTC,
+            sendEmailWhenPublished,
+            visibility,
+            previewUrl
+        } = this.post;
+        let publishedAtBlogTZ = moment.tz(publishedAtUTC, this.settings.get('timezone'));
+
+        let title = this.intl.t('postBadge.Scheduled');
+        let description = ['Will be published'];
+
+        if (sendEmailWhenPublished) {
+            description.push('and delivered to');
+
+            if (visibility === 'paid') {
+                description.push('<span><strong>paid members</strong></span>');
+            } else {
+                description.push('<span><strong>all members</strong></span>');
+            }
+        }
+
+        description.push(`on <span><strong>${publishedAtBlogTZ.format('MMM Mo')}</strong></span>`);
+
+        description.push(`at <span><strong>${publishedAtBlogTZ.format('HH:mm')}</strong>`);
+        if (publishedAtBlogTZ.utcOffset() === 0) {
+            description.push('(UTC)</span>');
+        } else {
+            description.push(`(UTC${publishedAtBlogTZ.format('Z').replace(/([+-])0/, '$1').replace(/:00/, '')})</span>`);
+        }
+
+        description = description.join(' ').htmlSafe();
+
+        let actions = `<a href="${previewUrl}" target="_blank">View Preview</a>`.htmlSafe();
+
+        return this.notifications.showNotification(title, {description, actions, type: 'success', delayed});
     },
 
     _showErrorAlert(prevStatus, status, error, delay) {

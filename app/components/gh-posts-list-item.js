@@ -1,55 +1,34 @@
-import Component from '@ember/component';
-import {alias, equal} from '@ember/object/computed';
-import {computed} from '@ember/object';
-import {isBlank} from '@ember/utils';
+import Component from '@glimmer/component';
+import {formatPostTime} from 'ghost-admin/helpers/gh-format-post-time';
 import {inject as service} from '@ember/service';
 
-export default Component.extend({
-    ghostPaths: service(),
-    session: service(),
+export default class GhPostsListItemComponent extends Component {
+    @service session;
+    @service settings;
+    @service intl;
 
-    tagName: 'li',
-    classNames: ['gh-list-row', 'gh-posts-list-item'],
+    get authorNames() {
+        return this.args.post.authors.map(author => author.name || author.email).join(', ');
+    }
 
-    post: null,
+    get scheduledText() {
+        let {post} = this.args;
+        let text = [];
 
-    isFeatured: alias('post.featured'),
-    isPage: alias('post.page'),
-    isDraft: equal('post.status', 'draft'),
-    isPublished: equal('post.status', 'published'),
-    isScheduled: equal('post.status', 'scheduled'),
-
-    authorNames: computed('post.authors.[]', function () {
-        let authors = this.get('post.authors');
-
-        return authors.map(author => author.get('name') || author.get('email')).join(', ');
-    }),
-
-    primaryTag: computed('post.authors.[]', function () {
-        let primaryTag = this.get('post.tags.firstObject');
-
-        if (primaryTag) {
-            return primaryTag.get('name');
-        } else {
-            return false;
-        }
-    }),
-
-    subText: computed('post.{excerpt,customExcerpt,metaDescription}', function () {
-        let text = this.get('post.excerpt') || '';
-        let customExcerpt = this.get('post.customExcerpt');
-        let metaDescription = this.get('post.metaDescription');
-
-        if (!isBlank(customExcerpt)) {
-            text = customExcerpt;
-        } else if (!isBlank(metaDescription)) {
-            text = metaDescription;
+        if (post.sendEmailWhenPublished) {
+            let paid = post.visibility === 'paid';
+            text.push(paid
+                ? this.intl.t('and sent to paid members')
+                : this.intl.t('and sent to all members')
+            );
         }
 
-        if (this.isScheduled) {
-            return `${text.slice(0, 35)}...`;
-        } else {
-            return `${text.slice(0, 80)}...`;
-        }
-    })
-});
+        let formattedTime = formatPostTime(
+            post.publishedAtUTC,
+            {timezone: this.settings.get('timezone'), scheduled: true}
+        );
+        text.push(formattedTime);
+
+        return text.join(' ');
+    }
+}

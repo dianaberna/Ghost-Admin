@@ -56,25 +56,8 @@ export default Component.extend({
     stripeDirectSecretKey: reads('settings.stripeSecretKey'),
 
     stripeConnectAccountId: reads('settings.stripeConnectAccountId'),
-    stripeConnectAccountName: reads('settings.stripeConnectAccountName'),
+    stripeConnectAccountName: reads('settings.stripeConnectDisplayName'),
     stripeConnectLivemode: reads('settings.stripeConnectLivemode'),
-
-    stripeConnectIntegration: computed('settings.stripeConnectIntegration', function () {
-        try {
-            const integration = JSON.parse(this.get('settings.stripeConnectIntegration'));
-            if (!integration || !integration.account_id) {
-                return null;
-            }
-
-            return {
-                id: integration.account_id,
-                name: integration.display_name,
-                livemode: integration.livemode
-            };
-        } catch (err) {
-            return null;
-        }
-    }),
 
     selectedCurrency: computed('stripePlans.monthly.currency', function () {
         return CURRENCIES.findBy('value', this.get('stripePlans.monthly.currency'));
@@ -82,7 +65,7 @@ export default Component.extend({
 
     disableUpdateFromAddressButton: computed('fromAddress', function () {
         const savedFromAddress = this.get('settings.membersFromAddress') || '';
-        if (savedFromAddress.includes('@') && this.blogDomain) {
+        if (!savedFromAddress.includes('@') && this.blogDomain) {
             return (this.fromAddress === `${savedFromAddress}@${this.blogDomain}`);
         }
         return (this.fromAddress === savedFromAddress);
@@ -116,7 +99,7 @@ export default Component.extend({
             },
             yearly: {
                 amount: parseInt(yearly.amount) / 100 || 0,
-                yearly: yearly.currency
+                currency: yearly.currency
             }
         };
     }),
@@ -245,7 +228,7 @@ export default Component.extend({
 
     openDisconnectStripeConnectModal: task(function* () {
         this.set('hasActiveStripeSubscriptions', false);
-        if (!this.get('stripeConnectIntegration')) {
+        if (!this.get('stripeConnectAccountId')) {
             return;
         }
         const url = this.get('ghostPaths.url').api('/members/hasActiveStripeSubscriptions');

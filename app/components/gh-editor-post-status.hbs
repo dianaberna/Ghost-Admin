@@ -1,22 +1,21 @@
-{{#if this._isSaving}}
-    {{t "postStatus.Saving..."}}
-{{else if (or this.post.isPublished this.post.pastScheduledTime)}}
-    {{t "postStatus.Published"}}
-    {{#if (or (eq this.post.email.status "submitting") (eq this.post.email.status "submitting"))}}
-        and sending to {{pluralize this.post.email.emailCount "member"}}
-    {{else if (eq this.post.email.status "submitted")}}
-        and sent to {{pluralize this.post.email.emailCount "member"}}
-    {{/if}}
-{{else if this.post.isScheduled}}
-    {{#if this.countdown}}
-        <time datetime="{{this.post.publishedAtUTC}}" class="ml1 green f8" data-test-schedule-countdown>
-            Scheduled to be published {{if this.post.sendEmailWhenPublished "and sent"}} {{this.countdown}}.
+<div data-test-editor-post-status ...attributes>
+    {{#if this._isSaving}}
+        {{t "postStatus.Saving..."}}
+    {{else if (or @post.isPublished @post.pastScheduledTime)}}
+        {{t "postStatus.Published"}}
+        {{#if (or (eq @post.email.status "submitting") (eq @post.email.status "submitting"))}}
+            {{t "and sending to {members, plural}" members=@post.email.emailCount}}
+        {{else if (eq @post.email.status "submitted")}}
+            and sent to {{pluralize @post.email.emailCount "member"}}
+            {{t "and sent to {members, plural}" members=@post.email.emailCount}}
+        {{/if}}
+    {{else if @post.isScheduled}}
+        <time datetime="{{@post.publishedAtUTC}}" class="ml1 green f8" data-test-schedule-countdown>
+            {{t "Will be published {scheduledText}." scheduledText=this.scheduledText}}
         </time>
+    {{else if @post.isNew}}
+        {{t "postStatus.New"}}
     {{else}}
-        {{t "postStatus.Scheduled"}}
-    {{/if}}
-{{else if this.post.isNew}}
-    {{t "postStatus.New"}}
-{{else}}
     {{t "postStatus.Draft"}}
-{{/if}}
+    {{/if}}
+</div>
