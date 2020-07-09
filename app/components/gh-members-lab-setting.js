@@ -2,7 +2,6 @@ import Component from '@ember/component';
 import {computed} from '@ember/object';
 import {reads} from '@ember/object/computed';
 import {inject as service} from '@ember/service';
-import {set} from '@ember/object';
 import {task} from 'ember-concurrency';
 
 const US = {flag: '🇺🇸', name: 'US', baseUrl: 'https://api.mailgun.net/v3'};
@@ -10,22 +9,22 @@ const EU = {flag: '🇪🇺', name: 'EU', baseUrl: 'https://api.eu.mailgun.net/v
 
 const CURRENCIES = [
     {
-        label: 'USD - US Dollar', value: 'usd'
+        label: 'USD - US Dollar', value: 'usd', symbol: '$'
     },
     {
-        label: 'AUD - Australian Dollar', value: 'aud'
+        label: 'AUD - Australian Dollar', value: 'aud', symbol: '$'
     },
     {
-        label: 'CAD - Canadian Dollar', value: 'cad'
+        label: 'CAD - Canadian Dollar', value: 'cad', symbol: '$'
     },
     {
-        label: 'EUR - Euro', value: 'eur'
+        label: 'EUR - Euro', value: 'eur', symbol: '€'
     },
     {
-        label: 'GBP - British Pound', value: 'gbp'
+        label: 'GBP - British Pound', value: 'gbp', symbol: '£'
     },
     {
-        label: 'INR - Indian Rupee', value: 'inr'
+        label: 'INR - Indian Rupee', value: 'inr', symbol: '₹'
     }
 ];
 
@@ -41,6 +40,9 @@ export default Component.extend({
     currencies: null,
     showFromAddressConfirmation: false,
     showMembersModalSettings: false,
+    stripePlanInvalidAmount: false,
+    _scratchStripeYearlyAmount: null,
+    _scratchStripeMonthlyAmount: null,
 
     // passed in actions
     setStripeConnectIntegrationTokenSetting() {},
@@ -48,6 +50,8 @@ export default Component.extend({
     defaultContentVisibility: reads('settings.defaultContentVisibility'),
 
     stripeDirect: reads('config.stripeDirect'),
+
+    mailgunIsConfigured: reads('config.mailgunIsConfigured'),
 
     allowSelfSignup: reads('settings.membersAllowFreeSignup'),
 
@@ -77,13 +81,13 @@ export default Component.extend({
         return (domainExp && domainExp[1]) || '';
     }),
 
-    mailgunRegion: computed('settings.bulkEmailSettings.baseUrl', function () {
-        if (!this.settings.get('bulkEmailSettings.baseUrl')) {
+    mailgunRegion: computed('settings.mailgunBaseUrl', function () {
+        if (!this.settings.get('mailgunBaseUrl')) {
             return US;
         }
 
         return [US, EU].find((region) => {
-            return region.baseUrl === this.settings.get('bulkEmailSettings.baseUrl');
+            return region.baseUrl === this.settings.get('mailgunBaseUrl');
         });
     }),
 
@@ -94,25 +98,22 @@ export default Component.extend({
 
         return {
             monthly: {
-                amount: parseInt(monthly.amount) / 100 || 0,
+                amount: parseInt(monthly.amount) / 100 || 5,
                 currency: monthly.currency
             },
             yearly: {
-                amount: parseInt(yearly.amount) / 100 || 0,
+                amount: parseInt(yearly.amount) / 100 || 50,
                 currency: yearly.currency
             }
         };
     }),
 
-    bulkEmailSettings: computed('settings.bulkEmailSettings', function () {
-        let bulkEmailSettings = this.get('settings.bulkEmailSettings') || {};
-        const {apiKey = '', baseUrl = US.baseUrl, domain = ''} = bulkEmailSettings;
-        return {apiKey, baseUrl, domain};
-    }),
-
-    hasBulkEmailConfig: computed('settings.bulkEmailSettings', function () {
-        let bulkEmailSettings = this.get('settings.bulkEmailSettings');
-        return !!bulkEmailSettings.isConfig;
+    mailgunSettings: computed('settings.{mailgunBaseUrl,mailgunApiKey,mailgunDomain}', function () {
+        return {
+            apiKey: this.get('settings.mailgunApiKey') || '',
+            domain: this.get('settings.mailgunDomain') || '',
+            baseUrl: this.get('settings.mailgunBaseUrl') || ''
+        };
     }),
 
     init() {
@@ -134,19 +135,16 @@ export default Component.extend({
             this.setDefaultContentVisibility(value);
         },
 
-        setBulkEmailSettings(key, event) {
-            let bulkEmailSettings = this.get('settings.bulkEmailSettings') || {};
-            bulkEmailSettings[key] = event.target.value;
-            if (!bulkEmailSettings.baseUrl) {
-                set(bulkEmailSettings, 'baseUrl', US.baseUrl);
-            }
-            this.setBulkEmailSettings(bulkEmailSettings);
+        setMailgunDomain(event) {
+            this.set('settings.mailgunDomain', event.target.value);
         },
 
-        setBulkEmailRegion(region) {
-            let bulkEmailSettings = this.get('settings.bulkEmailSettings') || {};
-            set(bulkEmailSettings, 'baseUrl', region.baseUrl);
-            this.setBulkEmailSettings(bulkEmailSettings);
+        setMailgunApiKey(event) {
+            this.set('settings.mailgunApiKey', event.target.value);
+        },
+
+        setMailgunRegion(region) {
+            this.set('settings.mailgunBaseUrl', region.baseUrl);
         },
 
         setFromAddress(fromAddress) {
@@ -167,18 +165,46 @@ export default Component.extend({
             this.set('settings.stripeSecretKey', event.target.value);
         },
 
-        setStripePlan(type, event) {
-            const updatedPlans = this.get('settings.stripePlans').map((plan) => {
-                if (plan.interval === type && plan.name !== 'Complimentary') {
-                    const newAmount = parseInt(event.target.value) * 100 || 0;
-                    return Object.assign({}, plan, {
-                        amount: newAmount
-                    });
-                }
-                return plan;
-            });
+        validateStripePlans() {
+            this.get('settings.errors').remove('stripePlans');
+            this.get('settings.hasValidated').removeObject('stripePlans');
 
-            this.set('settings.stripePlans', updatedPlans);
+            if (this._scratchStripeYearlyAmount === null) {
+                this._scratchStripeYearlyAmount = this.get('stripePlans').yearly.amount;
+            }
+            if (this._scratchStripeMonthlyAmount === null) {
+                this._scratchStripeMonthlyAmount = this.get('stripePlans').monthly.amount;
+            }
+
+            try {
+                const selectedCurrency = this.selectedCurrency;
+                const yearlyAmount = parseInt(this._scratchStripeYearlyAmount);
+                const monthlyAmount = parseInt(this._scratchStripeMonthlyAmount);
+                if (!yearlyAmount || yearlyAmount < 1 || !monthlyAmount || monthlyAmount < 1) {
+                    throw new TypeError(`Subscription amount must be at least ${selectedCurrency.symbol}1.00`);
+                }
+
+                const updatedPlans = this.get('settings.stripePlans').map((plan) => {
+                    if (plan.name !== 'Complimentary') {
+                        let newAmount;
+                        if (plan.interval === 'year') {
+                            newAmount = yearlyAmount * 100;
+                        } else if (plan.interval === 'month') {
+                            newAmount = monthlyAmount * 100;
+                        }
+                        return Object.assign({}, plan, {
+                            amount: newAmount
+                        });
+                    }
+                    return plan;
+                });
+
+                this.set('settings.stripePlans', updatedPlans);
+            } catch (err) {
+                this.get('settings.errors').add('stripePlans', err.message);
+            } finally {
+                this.get('settings.hasValidated').pushObject('stripePlans');
+            }
         },
 
         setStripePlansCurrency(event) {

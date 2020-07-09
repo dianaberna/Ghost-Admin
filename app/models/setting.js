@@ -38,10 +38,15 @@ export default Model.extend(ValidationEngine, {
     ogTitle: attr('string'),
     ogDescription: attr('string'),
     ogImage: attr('string'),
-    bulkEmailSettings: attr('json-string'),
+    mailgunApiKey: attr('string'),
+    mailgunDomain: attr('string'),
+    mailgunBaseUrl: attr('string'),
     portalButton: attr('boolean'),
     portalName: attr('boolean'),
     portalPlans: attr('json-string'),
+    portalButtonStyle: attr('string'),
+    portalButtonIcon: attr('string'),
+    portalButtonSignupText: attr('string'),
     sharedViews: attr('string'),
     /**
      * Members settings

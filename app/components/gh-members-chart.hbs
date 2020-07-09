@@ -49,10 +49,10 @@
             <div class="gh-members-chart-summary-data">{{if (not this.stats) "-" (format-number this.stats.total)}}</div>
         </div>
         <div class="flex-auto flex flex-column justify-center items-start pa4 bb b--whitegrey">
-            {{#if (eq this.range "all-time")}}
+            {{#if (eq this.selectedRange.days "all-time")}}
                 <h3 class="f-small ttu midgrey fw5">{{t "members.All time signups"}}</h3>
             {{else}}
-                <h3 class="f-small ttu midgrey fw5">{{t "members.Signed up in the last {range} days" range=this.range}}</h3>
+                <h3 class="f-small ttu midgrey fw5">{{t "members.Signed up in the last {range} days" range=this.selectedRange.days}}</h3>
             {{/if}}
             <div class="gh-members-chart-summary-data">{{if (not this.stats) "-" (format-number this.stats.total_in_range)}}</div>
         </div>

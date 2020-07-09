@@ -169,32 +169,37 @@
             </div>
             <div class="w-100 w-50-l flex flex-column flex-row-ns">
                 <div class="w-100 w-50-ns mr3-ns">
-                    <GhFormGroup>
+                    <GhFormGroup @errors={{this.settings.errors}} @hasValidated={{settings.hasValidated}} @property="stripePlans">
                     <label class="fw6 f8">{{t "Monthly price"}}</label>
 
                     <div class="flex items-center justify-center mt1 gh-input-group gh-labs-price-label">
                         <GhTextInput
                             @value={{readonly this.stripePlans.monthly.amount}}
                             @type="number"
-                            @input={{action "setStripePlan" "month"}}
+                            @input={{action (mut this._scratchStripeMonthlyAmount) value="target.value"}}
+                            @focus-out={{action "validateStripePlans"}}
                         />
                         <span class="gh-input-append">{{{t "<span class=\"ttu\">{currency}</span>/month" currency=this.stripePlans.monthly.currency}}}</span>
                     </div>
                     </GhFormGroup>
                 </div>
                 <div class="w-100 w-50-ns ml2-ns">
-                    <GhFormGroup @class="description-container">
+                    <GhFormGroup @errors={{this.settings.errors}} @hasValidated={{settings.hasValidated}} @property="stripePlans">
                     <label class="fw6 f8">{{t "Yearly price"}}</label>
                     <div class="flex items-center justify-center mt1 gh-input-group gh-labs-price-label">
                         <GhTextInput
                             @value={{readonly this.stripePlans.yearly.amount}}
                             @type="number"
-                            @input={{action "setStripePlan" "year"}}
+                            @input={{action (mut this._scratchStripeYearlyAmount) value="target.value"}}
+                            @focus-out={{action "validateStripePlans"}}
                         />
                         <span class="gh-input-append">{{{t "<span class=\"ttu\">{currency}</span>/year" currency=this.stripePlans.yearly.currency}}}</span>
                     </div>
                     </GhFormGroup>
                 </div>
+            </div>
+            <div class="w-100 w-50-l flex flex-column flex-row-ns">
+                <GhErrorMessage @errors={{settings.errors}} @property="stripePlans" class="w-100 red"/>
             </div>
         {{/liquid-if}}
     </section>
@@ -311,7 +316,7 @@
             </div>
         </section>
     {{/if}}
-    {{#unless this.hasBulkEmailConfig}}
+    {{#unless this.mailgunIsConfigured}}
         <section class="bb b--whitegrey pa5">
             <div class="flex justify-between">
                 <div>
@@ -334,7 +339,7 @@
                                 <PowerSelect
                                     @options={{this.mailgunRegions}}
                                     @selected={{this.mailgunRegion}}
-                                    @onChange={{action "setBulkEmailRegion"}}
+                                    @onChange={{action "setMailgunRegion"}}
                                     @searchEnabled={{false}}
                                     @triggerComponent="gh-power-select/trigger"
                                     as |region|
@@ -346,8 +351,8 @@
                         <GhFormGroup>
                             <label class="fw6 f8">{{t "Mailgun domain"}}</label>
                             <GhTextInput
-                                @value={{readonly this.bulkEmailSettings.domain}}
-                                @input={{action "setBulkEmailSettings" "domain"}}
+                                @value={{readonly this.mailgunSettings.domain}}
+                                @input={{action "setMailgunDomain"}}
                                 @class="mt1"
                             />
                         </GhFormGroup>
@@ -361,8 +366,8 @@
                         <label class="fw6 f8">{{t "Mailgun API key"}}</label>
                         <GhTextInput
                             @type="password"
-                            @value={{readonly this.bulkEmailSettings.apiKey}}
-                            @input={{action "setBulkEmailSettings" "apiKey"}}
+                            @value={{readonly this.mailgunSettings.apiKey}}
+                            @input={{action "setMailgunApiKey"}}
                             @class="mt1 password" @autocomplete="new-password"
                         />
                         <a href="https://app.mailgun.com/app/account/security/api_keys" target="_blank" class="mt1 fw4 f8">

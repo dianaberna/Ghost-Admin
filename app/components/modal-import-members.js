@@ -12,6 +12,56 @@ import {htmlSafe} from '@ember/string';
 import {isBlank} from '@ember/utils';
 import {run} from '@ember/runloop';
 import {inject as service} from '@ember/service';
+import {tracked} from '@glimmer/tracking';
+
+class MembersFieldMapping {
+    _supportedImportFields = [
+        'email',
+        'name',
+        'note',
+        'subscribed_to_emails',
+        'stripe_customer_id',
+        'complimentary_plan',
+        'labels',
+        'created_at'
+    ];
+
+    @tracked _mapping = {};
+
+    constructor(mapping) {
+        // NOTE: there are only 2 distinguishable fields that could be automatically matched, which is the reason why code is just simple assignments
+        if (mapping) {
+            this.set(mapping.email, 'email');
+            this.set(mapping.stripe_customer_id, 'stripe_customer_id');
+        }
+    }
+
+    set(key, value) {
+        this._mapping[key] = value;
+
+        // trigger an update
+        // eslint-disable-next-line no-self-assign
+        this._mapping = this._mapping;
+    }
+
+    get(key) {
+        return this._mapping[key];
+    }
+
+    get mapping() {
+        return this._mapping;
+    }
+
+    updateMapping(from, to) {
+        for (const key in this._mapping) {
+            if (this.get(key) === to) {
+                this.set(key, null);
+            }
+        }
+
+        this.set(from, to);
+    }
+}
 
 export default ModalComponent.extend({
     config: service(),
@@ -24,7 +74,9 @@ export default ModalComponent.extend({
 
     file: null,
     fileData: null,
+    mapping: null,
     paramName: 'membersfile',
+    validating: false,
     uploading: false,
     uploadPercentage: 0,
     importResponse: null,
@@ -63,6 +115,18 @@ export default ModalComponent.extend({
             });
         }
 
+        // TODO: remove "if" below once import validations are production ready
+        if (this.config.get('enableDeveloperExperiments')) {
+            if (this.mapping) {
+                for (const key in this.mapping.mapping) {
+                    if (this.mapping.get(key)){
+                        // reversing mapping direction to match the structure accepted in the API
+                        formData.append(`mapping[${this.mapping.get(key)}]`, key);
+                    }
+                }
+            }
+        }
+
         return formData;
     }),
 
@@ -99,6 +163,7 @@ export default ModalComponent.extend({
 
                 // TODO: remove "if" below once import validations are production ready
                 if (this.config.get('enableDeveloperExperiments')) {
+                    this.set('validating', true);
                     papaparse.parse(file, {
                         header: true,
                         skipEmptyLines: true,
@@ -106,10 +171,13 @@ export default ModalComponent.extend({
                         complete: async (results) => {
                             this.set('fileData', results.data);
 
-                            let result = await this.memberImportValidator.check(results.data);
+                            let {validationErrors, mapping} = await this.memberImportValidator.check(results.data);
+                            this.set('mapping', new MembersFieldMapping(mapping));
 
-                            if (result !== true) {
-                                this._importValidationFailed(result);
+                            if (validationErrors.length) {
+                                this._importValidationFailed(validationErrors);
+                            } else {
+                                this.set('validating', false);
                             }
                         },
                         error: (error) => {
@@ -125,6 +193,7 @@ export default ModalComponent.extend({
             this.set('labels', {labels: []});
             this.set('file', null);
             this.set('fileData', null);
+            this.set('mapping', null);
             this.set('validationErrors', null);
         },
 
@@ -132,6 +201,10 @@ export default ModalComponent.extend({
             if (this.file) {
                 this.generateRequest();
             }
+        },
+
+        continueImport() {
+            this.set('validating', false);
         },
 
         confirm() {
@@ -142,6 +215,10 @@ export default ModalComponent.extend({
             if (!this.closeDisabled) {
                 this._super(...arguments);
             }
+        },
+
+        updateMapping(mapFrom, mapTo) {
+            this.mapping.updateMapping(mapFrom, mapTo);
         }
     },
 

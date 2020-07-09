@@ -1,9 +1,12 @@
 /* global Chart */
 import Component from '@ember/component';
+import moment from 'moment';
 import {action} from '@ember/object';
 import {computed, get} from '@ember/object';
 import {inject as service} from '@ember/service';
 import {task} from 'ember-concurrency';
+
+const DATE_FORMAT = 'D MMM YYYY';
 
 export default Component.extend({
     ajax: service(),
@@ -131,7 +134,15 @@ export default Component.extend({
                 bodyFontSize: 13,
                 titleFontStyle: 'normal',
                 titleFontColor: 'rgba(255, 255, 255, 0.7)',
-                titleMarginBottom: 4
+                titleMarginBottom: 4,
+                callbacks: {
+                    label: function (tooltipItems, data) {
+                        return data.datasets[0].label + `: ` + data.datasets[0].data[tooltipItems.index].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                    },
+                    title: function (tooltipItems) {
+                        return moment(tooltipItems[0].xLabel).format(DATE_FORMAT);
+                    }
+                }
             },
             hover: {
                 mode: 'index',
@@ -186,7 +197,10 @@ export default Component.extend({
                         maxTicksLimit: 5,
                         fontColor: '#9baeb8',
                         padding: 8,
-                        precision: 0
+                        precision: 0,
+                        callback: function (value) {
+                            return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                        }
                     }
                 }]
             }
