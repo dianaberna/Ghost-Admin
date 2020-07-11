@@ -55,7 +55,7 @@ describe('Integration: Component: modal-import-members-test', function () {
         expect(find('h1').textContent.trim(), 'default header')
             .to.equal('Import members');
         expect(find('.description').textContent.trim(), 'upload label')
-            .to.equal('Select or drag-and-drop a CSV file');
+            .to.equal('Select or drop a CSV file');
     });
 
     it('generates request to supplied endpoint', async function () {
@@ -65,7 +65,7 @@ describe('Integration: Component: modal-import-members-test', function () {
         await fileUpload('input[type="file"]', ['membersfile'], {name: 'test.csv'});
 
         expect(find('label').textContent.trim(), 'labels label')
-            .to.equal('Labels');
+            .to.equal('Label these members');
         expect(find('.gh-btn-green').textContent).to.match(/Import/g);
 
         await click('.gh-btn-green');

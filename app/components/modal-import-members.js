@@ -15,24 +15,13 @@ import {inject as service} from '@ember/service';
 import {tracked} from '@glimmer/tracking';
 
 class MembersFieldMapping {
-    _supportedImportFields = [
-        'email',
-        'name',
-        'note',
-        'subscribed_to_emails',
-        'stripe_customer_id',
-        'complimentary_plan',
-        'labels',
-        'created_at'
-    ];
-
     @tracked _mapping = {};
 
     constructor(mapping) {
-        // NOTE: there are only 2 distinguishable fields that could be automatically matched, which is the reason why code is just simple assignments
         if (mapping) {
-            this.set(mapping.email, 'email');
-            this.set(mapping.stripe_customer_id, 'stripe_customer_id');
+            for (const [key, value] of Object.entries(mapping)) {
+                this.set(value, key);
+            }
         }
     }
 
@@ -70,14 +59,18 @@ export default ModalComponent.extend({
     intl: service(),
     memberImportValidator: service(),
 
+    // import stages, default is "CSV file selection"
+    validating: false,
+    customizing: false,
+    uploading: false,
+    summary: false,
+
     dragClass: null,
 
     file: null,
     fileData: null,
     mapping: null,
     paramName: 'membersfile',
-    validating: false,
-    uploading: false,
     uploadPercentage: 0,
     importResponse: null,
     failureMessage: null,
@@ -164,6 +157,7 @@ export default ModalComponent.extend({
                 // TODO: remove "if" below once import validations are production ready
                 if (this.config.get('enableDeveloperExperiments')) {
                     this.set('validating', true);
+
                     papaparse.parse(file, {
                         header: true,
                         skipEmptyLines: true,
@@ -178,12 +172,15 @@ export default ModalComponent.extend({
                                 this._importValidationFailed(validationErrors);
                             } else {
                                 this.set('validating', false);
+                                this.set('customizing', true);
                             }
                         },
                         error: (error) => {
                             this._validationFailed(error);
                         }
                     });
+                } else {
+                    this.set('customizing', true);
                 }
             }
         },
@@ -195,6 +192,11 @@ export default ModalComponent.extend({
             this.set('fileData', null);
             this.set('mapping', null);
             this.set('validationErrors', null);
+
+            this.set('validating', false);
+            this.set('customizing', false);
+            this.set('uploading', false);
+            this.set('summary', false);
         },
 
         upload() {
@@ -205,6 +207,7 @@ export default ModalComponent.extend({
 
         continueImport() {
             this.set('validating', false);
+            this.set('customizing', true);
         },
 
         confirm() {
@@ -283,6 +286,7 @@ export default ModalComponent.extend({
     },
 
     _uploadStarted() {
+        this.set('customizing', false);
         this.set('uploading', true);
     },
 
@@ -296,6 +300,16 @@ export default ModalComponent.extend({
     },
 
     _uploadSuccess(importResponse) {
+        if (importResponse.meta.stats.invalid && importResponse.meta.stats.invalid.errors) {
+            importResponse.meta.stats.invalid.errors.forEach((error) => {
+                if (error.message === 'Value in [members.email] cannot be blank.') {
+                    error.message = this.intl.t('members.Missing email address');
+                } else if (error.message === 'Validation (isEmail) failed for email') {
+                    error.message = this.intl.t('members.Invalid email address');
+                }
+            });
+        }
+
         this.set('importResponse', importResponse.meta.stats);
         // invoke the passed in confirm action to refresh member data
         this.confirm();
@@ -303,6 +317,7 @@ export default ModalComponent.extend({
 
     _uploadFinished() {
         this.set('uploading', false);
+        this.set('summary', true);
     },
 
     _importValidationFailed(errors) {

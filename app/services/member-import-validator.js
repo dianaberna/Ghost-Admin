@@ -3,6 +3,7 @@ import Service, {inject as service} from '@ember/service';
 import validator from 'validator';
 import {formatNumber} from 'ghost-admin/helpers/format-number';
 import {isEmpty} from '@ember/utils';
+import {pluralize} from 'ember-inflector';
 
 export default Service.extend({
     ajax: service(),
@@ -33,8 +34,8 @@ export default Service.extend({
 
             if (!this.membersUtils.isStripeEnabled) {
                 validationErrors.push(new MemberImportError({
-                    message: this.intl.t(`members.Missing Stripe connection ({total})`, {total: formatNumber(totalCount)}),
-                    context: this.intl.t(`members.Stripe customers won't be imported. You need to <a href="#/settings/labs">connect to Stripe</a> to import stripe customers.`, {htmlSafe: true}),
+                    message: this.intl.t(`Missing Stripe connection`),
+                    context: this.intl.t(`{StripeCustomer, plural} won't be imported. You need to <a href="#/settings/labs">connect to Stripe</a> to import Stripe customers.`, {htmlSafe: true, StripeCustomer: totalCount}),
                     type: 'warning'
                 }));
             } else {
@@ -42,7 +43,7 @@ export default Service.extend({
                 if (stripeSeverValidation !== true) {
                     validationErrors.push(new MemberImportError({
                         message: this.intl.t('members.Wrong Stripe account'),
-                        context: this.intl.t(`members.The CSV contains Stripe customers from a different Stripe account. These members will not be imported. Make sure you're connected to the correct <a href="#/settings/labs">Stripe account</a>.`),
+                        context: this.intl.t(`members.The CSV contains Stripe customers from a different Stripe account. These members will not be imported. Make sure you're connected to the correct <a href="#/settings/labs">Stripe account</a>.`, {htmlSafe: true}),
                         type: 'warning'
                     }));
                 }
@@ -50,7 +51,7 @@ export default Service.extend({
 
             if (duplicateCount) {
                 validationErrors.push(new MemberImportError({
-                    message: this.intl.t(`members.Duplicate Stripe ID ({total})`, {total: formatNumber(duplicateCount)}),
+                    message: this.intl.t(`members.Duplicate Stripe ID ({duplicateCount})`, {duplicateCount: formatNumber(duplicateCount)}),
                     type: 'warning'
                 }));
             }
@@ -62,26 +63,11 @@ export default Service.extend({
             }));
         } else {
             // check can be done on whole set as it won't be too slow
-            const {invalidCount, emptyCount, duplicateCount} = this._checkEmails(data, mapping);
-            if (invalidCount) {
-                // @TODO: Remove error from displayed errors
-                validationErrors.push(new MemberImportError({
-                    message: this.intl.t(`members.Invalid email address ({total})`, {total: formatNumber(invalidCount)}),
-                    type: 'warning'
-                }));
-            }
+            const {emptyCount} = this._checkEmails(data, mapping);
 
             if (emptyCount) {
                 validationErrors.push(new MemberImportError({
-                    message: this.intl.t(`members.Missing email address ({total})`, {total: formatNumber(emptyCount)}),
-                    type: 'warning'
-                }));
-            }
-
-            if (duplicateCount) {
-                // @TODO: Remove error from displayed errors
-                validationErrors.push(new MemberImportError({
-                    message: this.intl.t(`members.Duplicate email address ({total})`, {total: formatNumber(duplicateCount)}),
+                    message: this.intl.t(`Missing email address <span class="fw4">({emptyCount})</span>`, {htmlSafe: true, emptyCount: formatNumber(emptyCount)}),
                     type: 'warning'
                 }));
             }
@@ -142,7 +128,7 @@ export default Service.extend({
     },
 
     /**
-     * Detects validated data types:
+     * Detects supported data types and auto-detects following two needed for validation:
      *  1. email
      *  2. stripe_customer_id
      *
@@ -151,6 +137,22 @@ export default Service.extend({
      * @param {Array} data sampled data containing non empty values
      */
     _detectDataTypes(data) {
+        const supportedTypes = [
+            'email',
+            'name',
+            'note',
+            'subscribed_to_emails',
+            'stripe_customer_id',
+            'complimentary_plan',
+            'labels',
+            'created_at'
+        ];
+
+        const autoDetectedTypes = [
+            'email',
+            'stripe_customer_id'
+        ];
+
         let mapping = {};
         let i = 0;
         // loopping through all sampled data until needed data types are detected
@@ -170,6 +172,10 @@ export default Service.extend({
                     mapping.stripe_customer_id = key;
                     continue;
                 }
+
+                if (!mapping[key] && supportedTypes.includes(key) && !(autoDetectedTypes.includes(key))) {
+                    mapping[key] = key;
+                }
             }
 
             i += 1;
@@ -185,29 +191,15 @@ export default Service.extend({
 
     _checkEmails(validatedSet, mapping) {
         let emptyCount = 0;
-        let invalidCount = 0;
-        let duplicateCount = 0;
-        let emailMap = {};
 
         validatedSet.forEach((member) => {
             let emailValue = member[mapping.email];
             if (!emailValue) {
                 emptyCount += 1;
             }
-
-            if (emailValue && !validator.isEmail(emailValue)) {
-                invalidCount += 1;
-            } else if (emailValue) {
-                if (emailMap[emailValue]) {
-                    emailMap[emailValue] += 1;
-                    duplicateCount += 1;
-                } else {
-                    emailMap[emailValue] = 1;
-                }
-            }
         });
 
-        return {invalidCount, emptyCount, duplicateCount};
+        return {emptyCount};
     },
 
     _countStripeRecors(validatedSet, mapping) {
