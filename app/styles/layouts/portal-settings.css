@@ -53,24 +53,217 @@
     flex-direction: column;
 }
 
-.gh-portal-button-icon {
-    cursor: pointer;
-    height: 44px;
-    padding: 5px 5px;
-    width: 44px;
-    margin-right: 3px;
-}
-
-.gh-portal-button-icon:hover {
-    border: 1px solid skyblue;
-}
-
-.gh-portal-button-icon.selected-icon {
-    border: 1px solid lightblue;
-}
-
 .gh-show-modal-link-form .gh-input {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.gh-portal-settings-sidebar {
+    padding: 0px 24px 20px;
+}
+
+.gh-portal-settings-form {
+    min-width: 290px;
+}
+
+.gh-portal-settings .form-group.space-l {
+    margin-bottom: 1.9em;
+}
+
+.gh-portal-setting-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.gh-portal-settings .for-switch.small {
+    width: 36px !important;
+    height: 22px !important;
+}
+
+.gh-portal-setting-sectionheading {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: var(--midlightgrey);
+    margin: 0 0 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.2px;
+}
+
+.gh-portal-setting-section {
+    margin: 12px -24px;
+    padding: 0 28px;
+}
+
+.gh-portal-setting-section.divider-top {
+    border-top: 1px solid var(--whitegrey);
+    padding-top: 16px;
+}
+
+.gh-portal-settings .input-color input {
+    height: 30px;
+    width: 102px;
+    padding: 3px 4px 3px 44px;
+    font-size: 1.3rem;
+}
+
+.gh-portal-settings .input-color .color-box {
+    height: 28px;
+    width: 28px;
+}
+
+.gh-portal-settings .input-color::after {
+    top: 5px;
+    left: 34px;
+}
+
+.gh-portal-settings .input-color input:focus + .color-box {
+    height: 26px;
+    width: 28px;
+}
+
+.gh-portal-settings .gh-select svg {
+    top: 19px;
+    right: 9px;
+}
+
+.gh-portal-settings-topbarheight {
+    height: 66px;
+}
+
+.gh-portal-settings-main {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    padding: 0 20px 20px;
+    border-left: 1px solid var(--whitegrey);
+}
+
+.gh-portal-settings .modal-footer {
+    margin-top: 28px;
+}
+
+.gh-portal-settings-maintabs {
+    list-style: none;
+    list-style-type: none;
+    display: flex;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+    border: 1px solid color-mod(var(--midgrey) l(+35%) s(+10%));
+    border-radius: 5px;
+    letter-spacing: 0.2px;
+    box-shadow: 0 2px 5px -3px rgba(0,0,0,.12);
+}
+
+.gh-portal-settings-maintabs li {
+    padding: 0;
+    margin: 0;
+}
+
+
+.gh-portal-settings-maintabs li a {
+    position: relative;
+    display: inline-block;
+    padding: 3px 10px 4px;
+    margin: 4px;
+    color: color-mod(var(--midgrey) l(-7%));
+    background: var(--white);
+    min-width: 56px;
+    text-align: center;
+    border-radius: 2px;
+    outline: none;
+    box-sizing: content-box;
+    font-size: 1.3rem;
+}
+
+.gh-portal-settings-maintabs li.active a {
+    color: var(--blue);
+    font-weight: 500;
+    box-shadow: 0 0 0 2px var(--blue);
+}
+
+.gh-portal-settings-icons {
+    display: flex;
+    flex-grow: 1;
+    align-items: center;
+    justify-content: flex-start;
+    border-right: 1px solid var(--lightgrey);
+    padding: 2px;
+}
+
+.gh-portal-button-icon {
+    display: inline-block;
+    cursor: pointer;
+    width: 41px;
+    height: 41px;
+    padding: 10px;
+    background-repeat: no-repeat;
+    background-size: 22px 22px;
+    background-position: center;
+    border-radius: 2px;
+    margin: 2px 3px 2px;
+}
+
+.gh-portal-button-icon:hover {
+    box-shadow: 0px 0px 0px 1px color-mod(var(--blue) a(40%));
+}
+
+.gh-portal-button-icon.selected-icon {
+    box-shadow: 0px 0px 0px 2px var(--blue);
+}
+
+.gh-portal-button-icon svg {
+    fill: var(--midlightgrey-d1);
+}
+
+.gh-portal-button-icon.selected-icon svg {
+    fill: var(--blue);
+}
+
+.gh-portal-button-uploadicon,
+.gh-portal-button-uploadicon:hover,
+.gh-portal-button-uploadicon:focus {
+    height: 44px;
+    width: 46px;
+    border: none;
+    box-shadow: none;
+}
+
+.gh-portal-button-uploadicon span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.gh-portal-button-uploadicon span svg {
+    width: 18px;
+    height: 18px;
+}
+
+.gh-portal-button-uploadicon:hover span svg {
+    fill: var(--darkgrey);
+}
+
+.gh-portal-setting-copy {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    top: 2px;
+    right: 2px;
+    height: 34px;
+    padding: 3px 8px 5px 9px;
+    border-radius: 2px;
+    background: var(--white);
+    border: 1px solid var(--whitegrey);
+}
+
+.gh-portal-siteiframe {
+    border-radius: 5px;
+    border: 1px solid var(--whitegrey);
+    transform: scale(0.9) !important;
+    transform-origin: 0 0;
+    width: calc((1 / 0.9) * 100%) !important;
+    height: calc((1 / 0.9) * 100%) !important;
 }

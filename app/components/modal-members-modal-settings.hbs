@@ -1,15 +1,16 @@
 <div class="modal-body gh-ps-modal-body">
-    <div style="display:flex;padding: 0 20px 0 20px;flex-grow: 1">
-        <div style="padding: 20px 20px 0 0;">
-            <h2 class="f6 fw6">{{t "members.Modal Settings"}}</h2>
-            <fieldset>
-                <div class="pt3">
-                    <GhFormGroup @classNames="gh-members-subscribed-checkbox pb4 mb0">
+    <div class="flex pa0 flex-grow-1 gh-portal-settings">
+        <div class="gh-portal-settings-sidebar">
+            <h2 class="f4 fw6 pa0 ma0 flex bb b--whitegrey nl6 nr6 pl6 pr6 mb1 items-center gh-portal-settings-topbarheight">{{t "members.Portal settings"}}</h2>
+            <fieldset class="gh-portal-settings-form">
+                <div class="gh-portal-setting-section">
+                    <h3 class="gh-portal-setting-sectionheading">{{t "members.Singup options"}}</h3>
+                    <GhFormGroup @classNames="gh-members-subscribed-checkbox pb5 mb0">
                         <div class="flex justify-between items-center">
-                            <div style="margin-right: 12px">
-                                <h4 class="gh-setting-title">{{t "members.Display name in signup form"}}</h4>
+                            <div class="mr3">
+                                <h4 class="gh-portal-setting-title">{{t "members.Display name in signup form"}}</h4>
                             </div>
-                            <div class="for-switch">
+                            <div class="for-switch small">
                                 <label
                                     class="switch"
                                     for="signup-name-checkbox"
@@ -26,9 +27,10 @@
                             </div>
                         </div>
                     </GhFormGroup>
+                    {{#if this.isStripeConfigured}}
                     <div>
                         <div class="mb3">
-                            <h4 class="gh-setting-title">{{t "members.Plans available at signup"}}</h4>
+                            <h4 class="gh-portal-setting-title">{{t "members.Plans available at signup"}}</h4>
                         </div>
                         <div class="form-group mb0 for-checkbox">
                             <label
@@ -88,12 +90,13 @@
                             </label>
                         </div>
                     </div>
-                    <div style="border-top: 1px solid #e5eff5;padding: 0 20px;margin: 0 -20px" class="mt3">
-                        <h4 class="mb3 mt3"> {{{t "members.Look &amp; Feel"}}} </h4>
-                        <GhFormGroup @classNames="flex">
-                            <div class="gh-setting-content flex items-center">
-                                <div class="gh-setting-title">{{t "members.Accent Color"}}</div>
-                            </div>
+                    {{/if}}
+                </div>
+                <div class="gh-portal-setting-section divider-top">
+                    <h3 class="gh-portal-setting-sectionheading"> {{{t "members.Look &amp; Feel"}}} </h3>
+                    <GhFormGroup @classNames="flex">
+                        <div class="flex w-100 items-center justify-between">
+                            <h4 class="gh-portal-setting-title">{{t "members.Accent Color"}}</h4>
                             <div class="gh-setting-action">
                                 <GhFormGroup
                                     @errors={{settings.errors}}
@@ -123,32 +126,32 @@
                                     />
                                 </GhFormGroup>
                             </div>
-                        </GhFormGroup>
-                        <GhFormGroup @classNames="gh-members-subscribed-checkbox mb0pt3 b--whitegrey">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <h4 class="gh-setting-title">{{t "members.Show Portal button"}}</h4>
-                                </div>
-                                <div class="for-switch">
-                                    <label
-                                        class="switch"
-                                        for="portal-button-checkbox"
+                        </div>
+                    </GhFormGroup>
+                    <GhFormGroup @classNames="gh-members-subscribed-checkbox mb0pt3 b--whitegrey">
+                        <div class="flex justify-between items-center nt2">
+                            <h4 class="gh-portal-setting-title">{{t "members.Show Portal button"}}</h4>
+                            <div class="for-switch small">
+                                <label
+                                    class="switch"
+                                    for="portal-button-checkbox"
+                                >
+                                    <input
+                                        type="checkbox"
+                                        checked={{this.settings.portalButton}}
+                                        id="portal-button-checkbox"
+                                        name="portal-button-checkbox"
+                                        onclick={{action "togglePortalButton" value="target.checked"}}
                                     >
-                                        <input
-                                            type="checkbox"
-                                            checked={{this.settings.portalButton}}
-                                            id="portal-button-checkbox"
-                                            name="portal-button-checkbox"
-                                            onclick={{action "togglePortalButton" value="target.checked"}}
-                                        >
-                                        <span class="input-toggle-component"></span>
-                                    </label>
-                                </div>
+                                    <span class="input-toggle-component"></span>
+                                </label>
                             </div>
-                        </GhFormGroup>
-                        {{#if this.settings.portalButton}}
-                            <GhFormGroup>
-                                <h4 class="gh-setting-title mb1">{{t "members.Portal button style"}}</h4>
+                        </div>
+                    </GhFormGroup>
+                    {{#if this.settings.portalButton}}
+                        <div class="mt5">
+                            <GhFormGroup @classNames="space-l">
+                                <h4 class="gh-portal-setting-title mb1">{{t "members.Portal button style"}}</h4>
                                 <span
                                     class="gh-select mt2"
                                     data-select-text="test"
@@ -167,8 +170,8 @@
                                 </span>
                             </GhFormGroup>
                             {{#if showIconSetting}}
-                                <GhFormGroup>
-                                    <h4 class="gh-setting-title">{{t "members.Icon"}}</h4>
+                                <GhFormGroup @classNames="space-l">
+                                    <h4 class="gh-portal-setting-title">{{t "members.Icon"}}</h4>
                                     <GhUploader
                                         @extensions={{this.iconExtensions}}
                                         @paramsHash={{hash purpose="icon"}}
@@ -176,15 +179,10 @@
                                         as
                                         |uploader|
                                     >
-                                        <div class="flex items-center mt2">
-                                            <div
-                                                class="flex flex-grow-1 justify-center"
-                                                style="border: 1px solid #d6e3eb;border-radius: 4px;padding: 5px 5px;"
-                                            >
+                                        <div class="flex items-center justify-between mt2 br3 ba b--whitegrey bg-white">
+                                            <div class="gh-portal-settings-icons">
                                                 {{#each this.defaultButtonIcons as |imgIcon| }}
-                                                    <img
-                                                        src={{imgIcon}}
-                                                        alt="icon" class="gh-portal-button-icon {{if (eq this.buttonIcon imgIcon) "selected-icon"}}" onclick={{action "selectDefaultIcon" imgIcon}} />
+                                                    <span class="gh-portal-button-icon {{if (eq this.buttonIcon imgIcon) "selected-icon"}}" onclick={{action "selectDefaultIcon" imgIcon}}>{{svg-jar imgIcon}}</span>
                                                 {{/each}}
                                                 {{#if uploader.isUploading}}
                                                     {{uploader.progressBar}}
@@ -198,17 +196,9 @@
                                                     >
                                                 {{/if}}
                                             </div>
-                                            <div
-                                                class="flex gh-setting-action"
-                                                style="border: 1px solid #d6e3eb;border-radius: 4px;padding: 9px 12px;"
-                                            >
-                                                <button
-                                                    type="button"
-                                                    class="gh-btn"
-                                                    onclick={{action "triggerFileDialog"}}
-                                                    data-test-image-upload-btn="icon"
-                                                >
-                                                    <span style="font-size:24px">+</span>
+                                            <div class="flex gh-setting-action">
+                                                <button type="button" class="gh-btn gh-portal-button-uploadicon" onclick={{action "triggerFileDialog"}} data-test-image-upload-btn="icon">
+                                                    <span>{{svg-jar "add" class="w5 h5"}}</span>
                                                 </button>
                                                 <div style="display:none">
                                                     <GhFileInput
@@ -224,82 +214,84 @@
 
                                 </GhFormGroup>
                             {{/if}}
-                            <GhFormGroup>
-                                <h4 class="gh-setting-title">{{t "members.Signup button text"}}</h4>
+                        </div>
+                        {{#if showButtonTextSetting}}
+                        <GhFormGroup @classNames="space-l">
+                            <h4 class="gh-portal-setting-title">{{t "members.Signup button text"}}</h4>
 
-                                <div class="flex items-center mt2">
-                                    <GhTextInput
-                                        @value={{readonly this.signupButtonText}}
-                                        @type="text"
-                                        @input={{action "setSignupButtonText"}}
-                                    />
-                                </div>
-                                <p class="gh-setting-desc pa0 ma0">{{t "members.Visible to logged out members only"}}</p>
-                            </GhFormGroup>
-                        {{/if}}
-                    </div>
-                    <div style="border-top: 1px solid #e5eff5;padding: 0 20px;margin: 0 -20px" class="mt3">
-                        <h4 class="mb3 mt3"> {{t "members.Links"}} </h4>
-                        <GhFormGroup>
-                            <div class="flex" style="width:100%">
-                                <div style="flex-grow:1;font-weight: bold">{{t "members.Show modal"}}</div>
-                                <div {{action (toggle "isShowModalLink" this)}} style="color:#3eb0ef;cursor:pointer"> {{if this.isShowModalLink (t "members.Data Attribute") (t "members.Link")}} </div>
-                            </div>
-                            <div class="flex items-center justify-center mt1 gh-show-modal-link-form">
+                            <div class="flex items-center mt2">
                                 <GhTextInput
-                                    @value={{this.showModalLinkOrAttribute}}
+                                    @value={{readonly this.signupButtonText}}
                                     @type="text"
-                                    @disabled={{true}}
+                                    @input={{action "setSignupButtonText"}}
                                 />
-                                <button type="button" {{action (perform this.copyLinkOrAttribute)}} class="bg-black-70 f8 pa1 pr3 pl3 br3 white fw4 flex items-center">
-                                    {{#if this.copyLinkOrAttribute.isRunning}}
-                                        {{svg-jar "check-circle" class="w3 v-mid mr2 stroke-white"}} {{t "taskButton.Copied"}}
-                                    {{else}}
-                                        {{t "taskButton.Copy"}}
-                                    {{/if}}
-                                </button>
-                            </div>
-                            <div class="mt2">
-                                <span onclick={{action "switchPreviewPage" "links"}} style="color:#3eb0ef;cursor:pointer"> {{t "members.Show more..."}}</span>
                             </div>
                         </GhFormGroup>
-                    </div>
+                        {{/if}}
+                    {{/if}}
+                </div>
+                <div class="gh-portal-setting-section divider-top">
+                    <h4 class="gh-portal-setting-sectionheading">{{t "members.Links"}}</h4>
+                    <GhFormGroup>
+                        <div class="flex w-100 justify-between items-center">
+                            <h4 class="gh-portal-setting-title">{{t "members.Show modal"}}</h4>
+                            <div {{action (toggle "isShowModalLink" this)}} class="blue pointer f8"> {{if this.isShowModalLink (t "members.Data Attribute") (t "members.Link")}} </div>
+                        </div>
+                        <div class="flex items-center justify-center mt1 gh-show-modal-link-form relative">
+                            <GhTextInput
+                                @value={{this.showModalLinkOrAttribute}}
+                                @type="text"
+                                @disabled={{true}}
+                            />
+                            <button type="button" {{action (perform this.copyLinkOrAttribute)}} class="gh-portal-setting-copy">
+                                {{#if this.copyLinkOrAttribute.isRunning}}
+                                    {{svg-jar "check-circle" class="w4 v-mid mr1 stroke-darkgrey"}} {{t "taskButton.Copied"}}
+                                {{else}}
+                                    <span data-tooltip={{t "taskButton.Copy"}}>{{svg-jar "copy" class="w4 v-mid fill-darkgrey"}}</span>
+                                {{/if}}
+                            </button>
+                        </div>
+                        <div>
+                            <span onclick={{action "switchPreviewPage" "links"}} class="blue pointer f7">{{t "members.Show more"}}</span>
+                        </div>
+                    </GhFormGroup>
                 </div>
             </fieldset>
         </div>
-        <div style="border-left: 1px solid #e5eff5;">
-        </div>
-        <div style="display: flex; flex-direction: column; flex-grow: 1; padding: 20px 0 20px 20px;">
-            <div style="padding-bottom: 12px;display: flex;justify-content: center;">
-                <span style="padding: 0 20px 0 20px; font-weight: bold"><a href="#" {{action "switchPreviewPage" "signup"}} data-test-link="switch-portal-preview-page">{{t "members.Signup"}}</a></span>
-                <span style="padding: 0 20px 0 20px; font-weight: bold"><a href="#" {{action "switchPreviewPage" "accountHome"}} data-test-link="switch-portal-preview-page">{{t "members.Account"}}</a></span>
-                <span style="padding: 0 20px 0 20px; font-weight: bold"><a href="#" {{action "switchPreviewPage" "links"}} data-test-link="switch-portal-preview-page">{{t "members.Links"}}</a></span>
+        <div class="gh-portal-settings-main">
+            <div class="flex items-center justify-between w-100 gh-portal-settings-topbarheight">
+                <ul class="gh-portal-settings-maintabs">
+                    <li class="{{if (eq this.page "signup") "active"}}"><a href="#" {{action "switchPreviewPage" "signup"}} data-test-link="switch-portal-preview-page">{{t "members.Signup"}}</a></li>
+                    <li class="{{if (eq this.page "accountHome") "active"}}"><a href="#" {{action "switchPreviewPage" "accountHome"}} data-test-link="switch-portal-preview-page">{{t "members.Account"}}</a></li>
+                    <li class="{{if (eq this.page "links") "active"}}"><a href="#" {{action "switchPreviewPage" "links"}} data-test-link="switch-portal-preview-page">{{t "members.Links"}}</a></li>
+                </ul>
+                <div class="flex items-center">
+                    <button
+                        class="gh-btn mr3"
+                        {{action "closeModal"}}
+                        {{!-- disable mouseDown so it doesn't trigger focus-out validations --}}
+                        {{on "mousedown" (optional this.noop)}}
+                        data-test-button="cancel-custom-view-form"
+                    >
+                        <span>{{t "common.Cancel"}}</span>
+                    </button>
+
+                    <GhTaskButton
+                        @buttonText={{t "taskButton.Save and close"}}
+                        @successText={{t "taskButton.Saved"}}
+                        @task={{this.saveTask}}
+                        @idleClass="gh-btn-blue"
+                        @class="gh-btn gh-btn-icon"
+                        data-test-button="save-members-modal-setting"
+                    />
+                </div>
             </div>
-            <div style="position: relative;flex-grow: 1">
+            <div class="relative flex-grow-1">
                 <GhSiteIframe
                     @guid="test-site-portal"
                     @src={{this.portalPreviewUrl}}
+                    @classNames="gh-portal-siteiframe"
                 ></GhSiteIframe>
-            </div>
-            <div class="modal-footer">
-                <button
-                    class="gh-btn"
-                    {{action "closeModal"}}
-                    {{!-- disable mouseDown so it doesn't trigger focus-out validations --}}
-                    {{on "mousedown" (optional this.noop)}}
-                    data-test-button="cancel-custom-view-form"
-                >
-                    <span>{{t "common.Cancel"}}</span>
-                </button>
-
-                <GhTaskButton
-                    @buttonText={{t "taskButton.Save and close"}}
-                    @successText={{t "taskButton.Saved"}}
-                    @task={{this.saveTask}}
-                    @idleClass="gh-btn-green"
-                    @class="gh-btn gh-btn-icon"
-                    data-test-button="save-members-modal-setting"
-                />
             </div>
         </div>
     </div>

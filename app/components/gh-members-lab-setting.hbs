@@ -55,6 +55,11 @@
                 <div>
                     <h4 class="gh-setting-title">{{t "Connect to Stripe"}}</h4>
                     {{#if this.stripeConnectAccountId}}
+                        {{#if this.hasActiveStripeSubscriptions}}
+                        <p class="red ma0 pa0 f8 nudge-bottom--2">
+                            {{t "Cannot disconnect while there are members with active Stripe subscriptions."}}
+                        </p>
+                        {{else}}
                         <p class="gh-setting-desc pa0 ma0">
                             {{#if this.stripeConnectSuccess}}
                                 {{svg-jar "check-circle" class="stroke-green w4 h4 nudge-top--3"}} <span class="green-d1">{{t "Successfully connected to {name}" name=this.stripeConnectAccountName}}</span>
@@ -65,10 +70,6 @@
                             {{#unless this.stripeConnectLivemode}}
                                 <span class="gh-members-connect-testmodelabel">{{t "Test mode"}}</span>
                             {{/unless}}
-                        </p>
-                        {{#if this.hasActiveStripeSubscriptions}}
-                        <p class="red ma0 pa0 f8">
-                            {{t "Cannot disconnect while there are members with active Stripe subscriptions."}}
                         </p>
                         {{/if}}
                     {{else}}
@@ -307,7 +308,7 @@
         <section class="bb b--whitegrey pa5">
             <div class="flex justify-between">
                 <div>
-                    <h4 class="gh-setting-title">{{t "Modal settings"}}</h4>
+                    <h4 class="gh-setting-title">{{t "Portal settings"}}</h4>
                     <p class="gh-setting-desc pa0 ma0">{{t "Customize members modal signup flow"}}</p>
                 </div>
                 <div>
@@ -354,6 +355,7 @@
                                 @value={{readonly this.mailgunSettings.domain}}
                                 @input={{action "setMailgunDomain"}}
                                 @class="mt1"
+                                data-test-mailgun-domain-input={{true}}
                             />
                         </GhFormGroup>
                     </div>
@@ -369,6 +371,7 @@
                             @value={{readonly this.mailgunSettings.apiKey}}
                             @input={{action "setMailgunApiKey"}}
                             @class="mt1 password" @autocomplete="new-password"
+                            data-test-mailgun-api-key-input={{true}}
                         />
                         <a href="https://app.mailgun.com/app/account/security/api_keys" target="_blank" class="mt1 fw4 f8">
                             {{t "Find your Mailgun API keys here &raquo;"}}
@@ -392,9 +395,6 @@
 
 {{#if this.showMembersModalSettings}}
     <GhFullscreenModal @modal="members-modal-settings"
-        @model={{hash
-            allowSelfSignup=this.allowSelfSignup
-        }}
         @close={{action "closeMembersModalSettings"}}
         @modifier="full-overlay portal-settings" />
 {{/if}}
