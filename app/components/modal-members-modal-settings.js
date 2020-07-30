@@ -12,23 +12,23 @@ const ICON_EXTENSIONS = ['gif', 'jpg', 'jpeg', 'png', 'svg'];
 
 const ICON_MAPPING = [
     {
-        icon: 'user-circle',
+        icon: 'portal-icon-1',
         value: 'icon-1'
     },
     {
-        icon: 'ambulance',
+        icon: 'portal-icon-2',
         value: 'icon-2'
     },
     {
-        icon: 'book-open',
+        icon: 'portal-icon-3',
         value: 'icon-3'
     },
     {
-        icon: 'store',
+        icon: 'portal-icon-4',
         value: 'icon-4'
     },
     {
-        icon: 'gift',
+        icon: 'portal-icon-5',
         value: 'icon-5'
     }
 ];
@@ -72,7 +72,7 @@ export default ModalComponent.extend({
 
     portalPreviewUrl: computed('selectedButtonStyle', 'buttonIcon', 'signupButtonText', 'page', 'isFreeChecked', 'isMonthlyChecked', 'isYearlyChecked', 'settings.{portalName,portalButton,accentColor}', function () {
         const baseUrl = this.config.get('blogUrl');
-        const portalBase = '/#/portal';
+        const portalBase = '/#/portal/preview';
         const settingsParam = new URLSearchParams();
         settingsParam.append('button', this.settings.get('portalButton'));
         settingsParam.append('name', this.settings.get('portalName'));
