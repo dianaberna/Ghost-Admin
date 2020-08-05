@@ -3,7 +3,6 @@ import Service, {inject as service} from '@ember/service';
 import validator from 'validator';
 import {formatNumber} from 'ghost-admin/helpers/format-number';
 import {isEmpty} from '@ember/utils';
-import {pluralize} from 'ember-inflector';
 
 export default Service.extend({
     ajax: service(),
