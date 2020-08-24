@@ -7,7 +7,6 @@
             {{t "and sending to {members, plural}" members=@post.email.emailCount}}
         {{else if (eq @post.email.status "submitted")}}
             and sent to {{pluralize @post.email.emailCount "member"}}
-            {{t "and sent to {members, plural}" members=@post.email.emailCount}}
         {{/if}}
     {{else if @post.isScheduled}}
         <time datetime="{{@post.publishedAtUTC}}" class="ml1 green f8" data-test-schedule-countdown>

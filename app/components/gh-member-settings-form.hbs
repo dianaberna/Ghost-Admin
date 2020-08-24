@@ -72,7 +72,9 @@
                 <section class="gh-member-stripe-info pa5 pb0 pt4 flex flex-column flex-row-ns items-start justify-between">
                     <div class="flex items-start w-100">
                         <div class="w-50 flex-auto mr8">
-                            <h4 class="f8 fw6">{{t "members.subscription.Customer data"}}</h4>
+                            <div class="gh-member-header-stripeinfo">
+                                <h4 class="f6 fw6">{{t "members.subscription.Customer"}}</h4>
+                            </div>
                             <table class="gh-member-stripe-table">
                                 <tr>
                                     <td class="gh-member-stripe-label">{{t "members.subscription.Stripe customer ID"}}</td>
@@ -88,7 +90,7 @@
                                         {{#if subscription.customer.name}}
                                             {{subscription.customer.name}}
                                         {{else}}
-                                            <span class="midlightgrey-l2">{{t "members.subscription.No name"}}</span>
+                                            <span class="midgrey-d1">{{t "members.subscription.No name"}}</span>
                                         {{/if}}
                                     </td>
                                 </tr>
@@ -98,7 +100,7 @@
                                         {{#if subscription.customer.email}}
                                             {{subscription.customer.email}}
                                         {{else}}
-                                            <span class="midlightgrey-l2">{{t "members.subscription.No email"}}</span>
+                                            <span class="midgrey-d1">{{t "members.subscription.No email"}}</span>
                                         {{/if}}
                                     </td>
                                 </tr>
@@ -108,7 +110,7 @@
                                         {{#if subscription.startDate}}
                                             {{subscription.startDate}}
                                         {{else}}
-                                            <span class="midlightgrey-l2">{{t "members.subscription.No data"}}</span>
+                                            <span class="midgrey-d1">{{t "members.subscription.No data"}}</span>
                                         {{/if}}
                                     </td>
                                 </tr>
@@ -116,7 +118,30 @@
                         </div>
 
                         <div class="w-50 flex-auto">
-                            <h4 class="f8 fw6">{{t "members.subscription.Subscription data"}}</h4>
+                            <div class="gh-member-header-stripeinfo">
+                                <h4 class="f6 fw6">Subscription</h4>
+                                {{#if (eq subscription.status "active")}}
+                                    {{#if subscription.cancelAtPeriodEnd}}
+                                        <GhTaskButton
+                                            @buttonText={{t "taskButton.Continue subscription"}}
+                                            @successText=""
+                                            @task={{this.continueSubscription}}
+                                            @taskArgs={{subscription.id}}
+                                            @class="gh-btn gh-btn-icon gh-member-btn-cancelsub"
+                                            data-test-button="continue-subscription"
+                                        />
+                                    {{else}}
+                                        <GhTaskButton
+                                            @buttonText={{t "taskButton.Cancel subscription"}}
+                                            @successText=""
+                                            @task={{this.cancelSubscription}}
+                                            @taskArgs={{subscription.id}}
+                                            @class="gh-btn gh-btn-icon gh-member-btn-cancelsub"
+                                            data-test-button="cancel-subscription"
+                                        />
+                                    {{/if}}
+                                {{/if}}
+                            </div>
                             <table class="gh-member-stripe-table">
                                 <tr>
                                     <td class="gh-member-stripe-label">{{t "members.subscription.Stripe subscription ID"}}</td>
@@ -131,7 +156,7 @@
                                     <td class="gh-member-stripe-label">{{t "members.subscription.Plan"}}</td>
                                     <td class="gh-member-stripe-data">
                                         {{subscription.plan.nickname}}
-                                        <span class="midgrey">({{subscription.amount}}
+                                        <span class="midgrey-d1">({{subscription.amount}}
                                             <span class="ttu">{{subscription.plan.currency}}</span>/{{subscription.plan.interval}})
                                         </span>
                                     </td>

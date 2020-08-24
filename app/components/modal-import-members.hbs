@@ -169,13 +169,7 @@
                 <span>{{t "members.Start over"}}</span>
             </button>
             <button class="gh-btn gh-btn-green" {{action "upload"}} disabled={{this.importDisabled}}>
-                <span>
-                    {{#if this.fileData.length}} {{format-number this.fileData.length}} {{pluralize this.fileData.length 'member' without-count=true}}
-                        {{t "members.Import {members, plural}" members=this.fileData.length}}
-                    {{else}}
-                        {{t "members.Import"}}
-                    {{/if}}
-                </span>
+                <span>{{t "members.Import {members, plural}" members=this.fileData.length}}</span>
             </button>
         {{/if}}
     {{else}}
