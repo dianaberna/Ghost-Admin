@@ -11,11 +11,11 @@ export default Component.extend({
     isLink: true,
 
     toggleValue: computed('isLink', function () {
-        return this.isLink ? this.intl.t('portal.Show Data Attributes') : ('portal.Show Links');
+        return this.isLink ? this.intl.t('portal.Data attributes') : this.intl.t('portal.Links');
     }),
 
     sectionHeaderLabel: computed('isLink', function () {
-        return this.isLink ? this.intl.t('portal.Link') : this.intl.t('portal.Data Attribute');
+        return this.isLink ? this.intl.t('portal.Link') : this.intl.t('portal.Data attribute');
     }),
 
     init() {

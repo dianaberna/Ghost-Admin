@@ -96,7 +96,7 @@
                     <h3 class="gh-portal-setting-sectionheading"> {{{t "members.Look &amp; Feel"}}} </h3>
                     <GhFormGroup @classNames="flex">
                         <div class="flex w-100 items-center justify-between">
-                            <h4 class="gh-portal-setting-title">{{t "members.Accent Color"}}</h4>
+                            <h4 class="gh-portal-setting-title">{{t "members.Accent color"}}</h4>
                             <div class="gh-setting-action">
                                 <GhFormGroup
                                     @errors={{settings.errors}}
@@ -114,10 +114,16 @@
                                             @value={{accentColor}}
                                             data-test-input="accentColor"
                                         />
+                                        <div class="color-picker-horizontal-divider"></div>
                                         <div
-                                            class="color-box"
+                                            class="color-box-container"
                                             style={{this.backgroundStyle}}
-                                        ></div>
+                                        >
+                                            <input
+                                                type="color" name="accent-color" class="color-picker" value="{{this.colorPickerValue}}"
+                                                oninput={{action "updateAccentColor" value="target.value"}}
+                                            >
+                                        </div>
                                     </div>
                                     <GhErrorMessage
                                         @errors={{settings.errors}}
@@ -200,9 +206,11 @@
                                                         alt="icon"
                                                         data-test-icon-img
                                                     >
+                                                    {{#if (eq this.buttonIcon this.customIcon)}}
                                                     <button type="button" class="gh-btn gh-btn-hover-red gh-portal-button-deleteicon" {{action "deleteCustomIcon"}}>
                                                         <span> {{svg-jar "trash" class="w5 h5"}} </span>
                                                     </button>
+                                                    {{/if}}
                                                 {{else}}
                                                     <button type="button" class="gh-btn gh-portal-button-uploadicon" onclick={{action "triggerFileDialog"}} data-test-image-upload-btn="icon">
                                                         <span>{{svg-jar "add" class="w5 h5"}}</span>
@@ -229,7 +237,7 @@
 
                             <div class="flex items-center mt2">
                                 <GhTextInput
-                                    @value={{readonly this.signupButtonText}}
+                                    @value={{readonly this.settings.portalButtonSignupText}}
                                     @type="text"
                                     @input={{action "setSignupButtonText"}}
                                 />

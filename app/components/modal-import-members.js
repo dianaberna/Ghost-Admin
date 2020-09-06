@@ -10,7 +10,6 @@ import {
 import {computed} from '@ember/object';
 import {htmlSafe} from '@ember/string';
 import {isBlank} from '@ember/utils';
-import {run} from '@ember/runloop';
 import {inject as service} from '@ember/service';
 import {tracked} from '@glimmer/tracking';
 
@@ -82,7 +81,6 @@ export default ModalComponent.extend({
     fileData: null,
     mapping: null,
     paramName: 'membersfile',
-    uploadPercentage: 0,
     importResponse: null,
     failureMessage: null,
     validationErrors: null,
@@ -130,19 +128,6 @@ export default ModalComponent.extend({
         }
 
         return formData;
-    }),
-
-    progressStyle: computed('uploadPercentage', function () {
-        let percentage = this.uploadPercentage;
-        let width = '';
-
-        if (percentage > 0) {
-            width = `${percentage}%`;
-        } else {
-            width = '0';
-        }
-
-        return htmlSafe(`width: ${width}`);
     }),
 
     init() {
@@ -276,16 +261,7 @@ export default ModalComponent.extend({
             data: formData,
             processData: false,
             contentType: false,
-            dataType: 'text',
-            xhr: () => {
-                let xhr = new window.XMLHttpRequest();
-
-                xhr.upload.addEventListener('progress', (event) => {
-                    this._uploadProgress(event);
-                }, false);
-
-                return xhr;
-            }
+            dataType: 'text'
         }).then((importResponse) => {
             this._uploadSuccess(JSON.parse(importResponse));
         }).catch((error) => {
@@ -298,15 +274,6 @@ export default ModalComponent.extend({
     _uploadStarted() {
         this.set('customizing', false);
         this.set('uploading', true);
-    },
-
-    _uploadProgress(event) {
-        if (event.lengthComputable) {
-            run(() => {
-                let percentage = Math.round((event.loaded / event.total) * 100);
-                this.set('uploadPercentage', percentage);
-            });
-        }
     },
 
     _uploadSuccess(importResponse) {

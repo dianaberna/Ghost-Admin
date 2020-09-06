@@ -1,12 +1,12 @@
 
 <header class="modal-header" data-test-modal="delete-user">
-    <h1>{{t "Upgrade your plan to enable newsletter delivery"}}</h1>
+    <h1>{{t "Upgrade to enable newsletter delivery"}}</h1>
 </header>
 <button class="close" title="{{t "common.Close"}}" {{on "click" this.closeModal}}>{{svg-jar "close"}}<span class="hidden">{{t "common.Close"}}</span></button>
 
 <div class="modal-body">
     <p>
-        {{{t "Your current plan allows you to have up to <strong>{limit}</strong> members, but you currently have <strong>{{upgradeMessage.total}}</strong> members." limit=upgradeMessage.limit}}}
+        {{{t "Your current plan allows you to have up to <strong>{limit, plural}</strong>, but you currently have <strong>{total, plural}</strong>" limit=upgradeMessage.limit total=upgradeMessage.total}}}.
     </p>
 </div>
 

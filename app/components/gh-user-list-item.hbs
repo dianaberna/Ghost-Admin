@@ -13,10 +13,10 @@
         <div class="apps-card-right">
             <div class="apps-configured">
                 {{#if user.isSuspended}}
-                    <span class="gh-badge author">{{t "Suspended"}}</span>
+                    <span class="gh-badge suspended">{{t "Suspended"}}</span>
                 {{else}}
                     {{#if user.isLocked}}
-                        <span class="gh-badge author">{{t "Locked"}}</span>
+                        <span class="gh-badge locked">{{t "Locked"}}</span>
                     {{/if}}
                     {{#unless this.session.user.isAuthorOrContributor}}
                         {{#each user.roles as |role|}}

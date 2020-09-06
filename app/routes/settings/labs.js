@@ -9,6 +9,9 @@ export default AuthenticatedRoute.extend(CurrentUserSettings, {
     queryParams: {
         fromAddressUpdate: {
             replace: true
+        },
+        supportAddressUpdate: {
+            replace: true
         }
     },
 
@@ -26,8 +29,13 @@ export default AuthenticatedRoute.extend(CurrentUserSettings, {
     setupController(controller) {
         if (controller.fromAddressUpdate === 'success') {
             this.notifications.showAlert(
-                this.intl.t(`Done! Newsletter “From address” has been updated`).htmlSafe(),
+                this.intl.t(`Newsletter email address has been updated`).htmlSafe(),
                 {type: 'success', key: 'members.settings.from-address.updated'}
+            );
+        } else if (controller.supportAddressUpdate === 'success') {
+            this.notifications.showAlert(
+                `Support email address has been updated`.htmlSafe(),
+                {type: 'success', key: 'members.settings.support-address.updated'}
             );
         }
     },
