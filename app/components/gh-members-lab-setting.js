@@ -52,7 +52,7 @@ export default Component.extend({
     replyAddresses: null,
     showFromAddressConfirmation: false,
     showSupportAddressConfirmation: false,
-    showMembersModalSettings: false,
+    showPortalSettings: false,
     stripePlanInvalidAmount: false,
     _scratchStripeYearlyAmount: null,
     _scratchStripeMonthlyAmount: null,
@@ -154,12 +154,12 @@ export default Component.extend({
             this.toggleProperty('showFromAddressConfirmation');
         },
 
-        closeMembersModalSettings() {
+        closePortalSettings() {
             const changedAttributes = this.settings.changedAttributes();
             if (changedAttributes && Object.keys(changedAttributes).length > 0) {
                 this.set('showLeaveSettingsModal', true);
             } else {
-                this.set('showMembersModalSettings', false);
+                this.set('showPortalSettings', false);
             }
         },
 
@@ -305,7 +305,7 @@ export default Component.extend({
 
         leavePortalSettings() {
             this.settings.rollbackAttributes();
-            this.set('showMembersModalSettings', false);
+            this.set('showPortalSettings', false);
             this.set('showLeaveSettingsModal', false);
         }
     },
