@@ -13,6 +13,7 @@ export default Component.extend({
     ghostPaths: service(),
     ajax: service(),
     store: service(),
+    intl: service(),
 
     // Allowed actions
     setProperty: () => {},
@@ -33,12 +34,14 @@ export default Component.extend({
         let subscriptions = this.member.get('stripe');
         if (subscriptions && subscriptions.length > 0) {
             return subscriptions.map((subscription) => {
+                const statusLabel = subscription.status === 'past_due' ? 'Past due' : subscription.status;
                 return {
                     id: subscription.id,
                     customer: subscription.customer,
                     name: subscription.name || '',
                     email: subscription.email || '',
                     status: subscription.status,
+                    statusLabel: this.intl.t(`members.status.${statusLabel}`),
                     startDate: subscription.start_date ? moment(subscription.start_date).format('D MMM YYYY') : '-',
                     plan: subscription.plan,
                     amount: parseInt(subscription.plan.amount) ? (subscription.plan.amount / 100) : 0,

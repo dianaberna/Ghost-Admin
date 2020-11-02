@@ -856,6 +856,7 @@
   "Invite staff users": "Invite staff users",
   "{invalid emails, plural}": "{invalid emails, plural, =1{an invalid email} other{# invalid emails}}",
   "Invite {users, plural}": "Invite {users, plural, =1{a user} other{# users}}",
+  "• Sent to <span class=\"midgrey-l2 fw5\">{members, plural}</span>": "• Sent to <span class=\"midgrey-l2 fw5\">{members, plural, ={a member} other{# members}}</span>",
   "Ghost works best when shared with others. Collaborate, get feedback on your posts &amp; work together on ideas.": "Ghost works best when shared with others. Collaborate, get feedback on your posts &amp; work together on ideas.",
   "Enter one email address per line, we’ll handle the rest!": "Enter one email address per line, we’ll handle the rest!",
   "I'll do this later, take me to my site!": "I'll do this later, take me to my site!",

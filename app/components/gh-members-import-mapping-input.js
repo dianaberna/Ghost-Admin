@@ -1,8 +1,6 @@
 import Component from '@glimmer/component';
 import {action} from '@ember/object';
-import {computed} from '@ember/object';
 import {inject as service} from '@ember/service';
-import {tracked} from '@glimmer/tracking';
 
 const FIELD_MAPPINGS = [
     {label: 'Email', value: 'email'},
@@ -17,9 +15,9 @@ const FIELD_MAPPINGS = [
 
 export default class extends Component {
     @service intl;
-    @tracked availableFields = computed('intl.locale', function () {
+    get availableFields() {
         return FIELD_MAPPINGS.map(({label, value}) => ({label: this.intl.t(`members.${label}`, value)}));
-    });
+    }
 
     get mapTo() {
         return this.args.mapTo;

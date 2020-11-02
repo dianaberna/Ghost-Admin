@@ -6,6 +6,7 @@
     @deselectCard={{action this.deselectCard}}
     @onDeselect={{action "onDeselect"}}
     @editCard={{action this.editCard}}
+    @saveAsSnippet={{if this.payload.html this.saveAsSnippet}}
     @toolbar={{this.toolbar}}
     @hasEditMode={{false}}
     @showSelectedOutline={{this.payload.html}}

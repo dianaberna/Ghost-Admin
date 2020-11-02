@@ -1,13 +1,29 @@
-<div class="flex flex-column b--whitegrey bt">
-    <section class="bb b--whitegrey pa5">
+<div class="flex flex-column b--whitegrey bt mb5">
 
+    {{#if (and this.feature.labs.members (or (enable-developer-experiments) this.config.portal))}}
+    <div class="gh-setting-header">{{t "members.Portal"}}</div>
+    <section class="flex flex-column br3 shadow-1 bg-grouped-table mt1 pa5 relative gh-settings-portal-section">
+        <div class="gh-setting-last gh-setting-first relative">
+            <div class="gh-setting-content">
+                <h4 class="gh-setting-title">{{t "members.Portal settings"}}</h4>
+                <p class="gh-setting-desc pa0 ma0">{{t "members.Customize members modal signup flow"}}</p>
+            </div>
+            <div class="gh-setting-action">
+                <button type="button" class="gh-btn gh-btn-outline blue" {{action (toggle "showPortalSettings" this)}} data-test-toggle-membersFrom><span> {{t "common.Customize"}} </span></button>
+            </div>
+        </div>
+    </section>
+    {{/if}}
+
+    <div class="gh-setting-header">{{t "members.Payments"}}</div>
+    <section class="flex flex-column br3 shadow-1 bg-grouped-table mt1 pa5">
         {{#if this.stripeDirect}}
-            <div class="flex justify-between">
-                <div>
+            <div class="gh-setting-first">
+                <div class="gh-setting-content">
                     <h4 class="gh-setting-title">{{t "members.Connect to Stripe"}}</h4>
                     <p class="gh-setting-desc pa0 ma0">{{t "members.Configure API keys to create subscriptions and take payments"}}</p>
                 </div>
-                <div>
+                <div class="gh-setting-action">
                     <button type="button" class="gh-btn" {{action (toggle "membersStripeOpen" this)}} data-test-toggle-membersstripe><span>{{if this.membersStripeOpen (t "common.Close") (t "common.Expand")}}</span></button>
                 </div>
             </div>
@@ -51,8 +67,8 @@
                 </div>
             {{/liquid-if}}
         {{else}}
-            <div class="flex justify-between">
-                <div>
+            <div class="gh-setting-first">
+                <div class="gh-setting-content">
                     <h4 class="gh-setting-title">{{t "members.Connect to Stripe"}}</h4>
                     {{#if this.stripeConnectAccountId}}
                         {{#if this.hasActiveStripeSubscriptions}}
@@ -76,7 +92,7 @@
                         <p class="gh-setting-desc pa0 ma0">{{t "members.Connect to Stripe to create subscriptions and take payments"}}</p>
                     {{/if}}
                 </div>
-                <div>
+                <div class="gh-setting-action">
                     {{#if this.stripeConnectAccountId}}
                         <button type="button" class="gh-btn" {{action "openDisconnectStripeModal"}}><span>{{t "common.Disconnect"}}</span></button>
                     {{else}}
@@ -86,7 +102,7 @@
             </div>
 
             {{#liquid-if this.membersStripeOpen}}
-            <div class="mb4 mt6">
+            <div class="mt2">
                 <div class="flex flex-column flex-row-l items-start justify-between">
                     <div class="w-100 w-50-l">
                         <label class="fw6 f8">{{t "members.Generate secure key"}}</label>
@@ -105,7 +121,7 @@
                         <div class="nudge-top--3">
                             <GhTextarea
                                 @class="gh-members-stripe-connect-token"
-                                @placeholder="Paste your secure key here"
+                                @placeholder={{t "members.Paste your secure key here"}}
                                 @input={{action "setStripeConnectIntegrationToken"}}
                             />
                             {{#if this.stripeConnectError}}<p class="mb0 mt2 f8 red">{{this.stripeConnectError}}</p>{{/if}}
@@ -136,29 +152,13 @@
             </div>
             {{/liquid-if}}
         {{/if}}
-    </section>
 
-    {{#if (or this.config.enableDeveloperExperiments this.config.portal)}}
-        <section class="bb b--whitegrey pa5">
-            <div class="flex justify-between">
-                <div>
-                    <h4 class="gh-setting-title">{{t "members.Portal settings"}}</h4>
-                    <p class="gh-setting-desc pa0 ma0">{{t "members.Customize members modal signup flow"}}</p>
-                </div>
-                <div>
-                    <button type="button" class="gh-btn" {{action (toggle "showPortalSettings" this)}} data-test-toggle-membersFrom><span> {{t "common.Customize"}} </span></button>
-                </div>
-            </div>
-        </section>
-    {{/if}}
-
-    <section class="bb b--whitegrey pa5">
-        <div class="flex justify-between">
-            <div>
+        <div class="gh-setting-last">
+            <div class="gh-setting-content">
                 <h4 class="gh-setting-title">{{t "members.Subscription pricing"}}</h4>
                 <p class="gh-setting-desc pa0 ma0">{{t "members.Set monthly and yearly recurring subscription prices"}}</p>
             </div>
-            <div>
+            <div class="gh-setting-action">
                 <button type="button" class="gh-btn" {{action (toggle "membersPricingOpen" this)}} data-test-toggle-memberspricing><span>{{if this.membersPricingOpen (t "common.Close") (t "common.Expand")}}</span></button>
             </div>
         </div>
@@ -219,13 +219,14 @@
         {{/liquid-if}}
     </section>
 
-    <section class="bb b--whitegrey pa5">
-        <div class="flex justify-between">
-            <div>
+    <div class="gh-setting-header">{{t "members.Access"}}</div>
+    <section class="flex flex-column br3 shadow-1 bg-grouped-table mt1 pa5">
+        <div class="gh-setting-first">
+            <div class="gh-setting-content">
                 <h4 class="gh-setting-title">{{t "members.Allow free member signup"}}</h4>
                 <p class="gh-setting-desc pa0 ma0">{{t "members.If disabled, members can only be signed up via payment checkout or API integration"}}</p>
             </div>
-            <div>
+            <div class="gh-setting-action">
                 <div class="for-switch">
                     <label class="switch" for="members-allow-self-signup" {{action "toggleSelfSignup" bubbles="false"}}>
                         <input type="checkbox" checked={{this.allowSelfSignup}} class="gh-input" onclick={{action "toggleSelfSignup"}} data-test-checkbox="members-allow-self-signup">
@@ -234,15 +235,13 @@
                 </div>
             </div>
         </div>
-    </section>
 
-    <section class="bb b--whitegrey pa5">
-        <div class="flex justify-between">
-            <div>
+        <div class="gh-setting-last">
+            <div class="gh-setting-content">
                 <h4 class="gh-setting-title">{{t "members.Default post access"}}</h4>
                 <p class="gh-setting-desc pa0 ma0">{{t "members.When a new post is created, who should have access to it?"}}</p>
             </div>
-            <div>
+            <div class="gh-setting-action">
                 <button type="button" class="gh-btn" {{action (toggle "membersPostAccessOpen" this)}} data-test-toggle-memberspostaccess><span>{{if this.membersPostAccessOpen (t "common.Close") (t "common.Expand")}}</span></button>
             </div>
         </div>
@@ -279,19 +278,20 @@
         {{/liquid-if}}
     </section>
 
-    <section class="bb b--whitegrey pa5">
-        <div class="flex justify-between">
-            <div>
+    <div class="gh-setting-header">{{t "members.Email"}}</div>
+    <section class="flex flex-column br3 shadow-1 bg-grouped-table mt1 pa5">
+        <div class="gh-setting-first">
+            <div class="gh-setting-content">
                 <h4 class="gh-setting-title">{{t "members.Email addresses"}}</h4>
                 <p class="gh-setting-desc pa0 ma0">{{t "members.Contact information used for newsletters and member login emails"}}</p>
             </div>
-            <div>
+            <div class="gh-setting-action">
                 <button type="button" class="gh-btn" {{action (toggle "membersFromOpen" this)}} data-test-toggle-membersFrom><span>{{if this.membersFromOpen (t "common.Close") (t "common.Expand")}}</span></button>
             </div>
         </div>
 
         {{#liquid-if this.membersFromOpen}}
-            <div class="mt8">
+            <div class="mt2">
                 <GhFormGroup>
                     <label class="fw6 f8">{{t "members.Support email address"}}</label>
                     <div class="flex items-center justify-center mt1">
@@ -344,12 +344,12 @@
                 </GhFormGroup>
                 <div class="nt5 mb5">
                     <span class="mt1 fw4 f8 midgrey">
-                        The address your newsletter posts are sent from
+                        {{t "members.The address your newsletter posts are sent from"}}
                     </span>
                 </div>
                 {{#if this.showFromAddressConfirmation}}
                 <div class="flex items-center green-d1 nt3 lh-1">
-                    {{svg-jar "check-circle" class="w4 h4 mr1 stroke-green-d1"}} <span class="nudge-left--2">{{t "Check your inbox and click the link to confirm"}}</span>
+                    {{svg-jar "check-circle" class="w4 h4 mr1 stroke-green-d1"}} <span class="nudge-left--2">{{t "members.Check your inbox and click the link to confirm"}}</span>
                 </div>
                 {{/if}}
             </div>
@@ -375,15 +375,14 @@
                 </div>
             </div>
         {{/liquid-if}}
-    </section>
-    {{#unless this.mailgunIsConfigured}}
-        <section class="bb b--whitegrey pa5">
-            <div class="flex justify-between">
-                <div>
+
+        {{#unless this.mailgunIsConfigured}}
+            <div class="gh-setting-last">
+                <div class="gh-setting-content">
                     <h4 class="gh-setting-title">{{t "members.Email newsletter settings"}}</h4>
-                    <p class="gh-setting-desc pa0 ma0">The <a href="https://www.mailgun.com/" target="_blank" rel="nofollow noopener">Mailgun API</a> is used for bulk email newsletter delivery. <a href="https://ghost.org/faq/mailgun-newsletters/" target="_blank" rel="noopener">Why is this required?</a></p>
+                    {{{t "members.<p class=\"gh-setting-desc pa0 ma0\">The <a href=\"https://www.mailgun.com/\" target=\"_blank\" rel=\"nofollow noopener\">Mailgun API</a> is used for bulk email newsletter delivery. <a href=\"https://ghost.org/faq/mailgun-newsletters/\" target=\"_blank\" rel=\"noopener\">Why is this required?</a></p>"}}}
                 </div>
-                <div>
+                <div class="gh-setting-action">
                     <button type="button" class="gh-btn" {{action (toggle "membersEmailOpen" this)}} data-test-toggle-membersemail>
                         <span>{{if this.membersEmailOpen (t "common.Close") (t "common.Expand")}}</span>
                     </button>
@@ -392,54 +391,54 @@
 
             {{#liquid-if this.membersEmailOpen}}
             <div class="flex flex-column w-100 w-50-l flex mt8">
-                    <div class="flex items-center">
-                        <GhFormGroup @class="gh-labs-mailgun-region">
-                            <label class="fw6 f8">{{t "members.Mailgun region"}}</label>
-                            <div class="mt1">
-                                <PowerSelect
-                                    @options={{this.mailgunRegions}}
-                                    @selected={{this.mailgunRegion}}
-                                    @onChange={{action "setMailgunRegion"}}
-                                    @searchEnabled={{false}}
-                                    @triggerComponent="gh-power-select/trigger"
-                                    as |region|
-                                >
-                                    {{region.flag}} {{region.name}}
-                                </PowerSelect>
-                            </div>
-                        </GhFormGroup>
-                        <GhFormGroup>
-                            <label class="fw6 f8">{{t "members.Mailgun domain"}}</label>
-                            <GhTextInput
-                                @value={{readonly this.mailgunSettings.domain}}
-                                @input={{action "setMailgunDomain"}}
-                                @class="mt1"
-                                data-test-mailgun-domain-input={{true}}
-                            />
-                        </GhFormGroup>
-                    </div>
-                    <div class="nt5 mb5">
-                        <a href="https://app.mailgun.com/app/sending/domains" target="_blank" class="mt1 fw4 f8">
-                            {{t "members.Find your Mailgun region and domain here &raquo;"}}
-                        </a>
-                    </div>
-                    <GhFormGroup>
-                        <label class="fw6 f8">{{t "members.Mailgun API key"}}</label>
-                        <GhTextInput
-                            @type="password"
-                            @value={{readonly this.mailgunSettings.apiKey}}
-                            @input={{action "setMailgunApiKey"}}
-                            @class="mt1 password" @autocomplete="new-password"
-                            data-test-mailgun-api-key-input={{true}}
-                        />
-                        <a href="https://app.mailgun.com/app/account/security/api_keys" target="_blank" class="mt1 fw4 f8">
-                            {{t "members.Find your Mailgun API keys here &raquo;"}}
-                        </a>
+                <div class="flex items-center">
+                    <GhFormGroup @class="gh-labs-mailgun-region">
+                        <label class="fw6 f8">{{t "members.Mailgun region"}}</label>
+                        <div class="mt1">
+                            <PowerSelect
+                                @options={{this.mailgunRegions}}
+                                @selected={{this.mailgunRegion}}
+                                @onChange={{action "setMailgunRegion"}}
+                                @searchEnabled={{false}}
+                                @triggerComponent="gh-power-select/trigger"
+                                as |region|
+                            >
+                                {{region.flag}} {{region.name}}
+                            </PowerSelect>
+                        </div>
                     </GhFormGroup>
+                    <GhFormGroup>
+                        <label class="fw6 f8">{{t "members.Mailgun domain"}}</label>
+                        <GhTextInput
+                            @value={{readonly this.mailgunSettings.domain}}
+                            @input={{action "setMailgunDomain"}}
+                            @class="mt1"
+                            data-test-mailgun-domain-input={{true}}
+                        />
+                    </GhFormGroup>
+                </div>
+                <div class="nt5 mb5">
+                    <a href="https://app.mailgun.com/app/sending/domains" target="_blank" class="mt1 fw4 f8">
+                        {{{t "members.Find your Mailgun region and domain here &raquo;"}}}
+                    </a>
+                </div>
+                <GhFormGroup>
+                    <label class="fw6 f8">{{t "members.Mailgun API key"}}</label>
+                    <GhTextInput
+                        @type="password"
+                        @value={{readonly this.mailgunSettings.apiKey}}
+                        @input={{action "setMailgunApiKey"}}
+                        @class="mt1 password" @autocomplete="new-password"
+                        data-test-mailgun-api-key-input={{true}}
+                    />
+                    <a href="https://app.mailgun.com/app/account/security/api_keys" target="_blank" class="mt1 fw4 f8">
+                        {{{t "members.Find your Mailgun API keys here &raquo;"}}}
+                    </a>
+                </GhFormGroup>
             </div>
             {{/liquid-if}}
-        </section>
-    {{/unless}}
+        {{/unless}}
+    </section>
 </div>
 
 {{#if this.showDisconnectStripeConnectModal}}
@@ -454,6 +453,9 @@
 
 {{#if this.showPortalSettings}}
     <GhFullscreenModal @modal="portal-settings"
+        @model={{hash
+            openStripeSettings=(action "openStripeSettings")
+        }}
         @close={{action "closePortalSettings"}}
         @modifier="full-overlay portal-settings" />
 {{/if}}

@@ -804,6 +804,44 @@
     color: var(--darkgrey);
 }
 
+.kg-cardmenu-card-hover .kg-cardmenu-action-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity ease-in-out 0.15s;
+    padding: 5px;
+    margin-top: -2px;
+    margin-bottom: -2px;
+    margin-right: 8px;
+    border-radius: 3px;
+}
+
+.kg-cardmenu-card-hover:hover svg [data-selector="bg"] {
+    fill: #fff;
+}
+
+.kg-cardmenu-card-hover:hover .kg-cardmenu-action-icon {
+    opacity: 1.0;
+}
+
+.kg-cardmenu-card-hover .kg-cardmenu-action-icon:hover {
+    background: var(--whitegrey-d1);
+}
+
+.kg-cardmenu-card-hover .kg-cardmenu-action-icon svg {
+    margin: 0;
+    height: 1em;
+}
+
+.kg-cardmenu-card-hover .kg-cardmenu-action-icon svg path {
+    fill: var(--red);
+}
+
+.kg-cardmenu-card-hover .kg-cardmenu-action-icon:hover svg path {
+    fill: var(--red);
+}
+
 /* Padded container housing title + editor canvas, scrollable content */
 .gh-koenig-editor-pane {
     padding: 11vw 92px;
@@ -856,12 +894,20 @@
 
 /* Chrome has a bug with its scrollbars on this element which has been reported here: https://bugs.chromium.org/p/chromium/issues/detail?id=697381 */
 .koenig-cardmenu {
-    width: 272px;
-    max-height: 580px;
+    width: 312px;
+    max-height: 440px;
+    padding-top: 0;
     background-clip: padding-box;
     z-index: 9999999; /* have to compete with codemirror */
     left: -16px;
     top: -10px;
+}
+
+/*Firefox has a bug with padding-bottom being ignored when using overflow:auto which has been reported here: https://bugzilla.mozilla.org/show_bug.cgi?id=748518. Below solution works cross browsers*/
+.koenig-cardmenu:after {
+    content: "";
+    padding: .8rem;
+    display: block;
 }
 
 /* Cards
@@ -895,7 +941,6 @@
     box-sizing: border-box;
     border: 1px solid var(--whitegrey);
     background: var(--white);
-    border-radius: 5px;
 }
 
 .koenig-editor__editor .kg-bookmark-container {

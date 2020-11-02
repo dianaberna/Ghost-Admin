@@ -4,8 +4,8 @@ import boundOneWay from 'ghost-admin/utils/bound-one-way';
 import config from 'ghost-admin/config/environment';
 import isNumber from 'ghost-admin/utils/isNumber';
 import moment from 'moment';
+import {action, computed} from '@ember/object';
 import {alias, mapBy} from '@ember/object/computed';
-import {computed} from '@ember/object';
 import {inject as controller} from '@ember/controller';
 import {get} from '@ember/object';
 import {htmlSafe} from '@ember/string';
@@ -60,6 +60,7 @@ export default Controller.extend({
     showReAuthenticateModal: false,
     showEmailPreviewModal: false,
     showUpgradeModal: false,
+    showDeleteSnippetModal: false,
     hostLimitError: null,
     // koenig related properties
     wordcount: null,
@@ -94,6 +95,22 @@ export default Controller.extend({
         set(key, value) {
             return value;
         }
+    }),
+
+    _snippets: computed(function () {
+        return this.store.peekAll('snippet');
+    }),
+
+    snippets: computed('_snippets.@each.isNew', function () {
+        return this._snippets.reject(snippet => snippet.get('isNew'));
+    }),
+
+    canManageSnippets: computed('session.user.{isOwnerOrAdmin,isEditor}', function () {
+        let {user} = this.session;
+        if (user.get('isOwnerOrAdmin') || user.get('isEditor')) {
+            return true;
+        }
+        return false;
     }),
 
     _autosaveRunning: computed('_autosave.isRunning', '_timedSave.isRunning', function () {
@@ -241,6 +258,35 @@ export default Controller.extend({
             this.set('wordCount', counts);
         }
     },
+
+    saveSnippet: action(function (snippet) {
+        let snippetRecord = this.store.createRecord('snippet', snippet);
+        return snippetRecord.save().then(() => {
+            this.notifications.closeAlerts('snippet.save');
+            this.notifications.showNotification(
+                `Snippet saved as "${snippet.name}"`,
+                {type: 'success'}
+            );
+            return snippetRecord;
+        }).catch((error) => {
+            if (!snippetRecord.errors.isEmpty) {
+                this.notifications.showAlert(
+                    `Snippet save failed: ${snippetRecord.errors.messages.join('. ')}`,
+                    {type: 'error', key: 'snippet.save'}
+                );
+            }
+            snippetRecord.rollbackAttributes();
+            throw error;
+        });
+    }),
+
+    toggleDeleteSnippetModal: action(function (snippet) {
+        this.set('snippetToDelete', snippet);
+    }),
+
+    deleteSnippet: action(function (snippet) {
+        return snippet.destroyRecord();
+    }),
 
     /* Public tasks ----------------------------------------------------------*/
 
@@ -536,6 +582,8 @@ export default Controller.extend({
         } catch (error) {
             this.set('memberCount', 0);
         }
+
+        yield this.store.query('snippet', {limit: 'all'});
     }).restartable(),
 
     /* Public methods --------------------------------------------------------*/

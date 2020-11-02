@@ -1,5 +1,5 @@
 <header class="modal-header" data-test-modal="webhook-form">
-    <h1 data-test-text="title">{{if webhook.isNew (t "New webhook") (t "Edit webhook")}}</h1>
+    <h1 data-test-text="title">{{if webhook.isNew (t "webhook.New webhook") (t "webhook.Edit webhook")}}</h1>
 </header>
 <button class="close" href title="{{t "common.Close"}}" {{action "closeModal"}} {{action (optional this.noop) on="mouseDown"}}>
     {{svg-jar "close"}}
@@ -16,7 +16,7 @@
                 @id="webhook-name"
                 @name="name"
                 @class="gh-input mt1"
-                @placeholder={{t "Webhook name..."}}
+                @placeholder={{t "webhook.Webhook name..."}}
                 @shouldFocus={{true}}
                 @autocapitalize="off"
                 @autocorrect="off"
@@ -26,7 +26,7 @@
     </fieldset>
     <fieldset>
         <GhFormGroup @errors={{this.webhook.errors}} @hasValidated={{this.webhook.hasValidated}} @property="event">
-            <label for="webhook-event" class="fw6">{{t "Event"}}</label>
+            <label for="webhook-event" class="fw6">{{t "webhook.Event"}}</label>
             <span class="gh-select">
                 <OneWaySelect @value={{this.webhook.event}}
                     @options={{this.availableEvents}}
@@ -36,7 +36,7 @@
                     @groupLabelPath="group"
                     @class="mt1"
                     @includeBlank={{true}}
-                    @prompt={{t "Select an event"}}
+                    @prompt={{t "webhook.Select an event"}}
                     @update={{action "selectEvent"}}
                     @id="webhook-event"
                     @name="event"
@@ -48,7 +48,7 @@
     </fieldset>
     <fieldset>
         <GhFormGroup @errors={{this.webhook.errors}} @hasValidated={{this.webhook.hasValidated}} @property="targetUrl">
-            <label for="webhook-targetUrl" class="fw6">{{t "Target URL"}}</label>
+            <label for="webhook-targetUrl" class="fw6">{{t "webhook.Target URL"}}</label>
             <GhTextInput
                 @value={{readonly this.webhook.targetUrl}}
                 @input={{action (mut this.webhook.targetUrl) value="target.value"}}
@@ -56,7 +56,7 @@
                 @id="webhook-targetUrl"
                 @name="targetUrl"
                 @class="gh-input mt1"
-                @placeholder={{t "Webhook target URL..."}}
+                @placeholder={{t "webhook.Webhook target URL..."}}
                 @shouldFocus={{true}}
                 @autocapitalize="off"
                 @autocorrect="off"
@@ -64,10 +64,10 @@
             <GhErrorMessage @errors={{this.webhook.errors}} @property="targetUrl" data-test-error="webhook-targetUrl" />
         </GhFormGroup>
     </fieldset>
-    {{#if this.config.enableDeveloperExperiments}}
+    {{#if (enable-developer-experiments)}}
         <fieldset>
             <GhFormGroup @errors={{this.webhook.errors}} @hasValidated={{this.webhook.hasValidated}} @property="secret">
-                <label for="webhook-secret" class="fw6">{{t "Secret"}}</label>
+                <label for="webhook-secret" class="fw6">{{t "webhook.Secret"}}</label>
                 <GhTextInput
                     @value={{readonly this.webhook.secret}}
                     @oninput={{action (mut this.webhook.secret) value="target.value"}}
@@ -75,7 +75,7 @@
                     @id="webhook-secret"
                     @name="secret"
                     @class="gh-input mt1"
-                    @placeholder={{t "Webhook secret..."}}
+                    @placeholder={{t "webhook.Webhook secret..."}}
                     @shouldFocus={{true}}
                     @autocapitalize="off"
                     @autocorrect="off"

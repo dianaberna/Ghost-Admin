@@ -77,6 +77,8 @@ export default Component.extend({
     stripeConnectAccountName: reads('settings.stripeConnectDisplayName'),
     stripeConnectLivemode: reads('settings.stripeConnectLivemode'),
 
+    portalSettingsBorderColor: reads('settings.accentColor'),
+
     selectedReplyAddress: computed('settings.membersReplyAddress', function () {
         return REPLY_ADDRESSES.findBy('value', this.get('settings.membersReplyAddress'));
     }),
@@ -307,6 +309,10 @@ export default Component.extend({
             this.settings.rollbackAttributes();
             this.set('showPortalSettings', false);
             this.set('showLeaveSettingsModal', false);
+        },
+
+        openStripeSettings() {
+            this.set('membersStripeOpen', true);
         }
     },
 

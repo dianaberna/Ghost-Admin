@@ -74,7 +74,7 @@ export default ModalComponent.extend({
 
     showModalLinkOrAttribute: computed('isShowModalLink', function () {
         if (this.isShowModalLink) {
-            return `${this.config.get('blogUrl')}/#/portal`;
+            return `#/portal`;
         }
         return `data-portal`;
     }),
@@ -83,6 +83,7 @@ export default ModalComponent.extend({
         const baseUrl = this.config.get('blogUrl');
         const portalBase = '/#/portal/preview';
         const settingsParam = new URLSearchParams();
+        const signupButtonText = this.settings.get('portalButtonSignupText') || '';
         settingsParam.append('button', this.settings.get('portalButton'));
         settingsParam.append('name', this.settings.get('portalName'));
         settingsParam.append('isFree', this.isFreeChecked);
@@ -92,7 +93,7 @@ export default ModalComponent.extend({
         if (this.buttonIcon) {
             settingsParam.append('buttonIcon', encodeURIComponent(this.buttonIcon));
         }
-        settingsParam.append('signupButtonText', encodeURIComponent(this.settings.get('portalButtonSignupText')));
+        settingsParam.append('signupButtonText', encodeURIComponent(signupButtonText));
         if (this.settings.get('accentColor') === '' || this.settings.get('accentColor')) {
             settingsParam.append('accentColor', encodeURIComponent(`${this.settings.get('accentColor')}`));
         }
@@ -148,6 +149,7 @@ export default ModalComponent.extend({
         if (portalButtonIcon && !defaultIconKeys.includes(portalButtonIcon)) {
             this.set('customIcon', this.settings.get('portalButtonIcon'));
         }
+        this.siteUrl = this.config.get('blogUrl');
     },
 
     didInsertElement() {
@@ -191,6 +193,13 @@ export default ModalComponent.extend({
             } else {
                 this.set('showLinksPage', false);
                 this.set('page', page);
+            }
+        },
+
+        switchToSignupPage() {
+            if (this.showLinksPage) {
+                this.set('showLinksPage', false);
+                this.set('page', 'signup');
             }
         },
 
@@ -248,6 +257,11 @@ export default ModalComponent.extend({
             this.set('showLeaveSettingsModal', false);
         },
 
+        openStripeSettings() {
+            this.model.openStripeSettings();
+            this.closeModal();
+        },
+
         leaveSettings() {
             this.closeModal();
         }
@@ -298,7 +312,7 @@ export default ModalComponent.extend({
                 this.set('accentColor', newColor.slice(1));
             });
         } else {
-            errMessage = this.intl.t('members.The color should be in valid hex format');
+            errMessage = this.intl.t('portal.The color should be in valid hex format');
             this.get('settings.errors').add('accentColor', errMessage);
             this.get('settings.hasValidated').pushObject('accentColor');
             return;

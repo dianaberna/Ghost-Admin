@@ -11,6 +11,7 @@
     @deselectCard={{action this.deselectCard}}
     @editCard={{action this.editCard}}
     @saveCard={{action this.saveCard}}
+    @saveAsSnippet={{this.saveAsSnippet}}
     @onLeaveEdit={{action "leaveEditMode"}}
     @addParagraphAfterCard={{this.addParagraphAfterCard}}
     @moveCursorToPrevSection={{this.moveCursorToPrevSection}}
@@ -21,7 +22,7 @@
     {{#if this.isEditing}}
         <KoenigTextReplacementHtmlInput
             @html={{this.payload.html}}
-            @placeholder="Email only content..."
+            @placeholder={{t "koenig.email.Email only content..."}}
             @autofocus={{true}}
             @class="miw-100 bn bg-transparent"
             @onChange={{action "updateHtml"}}
@@ -31,7 +32,7 @@
         />
         <div class="kg-card-help">
             <p>
-                <span>Only visible when delivered by email, this card will not be published on your site.</span>
+                <span>{{t "koenig.email.Only visible when delivered by email, this card will not be published on your site."}}</span>
                 <a href="https://ghost.org/docs/members/email-card/" class="dib lh-zero v-mid kg-card-help-icon-link" target="_blank" rel="noreferer nopener">{{svg-jar "help" class="stroke-midgrey"}}</a>
             </p>
         </div>

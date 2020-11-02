@@ -167,7 +167,7 @@
                                         {{#if subscription.cancelAtPeriodEnd}}
                                             <span class="gh-member-cancels-on-label">{{t "members.subscription.Cancels on {validUntil}" validUntil=subscription.validUntil}}</span>
                                         {{else}}
-                                            <span class="gh-member-stripe-status">{{subscription.status}}</span>
+                                            <span class="gh-member-stripe-status">{{subscription.statusLabel}}</span>
                                         {{/if}}
                                     </td>
                                 </tr>
