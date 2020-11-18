@@ -53,6 +53,7 @@ export default Component.extend({
     showFromAddressConfirmation: false,
     showSupportAddressConfirmation: false,
     showPortalSettings: false,
+    showEmailDesignSettings: false,
     stripePlanInvalidAmount: false,
     _scratchStripeYearlyAmount: null,
     _scratchStripeMonthlyAmount: null,
@@ -163,6 +164,10 @@ export default Component.extend({
             } else {
                 this.set('showPortalSettings', false);
             }
+        },
+
+        closeEmailDesignSettings() {
+            this.set('showEmailDesignSettings', false);
         },
 
         setDefaultContentVisibility(value) {

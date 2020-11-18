@@ -280,7 +280,17 @@
 
     <div class="gh-setting-header">{{t "members.Email"}}</div>
     <section class="flex flex-column br3 shadow-1 bg-grouped-table mt1 pa5">
-        <div class="gh-setting-first">
+        <div class="gh-setting-first relative">
+            <div class="gh-setting-content">
+                <h4 class="gh-setting-title">{{t "members.Email design"}}</h4>
+                <p class="gh-setting-desc pa0 ma0">{{t "members.Customize the look and feel of email newsletters"}}</p>
+            </div>
+            <div class="gh-setting-action">
+                <button type="button" class="gh-btn" {{action (toggle "showEmailDesignSettings" this)}} data-test-toggle-membersFrom><span> {{t "common.Customize"}} </span></button>
+            </div>
+        </div>
+
+        <div class="{{if this.mailgunIsConfigured "gh-setting-last" "gh-setting"}}">
             <div class="gh-setting-content">
                 <h4 class="gh-setting-title">{{t "members.Email addresses"}}</h4>
                 <p class="gh-setting-desc pa0 ma0">{{t "members.Contact information used for newsletters and member login emails"}}</p>
@@ -459,9 +469,18 @@
         @close={{action "closePortalSettings"}}
         @modifier="full-overlay portal-settings" />
 {{/if}}
+
 {{#if this.showLeaveSettingsModal}}
     <GhFullscreenModal @modal="leave-settings"
         @confirm={{action "leavePortalSettings"}}
         @close={{action "closeLeaveSettingsModal"}}
         @modifier="action wide" />
+{{/if}}
+
+{{#if this.showEmailDesignSettings}}
+    <GhFullscreenModal @modifier="full-overlay portal-settings">
+        <ModalEmailDesignSettings
+            @closeModal={{action "closeEmailDesignSettings"}}
+        />
+    </GhFullscreenModal>
 {{/if}}

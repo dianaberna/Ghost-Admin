@@ -1,6 +1,7 @@
 import Component from '@ember/component';
 import moment from 'moment';
 import {computed} from '@ember/object';
+import {formatNumber} from 'ghost-admin/helpers/format-number';
 import {isEmpty} from '@ember/utils';
 import {or} from '@ember/object/computed';
 import {inject as service} from '@ember/service';
@@ -18,11 +19,32 @@ export default Component.extend({
     _publishedAtBlogTZ: null,
 
     'data-test-publishmenu-draft': true,
-
     showSendEmail: or('session.user.isOwner', 'session.user.isAdmin', 'session.user.isEditor'),
 
     disableEmailOption: computed('memberCount', function () {
         return (this.get('session.user.isOwnerOrAdmin') && this.memberCount === 0);
+    }),
+
+    disableFreeMemberCheckbox: computed('freeMemberCount', function () {
+        return (this.get('session.user.isOwnerOrAdmin') && this.freeMemberCount === 0);
+    }),
+
+    disablePaidMemberCheckbox: computed('paidMemberCount', function () {
+        return (this.get('session.user.isOwnerOrAdmin') && this.paidMemberCount === 0);
+    }),
+
+    freeMemberCountLabel: computed('freeMemberCount', function () {
+        if (this.get('freeMemberCount') !== undefined) {
+            return `(${formatNumber(this.get('freeMemberCount'))})`;
+        }
+        return '';
+    }),
+
+    paidMemberCountLabel: computed('freeMemberCount', function () {
+        if (this.get('freeMemberCount') !== undefined) {
+            return `(${formatNumber(this.get('paidMemberCount'))})`;
+        }
+        return '';
     }),
 
     canSendEmail: computed('feature.labs.members', 'post.{displayName,email}', 'settings.{mailgunApiKey,mailgunDomain,mailgunBaseUrl}', 'config.mailgunIsConfigured', function () {
@@ -32,6 +54,14 @@ export default Component.extend({
         let hasSentEmail = !!this.post.email;
 
         return membersEnabled && mailgunIsConfigured && isPost && !hasSentEmail;
+    }),
+
+    sendEmailToFreeMembersWhenPublished: computed('sendEmailWhenPublished', function () {
+        return ['free', 'all'].includes(this.sendEmailWhenPublished);
+    }),
+
+    sendEmailToPaidMembersWhenPublished: computed('sendEmailWhenPublished', function () {
+        return ['paid', 'all'].includes(this.sendEmailWhenPublished);
     }),
 
     didInsertElement() {
@@ -84,12 +114,31 @@ export default Component.extend({
 
             post.set('publishedAtBlogTime', time);
             return post.validate();
+        },
+
+        toggleSendEmailWhenPublished(type) {
+            let isFree = this.get('sendEmailToFreeMembersWhenPublished');
+            let isPaid = this.get('sendEmailToPaidMembersWhenPublished');
+            if (type === 'free') {
+                isFree = !isFree;
+            } else if (type === 'paid') {
+                isPaid = !isPaid;
+            }
+            if (isFree && isPaid) {
+                this.setSendEmailWhenPublished('all');
+            } else if (isFree && !isPaid) {
+                this.setSendEmailWhenPublished('free');
+            } else if (!isFree && isPaid) {
+                this.setSendEmailWhenPublished('paid');
+            } else if (!isFree && !isPaid) {
+                this.setSendEmailWhenPublished('none');
+            }
         }
     },
 
-    // API only accepts dates at least 2 mins in the future, default the
     // scheduled date 5 mins in the future to avoid immediate validation errors
     _getMinDate() {
         return moment.utc().add(5, 'minutes');
     }
+    // API only accepts dates at least 2 mins in the future, default the
 });

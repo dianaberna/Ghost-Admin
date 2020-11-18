@@ -17,6 +17,8 @@
                 @saveType={{this.saveType}}
                 @isClosing={{this.isClosing}}
                 @memberCount={{this.memberCount}}
+                @paidMemberCount={{this.paidMemberCount}}
+                @freeMemberCount={{this.freeMemberCount}}
                 @setSaveType={{action "setSaveType"}}
                 @setTypedDateError={{action (mut this.typedDateError)}} />
 
@@ -26,8 +28,11 @@
                 @saveType={{this.saveType}}
                 @setSaveType={{action "setSaveType"}}
                 @setTypedDateError={{action (mut this.typedDateError)}}
+                @setSendEmailWhenPublished={{action "setSendEmailWhenPublished"}}
                 @backgroundTask={{this.backgroundTask}}
                 @memberCount={{this.memberCount}}
+                @paidMemberCount={{this.paidMemberCount}}
+                @freeMemberCount={{this.freeMemberCount}}
                 @sendEmailWhenPublished={{this.sendEmailWhenPublished}} />
         {{/if}}
 
@@ -56,6 +61,7 @@
     <GhFullscreenModal
         @modal="confirm-email-send"
         @model={{hash
+            sendEmailWhenPublished=this.sendEmailWhenPublished
             memberCount=this.memberCount
             isScheduled=(eq this.saveType "schedule")
             paidOnly=(eq this.post.visibility "paid")

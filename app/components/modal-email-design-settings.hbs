@@ -1,0 +1,159 @@
+<div class="modal-body modal-fullsettings">
+    <div class="modal-fullsettings-body">
+        <div class="modal-fullsettings-sidebar with-footer">
+            <div>
+                <h2 class="modal-fullsettings-topbar modal-fullsettings-heading">{{t "Email newsletter design"}}</h2>
+                <fieldset class="modal-fullsettings-form">
+                    <div class="modal-fullsettings-section first">
+                        <GhFormGroup>
+                            <h4 class="modal-fullsettings-title">{{t "Show publication icon and title"}}</h4>
+                            <div class="for-switch small">
+                                <label
+                                    class="switch"
+                                    for="show-header"
+                                >
+                                    <input
+                                        type="checkbox"
+                                        checked={{this.showHeader}}
+                                        id="show-header"
+                                        name="show-header"
+                                        {{on "click" this.setShowHeader}}
+                                    >
+                                    <span class="input-toggle-component"></span>
+                                </label>
+                            </div>
+                        </GhFormGroup>
+                    </div>
+                    <div class="modal-fullsettings-section">
+                        <GhFormGroup @classNames="vertical">
+                            <h4 class="modal-fullsettings-title">{{t "Typography"}}</h4>
+                            <div class="modal-fullsettings-radiogroup">
+                                <div class="gh-radio {{if (eq this.bodyFontCategory "serif") "active"}}"
+                                    {{on "click" (fn this.setBodyFontCategory "serif")}}
+                                    >
+                                    <div class="gh-radio-button"></div>
+                                    <div class="gh-radio-content">
+                                        <div class="gh-radio-label">Serif</div>
+                                    </div>
+                                </div>
+                                <div class="gh-radio {{if (eq this.bodyFontCategory "sans_serif") "active"}}"
+                                    {{on "click" (fn this.setBodyFontCategory "sans_serif")}}
+                                    >
+                                    <div class="gh-radio-button"></div>
+                                    <div class="gh-radio-content">
+                                        <div class="gh-radio-label">Sans-serif</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <p>{{t "Font style for the email body contents"}}</p>
+                        </GhFormGroup>
+                    </div>
+                    <div class="modal-fullsettings-section">
+                        <GhFormGroup @classNames="vertical">
+                            <h4 class="modal-fullsettings-title">{{t "Footer"}}</h4>
+                            <KoenigBasicHtmlInput
+                                @name="footer"
+                                @html={{this.footerContent}}
+                                @class="miw-100 form-text gh-members-emailsettings-footer-input"
+                                @onChange={{this.setFooterContent}}
+                                @onFocus={{this.handleInputFocus}}
+                                @onBlur={{this.handleInputBlur}}
+                            />
+                            <p>{{t "Extra content to show at the bottom of all emails"}}</p>
+                        </GhFormGroup>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="modal-fullsettings-section gh-members-emailsettings-footer">
+                <GhFormGroup>
+                    <div class="gh-members-emailsettings-promotelabel">
+                        <span>{{svg-jar "heart"}}</span>
+                        <div>
+                            <h4 class="modal-fullsettings-title">{{t "Promote independent publishing"}}</h4>
+                            <p>{{t "Show you’re a part of the indie publishing movement with a small badge in the footer"}}</p>
+                        </div>
+                    </div>
+                    <div class="for-switch small">
+                        <label
+                            class="switch"
+                            for="promote-ghost"
+                        >
+                            <input
+                                type="checkbox"
+                                checked={{this.showBadge}}
+                                id="promote-ghost"
+                                name="promote-ghost"
+                                {{on "click" this.setShowBadge}}
+                            >
+                            <span class="input-toggle-component"></span>
+                        </label>
+                    </div>
+                </GhFormGroup>
+            </div>
+        </div>
+        <div class="modal-fullsettings-main">
+            <div class="flex items-center justify-end w-100 modal-fullsettings-topbar">
+                <div class="flex items-center">
+                    <button
+                        class="gh-btn mr3"
+                        {{action "closeModal"}}
+                        {{!-- disable mouseDown so it does not trigger focus-out validations --}}
+                        {{on "mousedown" (optional this.noop)}}
+                        data-test-button="cancel-custom-view-form"
+                    >
+                        <span>{{t "common.Cancel"}}</span>
+                    </button>
+
+                    <GhTaskButton
+                        @buttonText={{t "taskButton.Save and close"}}
+                        @successText={{t "taskButton.Saved"}}
+                        @task={{this.saveSettings}}
+                        @idleClass="gh-btn-blue"
+                        @class="gh-btn gh-btn-icon"
+                        data-test-button="save-members-modal-setting"
+                    />
+                </div>
+            </div>
+
+            <div class="modal-fullsettings-preview-container gh-members-emailpreview">
+                <div class="gh-members-emailpreview-container">
+                    <div class="gh-members-emailpreview-faux">
+                        <p>
+                            <span class="strong">{{this.config.blogTitle}}</span> &lt;{{this.settings.membersFromAddress}}&gt;
+                        </p>
+                        <p><span class="dark">To:</span> Jamie Larson &lt;jamie@example.com&gt;</p>
+                    </div>
+                    <div class="gh-members-emailpreview-contents">
+                        <div class="gh-members-emailpreview-header {{if (not this.showHeader) "hide"}}">
+                            {{#if this.settings.icon}}
+                                <img src={{this.settings.icon}} />
+                            {{/if}}
+                            <h4>{{this.config.blogTitle}}</h4>
+                        </div>
+                        <div class="gh-members-emailpreview-title">
+                            <h2>Email newsletter</h2>
+                            <p>
+                                <span>By Jamie Larson – Nov 5 2020 – </span> <a href="javascript:">View online →</a>
+                            </p>
+                        </div>
+                        <div class="gh-members-emailpreview-content {{if (eq this.bodyFontCategory "sans_serif") "sans-serif"}}">
+                            <p>This is where the contents of your newsletter go. Customise the appearance with the options in the sidebar.</p>
+                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras at auctor tellus, in accumsan magna. Sed vel magna velit. Vivamus commodo laoreet malesuada. Nullam efficitur augue et eros fermentum.</p>
+                        </div>
+                        <div class="gh-members-emailpreview-footer">
+                            <div class="gh-members-emailpreview-footercontent">
+                                {{{this.footerContent}}}
+                            </div>
+                            <div class="gh-members-emailpreview-footersite">
+                                <span>Ghost Site &copy; – </span> <a href="javascript:">Unsubscribe</a>
+                            </div>
+                        </div>
+                        <div class="gh-members-emailpreview-badge {{if (not this.showBadge) "hide"}}">
+                            <a href="javascript:"><svg viewBox="0 0 156 156"><g fill="none" fill-rule="evenodd"><rect fill="#15212B" width="156" height="156" rx="27"></rect><g transform="translate(36 36)" fill="#F6F8FA"><path d="M0 71.007A4.004 4.004 0 014 67h26a4 4 0 014 4.007v8.986A4.004 4.004 0 0130 84H4a4 4 0 01-4-4.007v-8.986zM50 71.007A4.004 4.004 0 0154 67h26a4 4 0 014 4.007v8.986A4.004 4.004 0 0180 84H54a4 4 0 01-4-4.007v-8.986z"></path><rect y="34" width="84" height="17" rx="4"></rect><path d="M0 4.007A4.007 4.007 0 014.007 0h41.986A4.003 4.003 0 0150 4.007v8.986A4.007 4.007 0 0145.993 17H4.007A4.003 4.003 0 010 12.993V4.007z"></path><rect x="67" width="17" height="17" rx="4"></rect></g></g></svg> <span>Publish with Ghost</span></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

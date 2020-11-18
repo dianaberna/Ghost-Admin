@@ -31,29 +31,48 @@
 
     {{#if (and this.canSendEmail showSendEmail)}}
         <div class="gh-publishmenu-section">
-            <div class="gh-publishmenu-radio gh-publishmenu-email">
+            <div class="gh-publishmenu-email">
                 {{#if this.backgroundLoader.isRunning}}
                     <div class="gh-loading-spinner" style="zoom: 50%"></div>
                 {{else}}
                     <div class="gh-publishmenu-email-label {{if this.disableEmailOption "pe-none"}}">
-                        <label class="gh-publishmenu-radio-label {{if this.disableEmailOption "midgrey"}}" for="email-when-published-checkbox">{{t "Send by email"}}</label>
-                        {{#if (or this.memberCount this.session.user.isEditor)}}
-                            <div class="gh-publishmenu-radio-desc">{{t "Deliver post to members"}}</div>
-                        {{else}}
-                            <div class="gh-publishmenu-radio-desc">{{t "You haven't got any members"}}</div>
-                        {{/if}}
-                    </div>
-                    <div class="for-switch small {{if this.disableEmailOption "pe-none"}}">
-                        <div class="switch container" for="email-when-published-checkbox">
-                            <Input
-                                @checked={{this.sendEmailWhenPublished}}
-                                @type="checkbox"
-                                @id="email-when-published-checkbox"
-                                @name="email-when-published"
-                                @disabled={{this.disableEmailOption}}
-                            />
-                            <span class="input-toggle-component gh-publishmenu-email-checkbox"
-                                {{on "click" (toggle "sendEmailWhenPublished" this)}}></span>
+                        <label class="gh-publishmenu-radio-label mb3 {{if this.disableEmailOption "midgrey"}}">{{t "Send by email to"}}</label>
+
+                        <div class="form-group">
+                            <div class="gh-publishmenu-send-to-option">
+                                <p>Free members <span class="gh-publishmenu-emailcount">{{this.freeMemberCountLabel}}</span></p>
+                                <div class="for-switch small" {{action "toggleSendEmailWhenPublished" "free" bubbles="false"}}>
+                                    <label class="switch" for="send-email-to-free">
+                                        <input
+                                            id="send-email-to-free"
+                                            type="checkbox"
+                                            checked={{this.sendEmailToFreeMembersWhenPublished}}
+                                            disabled={{this.disableEmailOption}}
+                                            class="gh-input post-settings-featured"
+                                            onclick={{action "toggleSendEmailWhenPublished" value="free"}}
+                                            data-test-checkbox="free-members"
+                                        >
+                                        <span class="input-toggle-component"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="gh-publishmenu-send-to-option">
+                                <p>Paid members <span class="gh-publishmenu-emailcount">{{this.paidMemberCountLabel}}</span></p>
+                                <div class="for-switch small" {{action "toggleSendEmailWhenPublished" "paid" bubbles="false"}}>
+                                    <label class="switch" for="send-email-to-paid">
+                                        <input
+                                            id="send-email-to-paid"
+                                            type="checkbox"
+                                            checked={{this.sendEmailToPaidMembersWhenPublished}}
+                                            disabled={{this.disableEmailOption}}
+                                            class="gh-input post-settings-featured"
+                                            onclick={{action "toggleSendEmailWhenPublished" value="paid"}}
+                                            data-test-checkbox="paid-members"
+                                        >
+                                        <span class="input-toggle-component"></span>
+                                    </label>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 {{/if}}
