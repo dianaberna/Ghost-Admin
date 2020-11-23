@@ -44,6 +44,10 @@ export default Component.extend({
         copyTextToClipboard(data);
         yield timeout(this.isTesting ? 50 : 3000);
     }),
+    copySignupFree: task(function* (data) {
+        copyTextToClipboard(data);
+        yield timeout(this.isTesting ? 50 : 3000);
+    }),
     copySignin: task(function* (data) {
         copyTextToClipboard(data);
         yield timeout(this.isTesting ? 50 : 3000);

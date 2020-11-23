@@ -20,6 +20,8 @@ export default Controller.extend({
     slugGenerator: service(),
     intl: service(),
 
+    personalToken: null,
+    personalTokenRegenerated: false,
     leaveSettingsTransition: null,
     dirtyAttributes: false,
     showDeleteUserModal: false,
@@ -27,6 +29,7 @@ export default Controller.extend({
     showTransferOwnerModal: false,
     showUploadCoverModal: false,
     showUplaodImageModal: false,
+    showRegenerateTokenModal: false,
     _scratchFacebook: null,
     _scratchTwitter: null,
 
@@ -329,6 +332,25 @@ export default Controller.extend({
             this.set('user.ne2Password', password);
             this.get('user.hasValidated').removeObject('ne2Password');
             this.get('user.errors').remove('ne2Password');
+        },
+
+        confirmRegenerateTokenModal() {
+            this.set('showRegenerateTokenModal', true);
+        },
+
+        cancelRegenerateTokenModal() {
+            this.set('showRegenerateTokenModal', false);
+        },
+
+        regenerateToken() {
+            let url = this.get('ghostPaths.url').api('users', 'me', 'token');
+
+            return this.ajax.put(url, {data: {}}).then(({apiKey}) => {
+                this.set('personalToken', apiKey.id + ':' + apiKey.secret);
+                this.set('personalTokenRegenerated', true);
+            }).catch((error) => {
+                this.notifications.showAPIError(error, {key: 'token.regenerate'});
+            });
         }
     },
 
