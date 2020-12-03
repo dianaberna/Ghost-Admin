@@ -164,13 +164,21 @@
                                 <tr>
                                     <td class="gh-member-stripe-label">{{t "members.subscription.Current status"}}</td>
                                     <td class="gh-member-stripe-data">
-                                        {{#if subscription.cancelAtPeriodEnd}}
+                                        {{#if (and subscription.cancelAtPeriodEnd (not-eq subscription.status 'canceled'))}}
                                             <span class="gh-member-cancels-on-label">{{t "members.subscription.Cancels on {validUntil}" validUntil=subscription.validUntil}}</span>
                                         {{else}}
                                             <span class="gh-member-stripe-status">{{subscription.statusLabel}}</span>
                                         {{/if}}
                                     </td>
                                 </tr>
+                                {{#if subscription.cancellationReason}}
+                                    <tr>
+                                        <td class="gh-member-stripe-label">{{t "members.subscription.Cancellation reason"}}</td>
+                                        <td class="gh-member-stripe-data">
+                                            <span class="gh-member-stripe-cancellation-reason">{{subscription.cancellationReason}}</span>
+                                        </td>
+                                    </tr>
+                                {{/if}}
                                 <tr>
                                     <td class="gh-member-stripe-label">{{t "members.subscription.Next renewal date"}}</td>
                                     <td class="gh-member-stripe-data">

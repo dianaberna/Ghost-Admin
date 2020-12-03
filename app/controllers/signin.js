@@ -77,6 +77,8 @@ export default Controller.extend(ValidationEngine, {
                     {type: 'error', key: 'session.authenticate.failed'}
                 );
             }
+
+            return false;
         }
     }).drop(),
 
@@ -95,8 +97,7 @@ export default Controller.extend(ValidationEngine, {
         try {
             yield this.validate({property: 'signin'});
             return yield this.authenticate
-                .perform(authStrategy, [signin.get('identification'), signin.get('password')])
-                .then(() => true);
+                .perform(authStrategy, [signin.get('identification'), signin.get('password')]);
         } catch (error) {
             this.set('flowErrors', this.intl.t('Please fill out the form to sign in.'));
         }

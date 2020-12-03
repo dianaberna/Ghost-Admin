@@ -34,7 +34,7 @@ export default Component.extend({
         let subscriptions = this.member.get('stripe');
         if (subscriptions && subscriptions.length > 0) {
             return subscriptions.map((subscription) => {
-                const statusLabel = subscription.status === 'past_due' ? 'Past due' : subscription.status;
+                const statusLabel = subscription.status ? subscription.status.replace('_', ' ') : '';
                 return {
                     id: subscription.id,
                     customer: subscription.customer,
@@ -46,6 +46,7 @@ export default Component.extend({
                     plan: subscription.plan,
                     amount: parseInt(subscription.plan.amount) ? (subscription.plan.amount / 100) : 0,
                     cancelAtPeriodEnd: subscription.cancel_at_period_end,
+                    cancellationReason: subscription.cancellation_reason,
                     validUntil: subscription.current_period_end ? moment(subscription.current_period_end).format('D MMM YYYY') : '-'
                 };
             }).reverse();
