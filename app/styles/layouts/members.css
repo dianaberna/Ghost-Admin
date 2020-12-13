@@ -121,7 +121,13 @@ p.gh-members-list-email {
     margin: -2px 0 -1px;
 }
 
+.gh-members-list-open-rate,
+.gh-members-list-geolocation {
+    width: 120px;
+}
+
 .gh-members-list-subscribed-at {
+    width: 220px;
     margin-right: -8px;
     padding-right: 0;
 }
@@ -263,7 +269,7 @@ p.gh-members-list-email {
     }
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1100px) {
     .members-list .gh-list-header, .gh-list-hidecell-m {
         display: none;
     }
@@ -324,15 +330,26 @@ p.gh-members-list-email {
         padding-bottom: 16px;
     }
 
+    .gh-members-list-open-rate {
+        display: inline-block;
+        width: auto;
+        margin-top: -16px;
+        padding: 0 0 0 64px;
+    }
+
+    .gh-members-list-open-rate-mobile::after {
+        content: " open rate •";
+    }
+
     .gh-members-list-geolocation {
         display: inline-block;
-        padding: 0 0 0 64px;
-        margin-top: -16px;
         width: auto;
+        margin-top: -16px;
+        padding: 0 0 0 4px;
     }
 
     .gh-members-list-geolocation::after {
-        content: "–";
+        content: "•";
     }
 
     .gh-members-geolocation-noname {
@@ -379,12 +396,18 @@ textarea.gh-member-details-textarea {
     max-width: 100%;
     min-width: auto;
     min-height: 50px;
-    height: 98px;
+    height: 154px;
 }
 
 .gh-member-info-icon {
     width: 18px;
     height: 18px;
+}
+
+.gh-member-email-stats {
+    font-size: 3.6rem;
+    color: var(--darkgrey);
+    line-height: 4.0rem;
 }
 
 .gh-member-header-stripeinfo {
@@ -394,17 +417,21 @@ textarea.gh-member-details-textarea {
     min-height: 24px;
 }
 
-.gh-member-header-stripeinfo h4 {
-    margin: 0 12px 0 0;
-    padding: 0;
-}
-
 .gh-member-stripe-info {
     border-bottom: 1px solid var(--whitegrey);
 }
 
 .gh-member-stripe-info:last-of-type {
     border-bottom: none;
+}
+
+.gh-member-btn-stripe-toggle {
+    box-shadow: 0 2px 5px -3px rgba(0,0,0,.12), 0 0 1px rgba(0, 0, 0, .13);    
+}
+
+.gh-member-btn-stripe-toggle:hover {
+    box-shadow: 0 3px 5px -3px rgba(0,0,0,.13), 0 0 1px rgba(0, 0, 0, .13);
+
 }
 
 .gh-member-stripe-table {
@@ -418,10 +445,15 @@ textarea.gh-member-details-textarea {
     padding: 5px 12px 5px 0;
 }
 
+.gh-member-stripe-id,
+.gh-member-stripe-email {
+    display: inline-block;
+    word-break: break-all;
+}
+
 .gh-member-stripe-label {
     color: var(--midgrey-d1);
     white-space: nowrap;
-    width: 200px;
 }
 
 .gh-members-subscribed-checkbox,
@@ -473,12 +505,50 @@ textarea.gh-member-details-textarea {
     color: color-mod(var(--blue) l(-7%) saturation(-10%));
 }
 
+@media (max-width: 1240px) {
+    .gh-member-settings {
+        flex-direction: column;
+    }
+}
+
 .gh-member-settings-primary {
-    flex-basis: 740px;
+    flex-basis: 800px;
 }
 
 .gh-member-settings-secondary {
-    flex-basis: 408px;
+    flex-basis: 348px;
+}
+
+@media (max-width: 1240px) and (min-width: 740px) {
+    .gh-member-settings-secondary {
+        flex-direction: row;
+    }
+
+    .gh-member-label-stripe {
+        display: none;
+    }
+
+    .gh-member-stripe {
+        margin-top: 3.2rem;
+        margin-left: 2rem;
+    }
+}
+
+@media (max-width: 1240px) {
+    .gh-member-settings-primary,
+    .gh-member-settings-secondary {
+        flex-basis: initial;
+        width: 100%;
+    }
+
+    .gh-member-details,
+    .gh-member-feed {
+        margin-right: 0;
+    }
+    
+    .gh-member-internal-info {
+        margin-top: 3.2rem;
+    }
 }
 
 .gh-member-cancelstripe-checkbox {
@@ -506,11 +576,88 @@ textarea.gh-member-details-textarea {
     background: var(--red);
 }
 
+.gh-member-feed-row {
+    display: flex;
+    padding: 0 2rem;
+}
+
+.gh-member-feed-row:hover {
+    background: var(--whitegrey-l2);
+}
+
+.gh-member-feed-activity {
+    display: flex;
+    align-items: center;
+}
+
+.gh-member-feed-activity svg {
+    width: 16px;
+    margin-right: 1rem;
+}
+
+.gh-member-feed-title {
+    display: table-cell;
+    padding: 10px 0;
+    vertical-align: middle;
+    color: var(--darkgrey);
+    text-align: left;
+}
+
+.gh-member-feed-title:hover {
+    color: var(--blue-d2);
+}
+
+.gh-member-feed-date {
+    margin-left: auto;
+    padding: 10px 0;
+    color: var(--midgrey);
+    font-size: 1.3rem;
+    text-align: right;
+}
+
+.gh-member-btn-expandfeed span {
+    height: 25px;
+    line-height: 25px;
+}
+
+
 /* Import modal
 /* ---------------------------------------------------------- */
 
 .fullscreen-modal-import-members {
-    max-width: 640px;
+    max-width: unset !important;
+}
+
+.gh-member-import-wrapper {
+    width: 420px;
+}
+
+.gh-member-import-wrapper.wide {
+    width: 580px;
+}
+
+.gh-member-import-wrapper .gh-btn.disabled,
+.gh-member-import-wrapper .gh-btn.disabled:hover {
+    cursor: auto !important;
+    opacity: 0.6 !important;
+}
+
+.gh-member-import-wrapper .gh-btn.disabled span,
+.gh-member-import-wrapper .gh-btn.disabled span:hover {
+    cursor: auto !important;
+    pointer-events: none;
+}
+
+.gh-member-import-wrapper .gh-token-input .ember-power-select-trigger[aria-disabled=true],
+.gh-member-import-wrapper .gh-token-input .ember-power-select-trigger-multiple-input:disabled {
+    background: var(--whitegrey-l2);
+}
+
+@media (max-width: 600px) {
+    .gh-member-import-wrapper,
+    .gh-member-import-wrapper.wide {
+        width: calc(100vw - 128px);
+    }
 }
 
 .gh-members-import-uploader {
@@ -528,6 +675,7 @@ textarea.gh-member-details-textarea {
     min-height: 182px;
     justify-content: center;
     align-items: center;
+    margin-bottom: -20px;
 }
 
 .gh-members-import-spinner .gh-loading-content {
@@ -576,6 +724,27 @@ p.gh-members-import-errorcontext {
     line-height: 1.3em;
     margin: 0;
     font-weight: 400;
+}
+
+.gh-members-import-mapping .error {
+    color: var(--red);
+}
+
+.gh-members-import-mappingwrapper.error {
+    position: relative;
+}
+
+.gh-members-import-mappingwrapper.error::before {
+    display: block;
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 1px solid red;
+    z-index: 9999;
+    pointer-events: none;
 }
 
 .gh-members-import-scrollarea {
@@ -761,8 +930,12 @@ p.gh-members-import-errordetail:first-of-type {
     overflow-wrap: break-word;
 }
 
+.gh-member-import-resultcontainer {
+    margin-bottom: 28px;
+}
+
 .gh-member-import-result-summary {
-    padding: 20px;
+    flex-basis: 50%;
 }
 
 .gh-member-import-result-summary h2 {
@@ -773,9 +946,42 @@ p.gh-members-import-errordetail:first-of-type {
 }
 
 .gh-member-import-result-summary p {
-    margin: -2px 0 0;
+    color: var(--darkgrey);
+    margin: 0;
     padding: 0;
-    color: var(--midlightgrey);
+    line-height: 1.6em;
+    margin-bottom: 12px;
+}
+
+.gh-member-import-result-summary p strong {
+    font-size: 1.5rem;
+}
+
+.gh-member-import-errorlist {
+    width: 100%;
+    margin: 8px 0 28px;
+}
+
+.gh-member-import-errorlist h4 {
+    font-size: 13px;
+    font-weight: 500;
+    border-bottom: 1px solid var(--whitegrey);
+    padding-bottom: 8px;
+    margin-top: 0px;
+    color: var(--midgrey);
+}
+
+.gh-member-import-errorlist ul li {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--midlightgrey-d2);
+    padding: 0;
+    margin-bottom: 6px;
+}
+
+.gh-member-import-resultcontainer hr {
+    margin: 24px -32px;
+    border-color: var(--whitegrey);
 }
 
 .gh-member-import-nodata span {
@@ -784,6 +990,22 @@ p.gh-members-import-errordetail:first-of-type {
     align-items: center;
     justify-content: center;
     color: var(--midgrey);
+}
+
+.gh-member-import-icon-members path,
+.gh-member-import-icon-members circle {
+    stroke-width: 0.85px;
+}
+
+.gh-member-import-icon-confetti {
+    color: var(--purple);
+    margin-left: 12px;
+}
+
+.gh-member-import-icon-confetti path,
+.gh-member-import-icon-confetti circle,
+.gh-member-import-icon-confetti ellipse {
+    stroke-width: 0.85px;
 }
 
 /* Fixing Firefox's select padding */
