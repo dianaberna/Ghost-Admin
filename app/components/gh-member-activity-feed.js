@@ -20,11 +20,6 @@ class MemberActivity {
             icon: 'cross-circle',
             iconClass: 'red-d2',
             tooltip: 'members.Email delivery failed'
-        },
-        unsubscribed: {
-            icon: 'unsubscribed',
-            iconClass: 'red-d2',
-            message: 'members.Automatically unsubscribed due to permanent delivery failure'
         }
     }
 
@@ -74,11 +69,6 @@ export default class MemberActivityFeedComponent extends Component {
                     email: emailRecipient.email,
                     timestamp: emailRecipient.failedAtUTC,
                     action: this.openEmailPreview.bind(this, emailRecipient.email)
-                }));
-
-                activities.push(new MemberActivity({
-                    event: 'unsubscribed',
-                    timestamp: emailRecipient.failedAtUTC.add(1, 'second')
                 }));
             } else if (emailRecipient.processedAtUTC) {
                 activities.push(new MemberActivity({

@@ -417,9 +417,6 @@
 .gh-blognav {
     margin: 0 20px;
 }
-@media (max-width: 600px) {
-    .gh-blognav { margin: 20px 0; }
-}
 
 .gh-blognav-item {
     display: flex;
@@ -898,6 +895,11 @@ p.theme-validation-details {
 }
 
 .gh-setting-amp-liquid {
+    padding-left: 40px;
+    padding-right: 40px;
+}
+
+.gh-setting-firstpromoter-liquid {
     padding-left: 40px;
     padding-right: 40px;
 }

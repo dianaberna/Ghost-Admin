@@ -20,8 +20,10 @@ Router.map(function () {
     this.route('signout');
     this.route('signup', {path: '/signup/:token'});
     this.route('reset', {path: '/reset/:token'});
+
     this.route('about');
     this.route('site');
+    this.route('dashboard');
 
     this.route('billing', function () {
         this.route('billing-sub', {path: '/*sub'});
@@ -59,6 +61,7 @@ Router.map(function () {
     });
     this.route('settings.integrations.slack', {path: '/settings/integrations/slack'});
     this.route('settings.integrations.amp', {path: '/settings/integrations/amp'});
+    this.route('settings.integrations.firstpromoter', {path: '/settings/integrations/firstpromoter'});
     this.route('settings.integrations.unsplash', {path: '/settings/integrations/unsplash'});
     this.route('settings.integrations.zapier', {path: '/settings/integrations/zapier'});
 
