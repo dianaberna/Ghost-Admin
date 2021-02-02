@@ -61,7 +61,7 @@ export default Service.extend(Evented, {
         }, {
             id: 'upload-a-theme',
             title: this.intl.t('tour.Customising your publication'),
-            message: this.intl.t('tour.Using custom themes you can completely control the look and feel of your site to suit your brand. Here\'s a full guide to help: <strong><a href="{link}" target="_blank">{link}</a></strong>', {link: 'https://ghost.org/docs/api/handlebars-themes/'})
+            message: this.intl.t('tour.Using custom themes you can completely control the look and feel of your site to suit your brand. Here\'s a full guide to help: <strong><a href="{link}" target="_blank">{link}</a></strong>', {link: 'https://ghost.org/docs/themes/', htmlSafe: true})
         }];
     },
 

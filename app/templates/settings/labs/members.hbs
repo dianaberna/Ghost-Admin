@@ -1,15 +1,15 @@
 <section class="gh-canvas">
     <GhCanvasHeader class="gh-canvas-header">
         <h2 class="gh-canvas-title" data-test-screen-title>
-            <LinkTo @route="settings.labs">Labs</LinkTo>
-            <span>{{svg-jar "arrow-right"}}</span> 
-            Members
+            <LinkTo @route="settings.labs">{{t "Labs"}}</LinkTo>
+            <span>{{svg-jar "arrow-right"}}</span>
+            {{t "members.Members"}}
         </h2>
         <section class="view-actions">
-            <GhTaskButton @buttonText="Save settings"
+            <GhTaskButton @buttonText={{t "taskButton.Save settings"}}
                 @task={{this.saveSettings}}
-                @successText="Saved"
-                @runningText="Saving"
+                @successText={{t "taskButton.Saved"}}
+                @runningText={{t "taskButton.Saving"}}
                 @class="gh-btn gh-btn-blue gh-btn-icon"
                 data-test-button="save-members-settings"
             />
@@ -22,8 +22,8 @@
         <div class="flex flex-column br3 shadow-1 bg-grouped-table mt2 pa5">
             <div class="gh-setting-first gh-setting-last">
                 <div class="gh-members-setting-content">
-                    <div class="gh-setting-title">Enable members</div>
-                    <div class="gh-setting-desc">Create registered members and take subscription payments — <a href="https://ghost.org/docs/members/" target="_blank" rel="noopener">Find out more</a></div>
+                    <div class="gh-setting-title">{{t "members.Enable members"}}</div>
+                    <div class="gh-setting-desc">{{{t "members.Create registered members and take subscription payments — <a href=\"{link}\" target=\"_blank\" rel=\"noopener\">Find out more</a>" link="https://ghost.org/docs/members/"}}}</div>
                 </div>
                 <div class="gh-setting-action">
                     <div class="for-switch">
@@ -47,6 +47,6 @@
         </div>
 
         {{/if}}
-        
+
     </section>
 </section>
