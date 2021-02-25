@@ -1,6 +1,5 @@
 <header class="modal-header gh-wn-header" data-test-modal="whats-new">
-    <img src="assets/img/whats-new-header-bg.svg" class="background-img" />
-    <span>{{svg-jar "gift" class="w5 h5 fill-white"}}</span>
+    <span>{{svg-jar "gift" class="w5 h5"}}</span>
     <h2>{{t "What's new?"}}</h2>
 </header>
 
@@ -18,7 +17,7 @@
             {{/if}}
             {{#if entry.custom_excerpt}}
                 <p>{{entry.custom_excerpt}}</p>
-                <a href={{entry.url}} class="dib fw6 mb6" target="_blank" rel="noopener noreferrer">Read the full post →</a>
+                <a href={{entry.url}} class="dib fw6 mb6" target="_blank" rel="noopener noreferrer">{{t "Read the full post →"}}</a>
             {{else}}
                 {{{entry.html}}}
             {{/if}}

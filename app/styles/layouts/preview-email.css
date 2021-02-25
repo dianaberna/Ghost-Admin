@@ -1,11 +1,10 @@
 .fullscreen-modal-email-preview {
-    margin: 30px;
+    margin: 24px;
     max-width: 100%;
 }
 
 .fullscreen-modal-email-preview .modal-content {
     position: relative;
-    overflow: scroll;
     height: 100%;
     padding: 0;
 }
@@ -19,9 +18,10 @@
     top: 0;
     left: 0;
     right: 0;
+    min-height: 70px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     margin: 0;
     padding: 18px 32px;
     border-top-left-radius: 6px;
@@ -35,17 +35,24 @@
 }
 
 .gh-pe-header h2 {
-    width: calc(50vw - 200px);
     margin: 0;
+    margin-right: auto;
+    position: absolute;
+    left: 24px;
+}
+
+.gh-pe-header .gh-btn-group {
+    flex: 1;
 }
 
 .gh-pe-header-border {
     border-bottom: 1px solid var(--whitegrey);
 }
 
-.gh-pe-close {
-    width: calc(50vw - 200px)
-}
+/* .gh-pe-close {
+    margin-left: auto;
+    flex: 1;
+} */
 
 .modal-content .gh-pe-close button {
     stroke: var(--midgrey);
@@ -63,23 +70,21 @@
 }
 
 .gh-pe-btn-group button span {
-    border: 1px solid var(--whitegrey);
+    border-radius: 0;
 }
 
 .gh-pe-btn-group button:first-of-type span {
     border-right: none;
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
 }
 
 .gh-pe-btn-group button:last-of-type span {
     border-left: none;
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
 }
 
 .fullscreen-modal-email-preview .gh-pe-desktop-container {
-    height: calc(100vh - 135px);
+    height: calc(100vh - 119px);
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -94,7 +99,7 @@
     width: 100%;
     padding: 0;
     background: var(--white);
-    box-shadow: 
+    box-shadow:
         0 0 0 1px rgba(0,0,0,0.02),
         0 2.8px 2.2px rgba(0, 0, 0, 0.02),
         0 6.7px 5.3px rgba(0, 0, 0, 0.028),
@@ -139,12 +144,15 @@
 }
 
 .fullscreen-modal-email-preview .gh-pe-mobile-container {
-    height: calc(100vh - 140px);
     display: flex;
     flex-direction: column;
+    flex-grow: 1;
     align-items: center;
     background: var(--whitegrey-l1);
     padding: 30px 30px 45px;
+    height: calc(100vh - 119px);
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
 }
 
 .gh-pe-mobile-bezel {
@@ -153,7 +161,7 @@
     border-radius: 40px;
     display: flex;
     background: var(--whitegrey-l2);
-    box-shadow: 
+    box-shadow:
         0 0 0 1px rgba(0,0,0,0.02),
         0 2.8px 2.2px rgba(0, 0, 0, 0.02),
         0 6.7px 5.3px rgba(0, 0, 0, 0.028),

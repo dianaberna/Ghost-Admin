@@ -1,0 +1,111 @@
+<section class="gh-canvas">
+    <GhCanvasHeader class="gh-canvas-header">
+        <h2 class="gh-canvas-title" data-test-screen-title>
+            <LinkTo @route="settings">{{t "settings.Settings"}}</LinkTo>
+            <span>{{svg-jar "arrow-right"}}</span>
+            {{t "settings.Theme"}}
+        </h2>
+    </GhCanvasHeader>
+
+    {{#if this.showLeaveSettingsModal}}
+        <GhFullscreenModal @modal="leave-settings"
+            @confirm={{action "leaveSettings"}}
+            @close={{action "toggleLeaveSettingsModal"}}
+            @modifier="action wide" />
+    {{/if}}
+
+    <section class="view-container">
+        <div class="gh-setting-header gh-first-header">{{t "settings.Ghost theme directory"}}</div>
+        <div class="gh-theme-directory-container">
+            <div class="theme-directory">
+                {{#each this.marketplaceThemes as |theme|}}
+                    <a class="td-item" href={{theme.url}} target="_blank" rel="noopener noreferrer">
+                        <div class="td-item-screenshot relative">
+                            <img style="object-fit:contain;" src={{theme.image}} alt={{t "settings.{name} Theme" name=theme.name}} />
+                            <div class="td-item-overlay">
+                                <LinkTo class="td-item-action gh-btn gh-btn-black mb4" @route="settings.theme.install" @query={{hash source="github" ref=theme.ref}}><span>{{t "settings.Install"}}</span></LinkTo>
+                                <a href={{theme.previewUrl}} class="td-item-action gh-btn" target="_blank" rel="noopener"><span>{{t "settings.Preview"}}</span></a>
+                            </div>
+                        </div>
+                        <div class="td-item-desc">
+                            <div>{{theme.name}}</div>
+                            <span>• {{theme.category}}</span>
+                        </div>
+                    </a>
+                {{/each}}
+                <a class="td-item" href="https://ghost.org/marketplace/" target="_blank" rel="noopener noreferrer">
+                    <div class="td-item-empty">
+                        {{svg-jar "circle-ellipsis" class="w5"}}
+                        <h4 class="fw6 f6 pt3 pb1">{{t "settings.More themes"}}</h4>
+                        <div class="midgrey f7">{{t "settings.Explore more free and premium themes on our Marketplace"}}</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="gh-setting-header">{{t "settings.Installed Themes"}}</div>
+        <div class="gh-themes-container">
+
+            <GhThemeTable
+                @themes={{this.themes}}
+                @activateTheme={{action "activateTheme"}}
+                @downloadTheme={{action "downloadTheme"}}
+                @deleteTheme={{action "deleteTheme"}} />
+
+            <div class="flex justify-between mt6">
+                <LinkTo id="upload-theme" @route="settings.theme.uploadtheme" class="gh-btn gh-btn-green" data-test-button="uploadtheme">
+                    <span>{{t "settings.Upload a theme"}}</span>
+                </LinkTo>
+
+                <a href="https://ghost.org/docs/themes/" target=_"blank" rel="noopener noreferrer" class="gh-btn gh-btn-outline">
+                    <span>{{t "settings.Theme developer docs"}}</span>
+                </a>
+            </div>
+
+
+            {{#if this.showDeleteThemeModal}}
+                <GhFullscreenModal @modal="delete-theme"
+                    @model={{hash
+                        theme=this.themeToDelete
+                        download=(action "downloadTheme" this.themeToDelete)
+                    }}
+                    @close={{action "hideDeleteThemeModal"}}
+                    @confirm={{action "deleteTheme"}}
+                    @modifier="action wide" />
+            {{/if}}
+
+            {{#if this.showThemeWarningsModal}}
+                <GhFullscreenModal @modal="theme-warnings"
+                    @model={{hash
+                        title=(t "settings.Activation successful")
+                        warnings=this.themeWarnings
+                        errors=this.themeErrors
+                        canActivate=true
+                    }}
+                    @close={{action "hideThemeWarningsModal"}}
+                    @modifier="action wide" />
+            {{/if}}
+
+            {{#if this.showThemeErrorsModal}}
+                <GhFullscreenModal @modal="theme-warnings"
+                    @model={{hash
+                        title=(t "settings.Activation failed")
+                        errors=this.themeErrors
+                        fatalErrors=this.themeFatalErrors
+                        canActivate=false
+                    }}
+                    @close={{action "hideThemeWarningsModal"}}
+                    @modifier="action wide" />
+            {{/if}}
+        </div>
+
+    </section>
+</section>
+
+{{outlet}}
+
+<GhTourItem @throbberId="upload-a-theme"
+    @target="#upload-theme"
+    @throbberAttachment="top middle"
+    @popoverTriangleClass="bottom"
+/>

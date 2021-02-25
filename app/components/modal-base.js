@@ -1,8 +1,11 @@
 /* global key */
 import Component from '@ember/component';
 import {run} from '@ember/runloop';
+import {inject as service} from '@ember/service';
 
 export default Component.extend({
+    intl: service(),
+
     tagName: 'section',
     classNames: 'modal-content',
 
@@ -23,7 +26,7 @@ export default Component.extend({
 
     actions: {
         confirm() {
-            throw new Error('You must override the "confirm" action in your modal component');
+            throw new Error(this.intl.t('You must override the "confirm" action in your modal component'));
         },
 
         closeModal() {
@@ -42,8 +45,10 @@ export default Component.extend({
             this.send('confirm');
         });
 
-        key('escape', 'modal', () => {
-            this.send('closeModal');
+        key('escape', 'modal', (event) => {
+            if (!event.target.dataset.preventEscapeCloseModal) {
+                this.send('closeModal');
+            }
         });
 
         key.setScope('modal');

@@ -1,12 +1,12 @@
 <div class="modal-body gh-ps-modal-body">
     <div class="flex pa0 flex-grow-1 gh-portal-settings">
         <div class="gh-portal-settings-sidebar">
-            <h2 class="f4 fw6 pa0 ma0 flex bb b--whitegrey pl6 pr6 items-center gh-portal-settings-topbarheight">{{t "portal.Portal settings"}}</h2>
+            <h2 class="gh-portal-settings-title">{{t "potal.Portal settings"}}</h2>
             <div class="gh-portal-form-wrapper">
                 <fieldset class="gh-portal-settings-form">
                     <div class="gh-portal-setting-section" onclick={{action "switchToSignupPage"}}>
-                        <h3 class="gh-portal-setting-sectionheading">{{t "portal.Signup options"}}</h3>
-                        <GhFormGroup @classNames="gh-members-subscribed-checkbox pb5 mb0">
+                        <h3 class="gh-portal-setting-sectionheading">{{t "potal.Signup options"}}</h3>
+                        <GhFormGroup @classNames="gh-members-subscribed-checkbox gh-portal-setting-first pb5 mb0">
                             <div class="flex justify-between items-center">
                                 <div class="mr3">
                                     <h4 class="gh-portal-setting-title">{{t "portal.Display name in signup form"}}</h4>
@@ -93,55 +93,15 @@
                         </div>
                         {{else}}
                         <div class="gh-portal-setting-no-stripe">
-                            You need to <button class="gh-btn gh-btn-link blue" {{action "openStripeSettings"}}>connect to Stripe</button> to take payments
+                            You need to <button class="gh-btn gh-btn-link black" {{action "openStripeSettings"}}>connect to Stripe</button> to take payments
                         </div>
                         {{/if}}
                     </div>
-                    <div class="gh-portal-setting-section divider-top" onclick={{action "switchToSignupPage"}}>
-                        <h3 class="gh-portal-setting-sectionheading">{{{t "portal.Look &amp; Feel"}}} </h3>
-                        <GhFormGroup @classNames="flex">
-                            <div class="flex w-100 items-center justify-between">
-                                <h4 class="gh-portal-setting-title">{{t "portal.Accent color"}}</h4>
-                                <div class="gh-setting-action">
-                                    <GhFormGroup
-                                        @errors={{settings.errors}}
-                                        @hasValidated={{settings.hasValidated}}
-                                        @property="accentColor"
-                                        @class="input-color-form-group"
-                                    >
-                                        <div class="input-color">
-                                            <GhTextInput
-                                                @name="accent-color"
-                                                @placeholder="abcdef"
-                                                @autocorrect="off"
-                                                @maxlength="6"
-                                                @focus-out={{action "validateAccentColor"}}
-                                                @value={{accentColor}}
-                                                data-test-input="accentColor"
-                                            />
-                                            <div class="color-picker-horizontal-divider"></div>
-                                            <div
-                                                class="color-box-container"
-                                                style={{this.backgroundStyle}}
-                                            >
-                                                <input
-                                                    type="color" name="accent-color" class="color-picker" value="{{this.colorPickerValue}}"
-                                                    oninput={{action "updateAccentColor" value="target.value"}}
-                                                >
-                                            </div>
-                                        </div>
-                                        <GhErrorMessage
-                                            @errors={{settings.errors}}
-                                            @property="accentColor"
-                                            data-test-error="accentColor"
-                                        />
-                                    </GhFormGroup>
-                                </div>
-                            </div>
-                        </GhFormGroup>
-                        <GhFormGroup @classNames="gh-members-subscribed-checkbox mb0pt3 b--whitegrey">
-                            <div class="flex justify-between items-center nt2">
-                                <h4 class="gh-portal-setting-title">{{t "portal.Show Portal button"}}</h4>
+                    <div class="gh-portal-setting-section" onclick={{action "switchToSignupPage"}}>
+                        <h3 class="gh-portal-setting-sectionheading">{{t "potal.Look & feel"}}</h3>
+                        <GhFormGroup @classNames="gh-members-subscribed-checkbox gh-portal-setting-first mb0 b--whitegrey">
+                            <div class="flex justify-between items-center">
+                                <h4 class="gh-portal-setting-title">{{t "potal.Show Portal button"}}</h4>
                                 <div class="for-switch small">
                                     <label
                                         class="switch"
@@ -251,13 +211,13 @@
                             {{/if}}
                         {{/if}}
                     </div>
-                    <div class="gh-portal-setting-section redirects divider-top">
-                        <h4 class="gh-portal-setting-sectionheading">{{t "portal.Welcome page"}}</h4>
+                    <div class="gh-portal-setting-section redirects">
+                        <h4 class="gh-portal-setting-sectionheading">{{t "potal.Welcome page"}}</h4>
                         <GhFormGroup
                             @errors={{settings.errors}}
                             @hasValidated={{settings.hasValidated}}
                             @property="membersFreeSignupRedirect"
-                            @classNames="mt5"
+                            @classNames="mt2"
                         >
                             <h4 class="gh-portal-setting-title">{{t "portal.For free signups"}}</h4>
                             <div class="flex items-center mt2">
@@ -301,13 +261,15 @@
             </div>
         </div>
         <div class="gh-portal-settings-main">
-            <div class="flex items-center justify-between w-100 gh-portal-settings-topbarheight">
-                <ul class="gh-portal-settings-maintabs">
-                    <li class="{{if (eq this.page "signup") "active"}}"><a href="#" {{action "switchPreviewPage" "signup"}} data-test-link="switch-portal-preview-page">{{t "portal.Signup"}}</a></li>
-                    <li class="{{if (eq this.page "accountHome") "active"}}"><a href="#" {{action "switchPreviewPage" "accountHome"}} data-test-link="switch-portal-preview-page">{{t "portal.Account"}}</a></li>
-                    <li class="{{if this.showLinksPage "active"}}"><a href="#" {{action "switchPreviewPage" "links"}} data-test-link="switch-portal-preview-page">{{t "portal.Links"}}</a></li>
-                </ul>
-                <div class="flex items-center">
+            <div class="gh-portal-settings-previewheader">
+
+                <div class="gh-btn-group">
+                    <a class="gh-btn {{if (eq this.page "signup") "gh-btn-group-selected"}}" href="#" {{action "switchPreviewPage" "signup"}} data-test-link="switch-portal-preview-page"><span>{{t "potal.Signup"}}</span></a>
+                    <a class="gh-btn {{if (eq this.page "accountHome") "gh-btn-group-selected"}}" href="#" {{action "switchPreviewPage" "accountHome"}} data-test-link="switch-portal-preview-page"><span>{{t "potal.Account"}}</span></a>
+                    <a class="gh-btn {{if this.showLinksPage "gh-btn-group-selected"}}" href="#" {{action "switchPreviewPage" "links"}} data-test-link="switch-portal-preview-page"><span>{{t "potal.Links"}}</span></a>
+                </div>
+
+                <div class="gh-portal-settings-actions">
                     <button
                         class="gh-btn mr3"
                         {{action "closeModal"}}
@@ -322,7 +284,7 @@
                         @buttonText={{t "taskButton.Save and close"}}
                         @successText={{t "taskButton.Saved"}}
                         @task={{this.saveTask}}
-                        @idleClass="gh-btn-blue"
+                        @idleClass="gh-btn-primary"
                         @class="gh-btn gh-btn-icon"
                         data-test-button="save-members-modal-setting"
                     />

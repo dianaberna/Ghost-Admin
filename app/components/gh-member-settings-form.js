@@ -21,7 +21,7 @@ export default Component.extend({
     // Allowed actions
     setProperty: () => {},
 
-    hasMultipleSubscriptions: gt('member.stripe', 1),
+    hasMultipleSubscriptions: gt('member.subscriptions', 1),
 
     canShowStripeInfo: computed('member.isNew', 'membersUtils.isStripeEnabled', function () {
         let stripeEnabled = this.membersUtils.isStripeEnabled;
@@ -33,8 +33,8 @@ export default Component.extend({
         }
     }),
 
-    subscriptions: computed('member.stripe', function () {
-        let subscriptions = this.member.get('stripe');
+    subscriptions: computed('member.subscriptions', function () {
+        let subscriptions = this.member.get('subscriptions');
         if (subscriptions && subscriptions.length > 0) {
             return subscriptions.map((subscription) => {
                 const statusLabel = subscription.status ? subscription.status.replace('_', ' ') : '';

@@ -1,0 +1,256 @@
+<section class="gh-canvas">
+    <GhCanvasHeader class="gh-canvas-header">
+        <h2 class="gh-canvas-title" data-test-screen-title>
+            <LinkTo @route="integrations" data-test-link="integrations-back">{{t "settings.Integrations"}}</LinkTo>
+            <span>{{svg-jar "arrow-right"}}</span>
+            {{t "settings.Zapier"}}
+        </h2>
+    </GhCanvasHeader>
+
+    <section class="view-container">
+
+        <section class="gh-main-section no-heading">
+            <div class="gh-main-section-block">
+                <div class="gh-main-section-content app-detail-heading app-grid">
+                    <div class="app-cell">
+                        <img class="app-icon" src="assets/img/zapier.svg" />
+                    </div>
+                    <div class="app-cell">
+                        <h3>{{t "settings.Zapier"}}</h3>
+                        <p>{{t "settings.Automation for your favourite apps"}}</p>
+
+                        <table class="list">
+                            <tbody>
+                                <tr>
+                                    <td class="data-label">{{t "settings.Admin API key"}}</td>
+                                    <td class="data highlight-hover">
+                                        <div class="relative flex items-center {{unless this.copyAdminKey.isRunning "hide-child-instant"}}">
+                                            <span class="truncate" data-test-text="admin-key">
+                                                {{this.integration.adminKey.secret}}
+                                            </span>
+                                            <div class="app-api-buttons child">
+                                                <button type="button" {{action "confirmRegenerateKeyModal" this.integration.adminKey}} class="app-button-regenerate" data-tooltip="Regenerate">
+                                                    {{svg-jar "reload" class="w4 h4 stroke-midgrey"}}
+                                                </button>
+                                                <button type="button" {{action (perform this.copyAdminKey)}} class="app-button-copy">
+                                                    {{#if this.copyAdminKey.isRunning}}
+                                                    {{svg-jar "check-circle" class="w3 v-mid mr2 stroke-white"}} {{t "taskButton.Copied"}}
+                                                    {{else}}
+                                                    {{t "taskButton.Copy"}}
+                                                    {{/if}}
+                                                </button>
+                                            </div>
+                                        </div>
+                                        {{#if (eq this.regeneratedKeyType this.integration.adminKey.type)}}
+                                            <div class="green"> {{t "settings.Admin API Key was successfully regenerated"}} </div>
+                                        {{/if}}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="data-label">API URL</td>
+                                    <td class="data highlight-hover">
+                                        <div class="relative flex items-center {{unless this.copyApiUrl.isRunning "hide-child-instant"}}">
+                                            <span data-test-text="api-url">
+                                                {{this.apiUrl}}
+                                            </span>
+                                            <div class="app-api-buttons child">
+                                                <button type="button" {{action (perform this.copyApiUrl)}} class="app-button-copy">
+                                                    {{#if this.copyApiUrl.isRunning}}
+                                                        {{svg-jar "check-circle" class="w3 v-mid mr2"}} {{t "taskButton.Copied"}}
+                                                    {{else}}
+                                                        {{t "taskButton.Copy"}}
+                                                    {{/if}}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="zapier-toggle" class="gh-main-section">
+            <h4 class="gh-main-section-header large bn">{{t "settings.Zapier templates"}}</h4>
+            <p class="gh-main-section-description">{{t "settings.Explore pre-built templates for common automation tasks"}}</p>
+            <div class="gh-setting-content gh-setting-content--no-action">
+                <div class="gh-setting-content-extended">
+                    <div class="apps-grid gh-settings-zapier-templates">
+                        <div class="apps-grid-cell">
+                            <article class="apps-card-app">
+                                <div class="apps-card-left">
+                                    <div class="flex items-center">
+                                        {{svg-jar "ghost-squircle" class="w8 h8"}}
+                                        {{svg-jar "arrow-right" class="fill-midgrey w4 ml2"}}
+                                        <figure class="apps-card-app-icon" style="background-image:url(assets/img/twitter.svg);background-size:32px;"></figure>
+                                    </div>
+                                    <div class="apps-card-meta">
+                                        <h3 class="apps-card-app-title">{{t "Share new posts to Twitter"}}</h3>
+                                    </div>
+                                </div>
+                                <div class="gh-card-right">
+                                    <a href="https://zapier.com/app/editor/template/50909" target="_blank" rel="noopener" class="gh-btn gh-btn-outline zapier-template-link"><span>{{t "settings.Use this Zap"}}</span></a>
+                                </div>
+                            </article>
+                        </div>
+                        <div class="apps-grid-cell">
+                            <article class="apps-card-app">
+                                <div class="apps-card-left">
+                                    <div class="flex items-center">
+                                        {{svg-jar "ghost-squircle" class="w8 h8"}}
+                                        {{svg-jar "arrow-right" class="fill-midgrey w4 ml2"}}
+                                        <figure class="apps-card-app-icon" style="background-image:url(assets/img/slackicon.png);background-size:30px;"></figure>
+                                    </div>
+                                    <div class="apps-card-meta">
+                                        <h3 class="apps-card-app-title">{{t "settings.Share scheduled posts with your team in Slack"}}</h3>
+                                    </div>
+                                </div>
+                                <div class="gh-card-right">
+                                    <a href="https://zapier.com/app/editor/template/359499" target="_blank" rel="noopener" class="gh-btn gh-btn-outline zapier-template-link"><span>{{t "settings.Use this Zap"}}</span></a>
+                                </div>
+                            </article>
+                        </div>
+                        <div class="apps-grid-cell">
+                            <article class="apps-card-app">
+                                <div class="apps-card-left">
+                                    <div class="flex items-center">
+                                        {{svg-jar "ghost-squircle" class="w8 h8"}}
+                                        {{svg-jar "arrow-right" class="fill-midgrey w4 ml2"}}
+                                        <figure class="apps-card-app-icon" style="background-image:url(assets/img/patreon.svg);background-size:28px;"></figure>
+                                    </div>
+                                    <div class="apps-card-meta">
+                                        <h3 class="apps-card-app-title">{{t "settings.Connect Patreon to your Ghost membership site"}}</h3>
+                                    </div>
+                                </div>
+                                <div class="gh-card-right">
+                                    <a href="https://zapier.com/app/editor/template/75801" target="_blank" rel="noopener" class="gh-btn gh-btn-outline zapier-template-link"><span>{{t "settings.Use this Zap"}}</span></a>
+                                </div>
+                            </article>
+                        </div>
+                        <div class="apps-grid-cell">
+                            <article class="apps-card-app">
+                                <div class="apps-card-left">
+                                    <div class="flex items-center">
+                                        {{svg-jar "ghost-squircle" class="w8 h8"}}
+                                        {{svg-jar "arrow-right" class="fill-midgrey w4 ml2"}}
+                                        <figure class="apps-card-app-icon" style="background-image:url(assets/img/zero-bounce.png);background-size:30px;"></figure>
+                                    </div>
+                                    <div class="apps-card-meta">
+                                        <h3 class="apps-card-app-title">{{t "settings.Protect email delivery with email verification"}}</h3>
+                                    </div>
+                                </div>
+                                <div class="gh-card-right">
+                                    <a href="https://zapier.com/app/editor/template/359415" target="_blank" rel="noopener" class="gh-btn gh-btn-outline zapier-template-link"><span>{{t "settings.Use this Zap"}}</span></a>
+                                </div>
+                            </article>
+                        </div>
+                        <div class="apps-grid-cell">
+                            <article class="apps-card-app">
+                                <div class="apps-card-left">
+                                    <div class="flex items-center">
+                                        {{svg-jar "ghost-squircle" class="w8 h8"}}
+                                        {{svg-jar "arrow-right" class="fill-midgrey w4 ml2"}}
+                                        <figure class="apps-card-app-icon" style="background-image:url(assets/img/paypal.svg);background-size:26px;"></figure>
+                                    </div>
+                                    <div class="apps-card-meta">
+                                        <h3 class="apps-card-app-title">{{t "settings.Add members for successful sales in PayPal"}}</h3>
+                                    </div>
+                                </div>
+                                <div class="gh-card-right">
+                                    <a href="https://zapier.com/app/editor/template/184423" target="_blank" rel="noopener" class="gh-btn gh-btn-outline zapier-template-link"><span>{{t "settings.Use this Zap"}}</span></a>
+                                </div>
+                            </article>
+                        </div>
+                        <div class="apps-grid-cell">
+                            <article class="apps-card-app">
+                                <div class="apps-card-left">
+                                    <div class="flex items-center">
+                                        {{svg-jar "ghost-squircle" class="w8 h8"}}
+                                        {{svg-jar "arrow-right" class="fill-midgrey w4 ml2"}}
+                                        <figure class="apps-card-app-icon" style="background-image:url(assets/img/paypal.svg);background-size:26px;"></figure>
+                                    </div>
+                                    <div class="apps-card-meta">
+                                        <h3 class="apps-card-app-title">{{t "settings.Unsubscribe members who cancel a subscription in PayPal"}}</h3>
+                                    </div>
+                                </div>
+                                <div class="gh-card-right">
+                                    <a href="https://zapier.com/app/editor/template/359348" target="_blank" rel="noopener" class="gh-btn gh-btn-outline zapier-template-link"><span>{{t "settings.Use this Zap"}}</span></a>
+                                </div>
+                            </article>
+                        </div>
+                        <div class="apps-grid-cell">
+                            <article class="apps-card-app">
+                                <div class="apps-card-left">
+                                    <div class="flex items-center">
+                                        {{svg-jar "ghost-squircle" class="w8 h8"}}
+                                        {{svg-jar "arrow-right" class="fill-midgrey w4 ml2"}}
+                                        <figure class="apps-card-app-icon" style="background-image:url(assets/img/google-docs.svg);background-size:22px;"></figure>
+                                    </div>
+                                    <div class="apps-card-meta">
+                                        <h3 class="apps-card-app-title">{{t "settings.Send new post drafts from Google Docs to Ghost"}}</h3>
+                                    </div>
+                                </div>
+                                <div class="gh-card-right">
+                                    <a href="https://zapier.com/app/editor/template/50924" target="_blank" rel="noopener" class="gh-btn gh-btn-outline zapier-template-link"><span>{{t "settings.Use this Zap"}}</span></a>
+                                </div>
+                            </article>
+                        </div>
+                        <div class="apps-grid-cell">
+                            <article class="apps-card-app">
+                                <div class="apps-card-left">
+                                    <div class="flex items-center">
+                                        {{svg-jar "ghost-squircle" class="w8 h8"}}
+                                        {{svg-jar "arrow-right" class="fill-midgrey w4 ml2"}}
+                                        <figure class="apps-card-app-icon" style="background-image:url(assets/img/typeform.svg);background-size:32px;"></figure>
+                                    </div>
+                                    <div class="apps-card-meta">
+                                        <h3 class="apps-card-app-title">{{t "settings.Survey new members using Typeform"}}</h3>
+                                    </div>
+                                </div>
+                                <div class="gh-card-right">
+                                    <a href="https://zapier.com/app/editor/template/359407" target="_blank" rel="noopener" class="gh-btn gh-btn-outline zapier-template-link"><span>{{t "settings.Use this Zap"}}</span></a>
+                                </div>
+                            </article>
+                        </div>
+                        <div class="apps-grid-cell">
+                            <article class="apps-card-app">
+                                <div class="apps-card-left">
+                                    <div class="flex items-center">
+                                        {{svg-jar "ghost-squircle" class="w8 h8"}}
+                                        {{svg-jar "arrow-right" class="fill-midgrey w4 ml2"}}
+                                        <figure class="apps-card-app-icon" style="background-image:url(assets/img/mailchimp.svg);background-size:32px;"></figure>
+                                    </div>
+                                    <div class="apps-card-meta">
+                                        <h3 class="apps-card-app-title">{{t "settings.Sync email subscribers in Ghost + Mailchimp"}}</h3>
+                                    </div>
+                                </div>
+                                <div class="gh-card-right">
+                                    <a href="https://zapier.com/app/editor/template/359342" target="_blank" rel="noopener" class="gh-btn gh-btn-outline zapier-template-link"><span>{{t "settings.Use this Zap"}}</span></a>
+                                </div>
+                            </article>
+                        </div>
+                    </div>
+
+                    <div class="zapier-footer">
+                        <a href="https://zapier.com/apps/ghost/integrations?utm_medium=partner_api&utm_source=widget&utm_campaign=Widget" target="_blank" rel="noopener">{{{t "settings.<span>See more Ghost integrations powered by</span> <figure style=\"background-image:url(assets/img/zapier-logo.svg); background-size: 42px;\"></figure>"}}}</a>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    </section>
+</section>
+
+{{#if this.showRegenerateKeyModal}}
+    <GhFullscreenModal @modal="regenerate-key"
+        @model={{hash
+            apiKey=this.selectedApiKey
+            integration=this.integration
+            internalIntegration="zapier"
+        }}
+        @confirm={{action "regenerateKey"}}
+        @close={{action "cancelRegenerateKeyModal"}}
+        @modifier="action wide" />
+{{/if}}

@@ -59,7 +59,7 @@
 .koenig-editor__editor h6 {
     font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, helvetica neue, helvetica, ubuntu, roboto, noto, segoe ui, arial, sans-serif;
     font-weight: 600;
-    color: var(--darkgrey-d1);
+    color: var(--black);
 }
 
 /* H1 should be almost the same size as the post title to suggest avoid using it */
@@ -498,8 +498,8 @@
 .koenig-editor__editor code,
 .koenig-editor__editor pre {
     font-family: Consolas,Liberation Mono,Menlo,Courier,monospace;
-    background: color-mod(var(--lightgrey) lightness(+4%));
-    border: 1px solid var(--lightgrey);
+    background: color-mod(var(--whitegrey) lightness(+4%));
+    border: 1px solid var(--whitegrey);
 }
 
 .koenig-editor__editor code {
@@ -650,7 +650,7 @@
 .koenig-editor__editor table tr td,
 .koenig-editor__editor table tr th {
     vertical-align: top;
-    border-bottom: 1px solid var(--lightgrey);
+    border-bottom: 1px solid var(--whitegrey);
 }
 
 /* Captions
@@ -676,7 +676,7 @@
 /* Styles that extend Spirit classes.
 /* -------------------------------------------------------------------- */
 .kg-card-left-border {
-    border-left-color: var(--lightgrey);
+    border-left-color: var(--whitegrey);
 }
 
 .kg-card-hover:hover {
@@ -731,6 +731,7 @@
 /* Link input bar */
 .kg-link-input {
     min-width: 225px; /* Same width as text toolbar */
+    caret-color: auto;
 }
 
 .kg-input-bar-close {
@@ -911,7 +912,7 @@
 /* --------------------------------------------------------------- */
 
 .kg-card-help {
-    background: color-mod(var(--lightgrey) l(+3%));
+    background: color-mod(var(--whitegrey) l(+3%));
     margin: 12px -13px -9px;
     padding: 6px;
 }
@@ -941,7 +942,7 @@
     border-radius: 4px;
 }
 
-.koenig-editor__editor .kg-bookmark-container {
+.kg-bookmark-container {
     display: flex;
     color: var(--darkgrey);
     text-decoration: none;
@@ -1038,6 +1039,32 @@
     margin-top: 0;
 }
 
+.kg-paywall-separator {
+    display: flex;
+    align-items: center;
+    height: 1em;
+    text-align: center;
+    color: var(--midlightgrey-d1);
+    text-transform: uppercase;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.kg-paywall-separator::before,
+.kg-paywall-separator::after {
+    content: '';
+    flex: 1;
+    border-top: 1px solid #dfe1e3;
+}
+
+.kg-paywall-separator:not(:empty)::before {
+    margin-right: .5em;
+}
+
+.kg-paywall-separator:not(:empty)::after {
+    margin-left: .5em;
+}
+
 
 /* Codemirror overrides
 /* --------------------------------------------------------------- */
@@ -1058,7 +1085,7 @@
 }
 
 .koenig-card-code--editor .CodeMirror {
-    background: color-mod(var(--lightgrey) lightness(+4%));
+    background: color-mod(var(--whitegrey) lightness(+4%));
 }
 
 .koenig-card-html--editor .CodeMirror:hover {

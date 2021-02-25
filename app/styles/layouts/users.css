@@ -5,13 +5,6 @@
     background: none;
 }
 
-.gh-invited-users .apps-grid-cell:hover + .apps-grid-cell .apps-card-app,
-.gh-invited-users .apps-grid-cell:hover .apps-card-app {
-    border-color: var(--lightgrey);
-    padding-left: 0;
-    margin-left: 16px;
-}
-
 .gh-invited-users .gh-badge {
     text-transform: none;
 }
@@ -78,7 +71,6 @@
     background-position: center center;
     background-size: cover;
     border-radius: 100%;
-    box-shadow: var(--white) 0 0 0 3px;
 }
 
 .user-list-item-figure img {
@@ -118,9 +110,9 @@
 }
 
 .gh-badge.administrator {
-    background: color-mod(var(--purple) a(15%));
+    background: color-mod(var(--pink) a(15%));
     text-transform: uppercase;
-    color: var(--purple-d2);
+    color: var(--pink-d2);
 }
 
 .gh-badge.editor {

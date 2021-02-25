@@ -4,18 +4,20 @@
         @class="gh-editor gh-view"
         as |editor|
     >
-        <header class="gh-editor-header br2 pe-none {{editor.headerClass}} {{if this.infoMessage "bg-white"}}">
+        <header class="gh-editor-header br2 pe-none {{editor.headerClass}}">
             <div class="flex items-center pe-auto">
                 {{#if this.ui.isFullScreen}}
-                    <div class="{{ui-text "ts"}} h9 br b--lightgrey pl3 pr4 flex items-center br2 br--left {{unless this.infoMessage "bg-white"}}">
-                        <LinkTo @route={{pluralize this.post.displayName }} @classNames="blue link fw4 flex items-center" data-test-link={{pluralize this.post.displayName}}>
-                            {{svg-jar "arrow-left" class="w3 fill-blue mr1 nudge-right--2"}}
-                            {{capitalize (t (concat post.displayName ".linkToList"))}}
+                    <div class="ml3 flex items-center">
+                        <LinkTo @route={{pluralize this.post.displayName }} @classNames="gh-editor-back-button" data-test-link={{pluralize this.post.displayName}}>
+                            <span>
+                                {{svg-jar "arrow-left"}}
+                                {{capitalize (pluralize this.post.displayName)}}
+                            </span>
                         </LinkTo>
                     </div>
                 {{/if}}
-                <div class="flex items-center pl4 pr4 f8 nudge-left--1 h9 br2 br--right {{unless this.infoMessage "bg-white"}}">
-                    <span class="fw4 midgrey-l2">
+                <div class="gh-editor-post-status">
+                    <span>
                         <GhEditorPostStatus
                             @post={{this.post}}
                             @isSaving={{or this.autosave.isRunning this.saveTasks.isRunning}}
@@ -24,20 +26,16 @@
                 </div>
             </div>
 
-            {{#if this.infoMessage}}
-            <div class="gh-koenig-info miw88 flex flex-auto justify-center" style="pointer-events: auto">
-                <div class="midgrey inline-flex tracked-1 center pa1 pl4 pr4 br3 justify-center items-start {{if (eq editor.headerClass "gh-editor-header-small") "bg-white"}}">
-                    {{svg-jar "idea" class="w7 h7 fill-blue"}}
-                    <p class="ma0 pa0 ml1 nudge-top--2">
-                        {{this.infoMessage}}
-                        <button type="button" class="blue fw5" {{action (mut this.infoMessage "")}}>{{t "Got it"}}</button>
-                    </p>
-                </div>
-            </div>
-            {{/if}}
-
-            <section class="view-actions br2 {{unless this.infoMessage "bg-white"}}" style="pointer-events: auto">
+            <section class="flex" style="pointer-events: auto">
                 {{#unless this.post.isNew}}
+                    {{#if this.post.isDraft}}
+                        <div>
+                            <button type="button" class="gh-editor-preview-trigger" {{on "click" (action "togglePostPreviewModal")}}>
+                                <span>{{t "editor.Preview"}}</span>
+                            </button>
+                        </div>
+                    {{/if}}
+
                     {{#if this.session.user.isContributor}}
                         <GhTaskButton @buttonText={{t "taskButton.Save"}}
                             @task={{this.save}}
@@ -45,20 +43,24 @@
                             @class="gh-btn gh-btn-blue gh-btn-icon contributor-save-button"
                             data-test-contributor-save=true />
                     {{else}}
-                        <GhPublishmenu
-                            @post={{this.post}}
-                            @postStatus={{this.post.status}}
-                            @saveTask={{this.save}}
-                            @setSaveType={{action "setSaveType"}}
-                            @onOpen={{action "cancelAutosave"}}
-                            @backgroundTask={{this.backgroundLoader}}
-                            @memberCount={{this.memberCount}} />
+                        <div>
+                            <GhPublishmenu
+                                @post={{this.post}}
+                                @postStatus={{this.post.status}}
+                                @saveTask={{this.save}}
+                                @setSaveType={{action "setSaveType"}}
+                                @onOpen={{action "cancelAutosave"}}
+                                @backgroundTask={{this.backgroundLoader}}
+                                @memberCount={{this.memberCount}} />
+                        </div>
                     {{/if}}
                 {{/unless}}
 
-                <button type="button" class="post-settings" title="{{t "Settings"}}" {{action "openSettingsMenu" target=this.ui}} data-test-psm-trigger>
-                    {{svg-jar "settings"}}
-                </button>
+                <div>
+                    <button type="button" class="gh-btn gh-btn-editor gh-btn-icon only-has-icon gh-actions-cog ml3" title={{t "editor.Settings"}} data-test-button="psm-toggle" {{action "openSettingsMenu" target=this.ui}} data-test-psm-trigger>
+                        <span>{{svg-jar "settings"}}</span>
+                    </button>
+                </div>
             </section>
         </header>
 
@@ -86,7 +88,7 @@
             @deleteSnippet={{if this.canManageSnippets this.toggleDeleteSnippetModal}}
         />
 
-        <div class="absolute flex items-center br3 bg-white {{if editor.headerClass "right-4 bottom-4" "right-6 bottom-6"}}">
+        <div class="gh-editor-wordcount-container {{if editor.headerClass "small"}}">
             <div class="midgrey-l2 {{if editor.headerClass "f-supersmall pl2 pr2" "f8 pl4 pr3"}} fw4">
                 {{t "editor.word" count=this.wordCount.wordCount}}
             </div>
@@ -113,6 +115,18 @@
         <GhFullscreenModal @modal="re-authenticate"
             @close={{action "toggleReAuthenticateModal"}}
             @modifier="action wide" />
+    {{/if}}
+
+    {{#if this.showPostPreviewModal}}
+        <GhFullscreenModal @modal="post-preview"
+            @model={{hash
+                post=this.post
+                saveTask=this.save
+                setEditorSaveType=(action "setSaveType")
+                memberCount=this.memberCount
+            }}
+            @close={{action "togglePostPreviewModal"}}
+            @modifier="full-overlay email-preview" />
     {{/if}}
 
     {{#if this.showEmailPreviewModal}}

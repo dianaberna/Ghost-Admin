@@ -1,7 +1,6 @@
 <section class="gh-canvas">
-
-    <GhCanvasHeader class="gh-canvas-header post-header">
-        <GhCustomViewTitle @title={{t "Posts"}} @query={{reset-query-params "posts"}} />
+    <GhCanvasHeader class="gh-canvas-header break tablet post-header">
+        <GhCustomViewTitle @title={{t "posts.Posts"}} @query={{reset-query-params "posts"}} />
 
         <section class="view-actions">
             <GhContentfilter
@@ -23,21 +22,20 @@
                 @onOrderChange={{action "changeOrder"}}
             />
 
-            <LinkTo @route="editor.new" @model="post" class="gh-btn gh-btn-green" data-test-new-post-button={{true}}><span>{{t "New post"}}</span></LinkTo>
+            <LinkTo @route="editor.new" @model="post" class="gh-btn gh-btn-primary view-actions-top-row" data-test-new-post-button={{true}}><span>{{t "posts.New post"}}</span></LinkTo>
         </section>
     </GhCanvasHeader>
 
-    <section class="content-list">
+    <section class="view-container content-list">
         <ol class="posts-list gh-list {{unless this.postsInfinityModel "no-posts"}}">
             {{#if this.postsInfinityModel}}
                 <li class="gh-list-row header">
-                    <div class="gh-list-header no-padding">{{!--Favorite indicator column: no header--}}</div>
-                    <div class="gh-list-header gh-posts-title-header">{{t "Title"}}</div>
+                    <div class="gh-list-header gh-posts-title-header">{{t "posts.Title"}}</div>
                     {{#if this.feature.emailAnalytics}}
-                        <div class="gh-list-header gh-posts-sends-header">{{t "Sends"}}</div>
-                        <div class="gh-list-header gh-posts-opens-header">{{t "Opens"}}</div>
+                        <div class="gh-list-header gh-posts-sends-header">{{t "posts.Sends"}}</div>
+                        <div class="gh-list-header gh-posts-opens-header">{{t "posts.Opens"}}</div>
                     {{/if}}
-                    <div class="gh-list-header gh-posts-status-header">{{t "Status"}}</div>
+                    <div class="gh-list-header gh-posts-status-header">{{t "posts.Status"}}</div>
                 </li>
             {{/if}}
 
@@ -50,14 +48,14 @@
                 <div class="no-posts">
                     {{#if this.showingAll}}
                         {{svg-jar "posts-placeholder" class="gh-posts-placeholder"}}
-                        <h3>{{t "You haven't written any posts yet!"}}</h3>
+                        <h3>{{t "posts.You haven't written any posts yet!"}}</h3>
                         <LinkTo @route="editor.new" @model="post" class="gh-btn gh-btn-green gh-btn-lg">
-                            <span>{{t "Write a new post"}}</span>
+                            <span>{{t "posts.Write a new post"}}</span>
                         </LinkTo>
                     {{else}}
-                        <h3>{{t "No posts match the current filter"}}</h3>
+                        <h3>{{t "posts.No posts match the current filter"}}</h3>
                         <LinkTo @route="posts" @query={{hash type=null author=null tag=null}} class="gh-btn gh-btn-lg">
-                            <span>{{t "Show all posts"}}</span>
+                            <span>{{t "posts.Show all posts"}}</span>
                         </LinkTo>
                     {{/if}}
                 </div>

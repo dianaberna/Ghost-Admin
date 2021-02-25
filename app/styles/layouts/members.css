@@ -16,6 +16,9 @@
 
 .gh-member-detail-avatar {
     box-shadow: none;
+    width: 80px;
+    height: 80px;
+    min-width: 80px;
 }
 
 .gh-member-avatar-label {
@@ -61,6 +64,7 @@
     position: sticky;
     top: 84px;
     z-index: 1;
+    background: var(--white);
 }
 
 .members-list-header-overlay {
@@ -91,26 +95,37 @@
 
 .members-header .view-actions input.gh-members-list-searchfield {
     min-width: 220px;
-    padding-left: 30px;
-    border-bottom-left-radius: 0;
-    border-top-left-radius: 0;
+    padding-left: 32px;
+    border: none;
+    background: var(--white);
+    border: var(--input-border);
+}
+
+.members-header.grey .view-actions .gh-btn,
+.members-header.grey .view-actions input.gh-members-list-searchfield {
+    background: color-mod(var(--whitegrey) l(-1%));
+}
+
+.members-header .view-actions input.gh-members-list-searchfield:focus {
+    background: var(--white);
+    border-color: var(--green);
 }
 
 .members-header .view-actions .gh-input-search-icon {
-    width: 14px;
-    height: 14px;
-    top: 10px;
-    left: 10px;
+    width: 16px;
+    height: 16px;
+    top: 9px;
+    left: 9px;
+    fill: var(--middarkgrey);
 }
 
-.dropdown-topmenu .gh-contentfilter-menu-trigger {
-    border-top-left-radius: 4px !important;
-    border-bottom-left-radius: 4px !important;
+.members-header.black .view-actions input.gh-members-list-searchfield {
+    background: var(--darkgrey-d1);
 }
 
 .gh-members-list-searchfield.active {
-    border-color: #3eb0ef;
-    box-shadow: inset 0 0 0 1px #3eb0ef;
+    border-color: var(--green) !important;
+    box-shadow: inset 0 0 0 1px var(--green);
 }
 
 .gh-members-list-checkbox {
@@ -123,7 +138,7 @@ p.gh-members-list-email {
 
 .gh-members-list-open-rate,
 .gh-members-list-geolocation {
-    width: 120px;
+    width: 150px;
 }
 
 .gh-members-list-subscribed-at {
@@ -160,18 +175,15 @@ p.gh-members-list-email {
 }
 
 .members-header .gh-members-header-search {
-    margin-right: 12px;
-    border-right: 1px solid var(--lightgrey-d2);
-    padding-right: 12px;
+    margin-right: 32px;
 }
 
 .gh-members-chart-header {
-    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px 4px 0;
     margin-bottom: 10px;
-    background: var(--whitegrey-l2);
-    border-bottom: var(--lightgrey) 1px solid;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
 }
 
 .gh-members-chart-header .gh-contentfilter {
@@ -180,31 +192,82 @@ p.gh-members-list-email {
 }
 
 .gh-members-chart-header .gh-contentfilter-type .gh-contentfilter-menu-trigger {
-    border-radius: 4px;
-    box-shadow: 0 0 0 1px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.05);
+    border-radius: 3px;
     height: 16px;
     padding: 0 8px;
+    margin-right: 0;
 }
 
 .gh-members-chart-dropdown {
     margin-left: -103px;
 }
 
-.gh-members-chart-container {
-    height: 186px;
-    margin: 0;
-    padding: 4px 7px 11px 2px;
+.gh-members-chart-xlabels {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 1.3rem;
+    color: var(--middarkgrey);
+    padding: 0 28px 16px 0;
 }
 
 .gh-members-chart-summary {
-    flex-basis: 24%;
-    min-width: 244px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex-basis: 28%;
+    min-width: 280px;
 }
 
-.gh-members-chart-summary-data {
-    font-size: 3.6rem;
-    color: var(--darkgrey);
-    line-height: 4.0rem;
+.gh-members-chart-summary section {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 16px 24px;
+}
+
+.gh-members-chart-summary-heading {
+    margin: 0;
+    padding: 0;
+}
+
+.gh-members-chart.black {
+    background: var(--black);
+}
+
+.gh-members-chart.black .gh-members-chart-header {
+    border-color: var(--darkgrey);
+}
+
+.gh-members-chart.black .gh-members-chart-summary-heading {
+    color: var(--midlightgrey);
+}
+
+.gh-members-chart.black .gh-members-chart-summary-data {
+    color: var(--whitegrey);
+}
+
+.gh-members-chart.black .gh-members-chart-header .gh-contentfilter-type .gh-contentfilter-menu-trigger,
+.gh-members-chart-box.black .gh-members-chart-header .gh-contentfilter-type .gh-contentfilter-menu-trigger {
+    background: transparent;
+    border: 1px solid var(--darkgrey);
+    color: var(--whitegrey);
+}
+
+.gh-members-chart.black .gh-contentfilter-menu-trigger svg path {
+    stroke: var(--whitegrey) !important;
+}
+
+.gh-members-chart-box.black .gh-members-chart-summary-heading {
+    color: var(--lightgrey);
+}
+
+.gh-members-chart-box.black .gh-members-chart-header {
+    border-color: var(--darkgrey);
 }
 
 .members-header .gh-contentfilter {
@@ -226,29 +289,27 @@ p.gh-members-list-email {
     width: 205px;
 }
 
+.gh-members-chart + .content-list .members-list {
+    margin-top: var(--main-layout-section-vpadding);
+}
+
+@media  (min-width: 1200px) and (max-width: 1370px) {
+    .members-header .view-actions input.gh-members-list-searchfield {
+        max-width: 130px;
+        min-width: unset;
+    }
+}
 
 @media (max-width: 1100px) {
     .gh-members-chart-summary-data {
         font-size: 2.8rem;
         line-height: 2.8rem;
     }
-
-    .gh-members-chart-container {
-        height: 166px;
-    }
 }
 
 @media (max-width: 1000px) {
     .members-list .gh-list-header, .gh-list-hidecell-m {
         display: table-cell;
-    }
-
-    .gh-members-chart-wrapper {
-        flex-direction: column;
-    }
-
-    .gh-members-chart-box {
-        margin: 0 0 24px;
     }
 }
 
@@ -337,7 +398,7 @@ p.gh-members-list-email {
         display: inline-block;
         width: auto;
         margin-top: -16px;
-        padding: 0 0 0 64px;
+        padding: 0 0 0 49px;
     }
 
     .gh-members-list-open-rate-noname {
@@ -371,7 +432,7 @@ p.gh-members-list-email {
     .gh-members-list-subscribed-moment {
         display: none;
     }
-    
+
     .gh-members-list-chevron {
         display: none;
     }
@@ -411,11 +472,35 @@ label[for="member-description"] + p {
     margin: 0 0 4px;
 }
 
+.gh-member-detail-overview {
+    padding: 32px 0 0;
+}
+
+.gh-member-detail-overview h3 {
+    font-size: 1.7rem;
+    font-weight: 600;
+    padding: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.gh-member-detail-overview p {
+    margin: 0;
+    padding: 0;
+    font-size: 1.3rem;
+    color: var(--midgrey);
+}
+
+.gh-member-detail-overview a,
+.gh-member-detail-overview a:hover {
+    color: var(--black);
+}
+
 textarea.gh-member-details-textarea {
     max-width: 100%;
     min-width: auto;
     min-height: 50px;
-    height: 154px;
+    height: 85px;
 }
 
 .gh-member-info-icon {
@@ -432,8 +517,9 @@ textarea.gh-member-details-textarea {
 .gh-member-header-stripeinfo {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     min-height: 24px;
+    margin-top: -8px;
 }
 
 .gh-member-stripe-info {
@@ -442,15 +528,6 @@ textarea.gh-member-details-textarea {
 
 .gh-member-stripe-info:last-of-type {
     border-bottom: none;
-}
-
-.gh-member-btn-stripe-toggle {
-    box-shadow: 0 2px 5px -3px rgba(0,0,0,.12), 0 0 1px rgba(0, 0, 0, .13);    
-}
-
-.gh-member-btn-stripe-toggle:hover {
-    box-shadow: 0 3px 5px -3px rgba(0,0,0,.13), 0 0 1px rgba(0, 0, 0, .13);
-
 }
 
 .gh-member-stripe-table {
@@ -479,6 +556,7 @@ textarea.gh-member-details-textarea {
     color: var(--midgrey-d1);
     white-space: nowrap;
     padding: 5px 12px 5px 0;
+    width: 170px;
 }
 
 .gh-member-stripe-data {
@@ -512,6 +590,8 @@ textarea.gh-member-details-textarea {
 .gh-members-subscribed-checkbox,
 .gh-members-comped-checkbox {
     max-width: 100%;
+    margin-top: 24px;
+    margin-bottom: 0;
 }
 
 .gh-new-member-avatar {
@@ -520,11 +600,11 @@ textarea.gh-member-details-textarea {
 
 .gh-member-cancels-on-label {
     display: inline-block;
-    background: var(--lightgrey-d1);
+    background: color-mod(var(--pink) a(10%));
     border-radius: 4px;
     padding: 0px 5px;
     margin: -2px 0 -2px -5px;
-    color: var(--darkgrey);
+    color: var(--pink);
     font-size: 1.3rem;
     font-weight: 400;
 }
@@ -533,12 +613,6 @@ textarea.gh-member-details-textarea {
     display: inline-block;
     text-transform: capitalize;
     margin-right: 6px;
-}
-
-.gh-member-btn-cancelsub span,
-.gh-member-btn-contsub span {
-    height: 25px;
-    line-height: 25px;
 }
 
 .gh-member-btn-contsub {
@@ -558,16 +632,9 @@ textarea.gh-member-details-textarea {
     color: color-mod(var(--blue) l(-7%) saturation(-10%));
 }
 
-.gh-member-details,
-.gh-member-feed {
-    float: left;
-    width: 69%;
-}
-
 .gh-member-internal-info,
 .gh-member-stripe {
     float: right;
-    width: 29%;
 }
 
 @media (max-width: 1160px) {
@@ -584,16 +651,16 @@ textarea.gh-member-details-textarea {
     .gh-member-details {
         order: 1;
     }
-    
+
     .gh-member-feed {
         order: 4;
     }
-    
+
     .gh-member-internal-info {
         order: 2;
         margin-top: 3.2rem;
     }
-    
+
     .gh-member-stripe {
         order: 3;
     }
@@ -629,13 +696,13 @@ textarea.gh-member-details-textarea {
     background: var(--red);
 }
 
-.gh-member-feed-row {
-    display: flex;
-    padding: 0 2rem;
+.gh-member-feed {
+    margin: -12px 0;
 }
 
-.gh-member-feed-row:hover {
-    background: var(--whitegrey-l2);
+.gh-member-feed-row {
+    display: flex;
+    padding: 0;
 }
 
 .gh-member-feed-activity {
@@ -654,10 +721,11 @@ textarea.gh-member-details-textarea {
     vertical-align: middle;
     color: var(--darkgrey);
     text-align: left;
+    font-weight: 500;
 }
 
 .gh-member-feed-title:hover {
-    color: var(--blue-d2);
+    color: var(--black);
 }
 
 .gh-member-feed-date {
@@ -812,7 +880,7 @@ p.gh-members-import-errorcontext {
         /* Shadow covers */
         linear-gradient(var(--white) 30%, rgba(255,255,255,0)),
         linear-gradient(rgba(255,255,255,0), var(--white) 70%) 0 100%,
-        
+
         /* Shadows */
         /* radial-gradient(farthest-side at 50% 0, rgba(0,0,0,.12), rgba(0,0,0,0)) -64px 0,
         radial-gradient(farthest-side at 50% 100%, rgba(0,0,0,.12), rgba(0,0,0,0)) -64px 100%; */
@@ -821,7 +889,7 @@ p.gh-members-import-errorcontext {
 	background-repeat: no-repeat;
 	background-color: var(--white);
 	background-size: 100% 40px, 100% 40px, 100% 14px, 100% 14px;
-	
+
 	/* Opera doesn't support this in the shorthand */
     background-attachment: local, local, scroll, scroll;
     margin-top: 4px;
@@ -1052,7 +1120,7 @@ p.gh-members-import-errordetail:first-of-type {
 }
 
 .gh-member-import-icon-confetti {
-    color: var(--purple);
+    color: var(--pink);
     margin-left: 12px;
 }
 
@@ -1082,13 +1150,13 @@ p.gh-members-import-errordetail:first-of-type {
 
 .gh-email-design-typography .gh-radio-content {
     border: 1px solid var(--whitegrey);
-    border-radius: 4px;
+    border-radius: 3px;
     margin: 0 -32px 0 0;
 }
 
 .gh-email-design-typography .active .gh-radio-content {
     border: 1px solid transparent;
-    box-shadow: 0px 0px 0px 2px var(--blue);
+    box-shadow: 0px 0px 0px 2px var(--green);
 }
 
 .gh-email-design-typography .gh-radio-button {
@@ -1149,7 +1217,6 @@ p.gh-members-import-errordetail:first-of-type {
 }
 
 .gh-members-emailsettings-footer {
-    border-top: 1px solid var(--whitegrey);
     padding-top: 20px;
     margin-bottom: 4px;
 }
@@ -1195,10 +1262,13 @@ p.gh-members-import-errordetail:first-of-type {
 
 .gh-members-emailpreview-container {
     background: #fff;
-    border-radius: 12px;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
     padding: 0;
     margin: 32px auto;
-    box-shadow: 
+    box-shadow:
         0 0 0 1px rgba(0,0,0,0.02),
         0 2.8px 2.2px rgba(0, 0, 0, 0.02),
         0 6.7px 5.3px rgba(0, 0, 0, 0.028),
@@ -1227,10 +1297,10 @@ p.gh-members-import-errordetail:first-of-type {
     margin: 0;
     height: 78px;
     padding: 0 24px;
-    border-bottom: 1px solid var(--lightgrey-d1);
+    border-bottom: 1px solid var(--whitegrey);
     background: var(--white);
-    border-top-left-radius: 12px;
-    border-top-right-radius: 12px;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
 }
 
 .gh-members-emailpreview-faux p {

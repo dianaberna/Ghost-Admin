@@ -1,0 +1,305 @@
+<div class="gh-main-section">
+    <h4 class="gh-main-section-header small bn"></h4>
+    <section class="gh-expandable">
+
+        {{#if this.stripeDirect}}
+
+            <div class="gh-expandable-block">
+                <div class="gh-expandable-header">
+                    <div>
+                        <h4 class="gh-expandable-title">{{t "members.Connect to Stripe"}}</h4>
+                        <p class="gh-expandable-description">{{t "members.Configure API keys to create subscriptions and take payments"}}</p>
+                    </div>
+                    <button type="button" class="gh-btn" {{action (toggle "membersStripeOpen" this)}} data-test-toggle-membersstripe><span>{{if this.membersStripeOpen (t "common.Close") (t "common.Expand")}}</span></button>
+                </div>
+                <div class="gh-expandable-content">
+                    {{#liquid-if this.membersStripeOpen}}
+                        <div class="flex flex-column flex-row-l items-start justify-between mb4 mt6">
+                            <div class="w-100 w-50-l">
+                                <div class="mb4">
+                                    <label class="fw6 f8">{{t "members.Stripe Publishable key"}}</label>
+                                    <GhTextInput
+                                        @type="password"
+                                        @value={{readonly this.stripeDirectPublicKey}}
+                                        @input={{action "setStripeDirectPublicKey"}}
+                                        @class="mt1 password"
+                                    />
+                                </div>
+                                <div class="nudge-top--3">
+                                    <label class="fw6 f8 mt4">{{t "members.Stripe Secret key"}}</label>
+                                    <GhTextInput
+                                        @type="password"
+                                        @value={{readonly this.stripeDirectSecretKey}}
+                                        @input={{action "setStripeDirectSecretKey"}}
+                                        @class="mt1 password"
+                                    />
+                                    <a href="https://dashboard.stripe.com/account/apikeys" target="_blank" class="mt1 fw4 f8">
+                                        {{t "members.Find your Stripe API keys here &raquo;"}}
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="ml0 ml5-l mt6">
+                                <div class="gh-members-stripe-info">
+                                    <div class="gh-members-stripe-info-header">
+                                        <h4>{{t "members.How you get paid"}}</h4>
+                                        {{svg-jar "stripe-verified-partner-badge" class="gh-members-stripe-badge"}}
+                                    </div>
+                                    <p class="f8 mt2 mb0">
+                                        {{{t "members.Stripe is our exclusive direct payments partner.<br />
+                                        Ghost collects <strong>no fees</strong> on any payments! If you don’t have a Stripe account yet, you can <a href=\"https://stripe.com\" target=\"_blank\"  rel=\"noopener\" class=\"gh-members-stripe-link\">sign up here</a>."}}}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    {{/liquid-if}}
+                </div>
+            </div>
+
+        {{else}}
+
+            <div class="gh-expandable-block">
+                <div class="gh-expandable-header">
+                    <div>
+                        <h4 class="gh-expandable-title">{{t "members.Connect to Stripe"}}</h4>
+                        <p class="gh-expandable-description">
+                            {{#if this.stripeConnectAccountId}}
+                                {{#if this.hasActiveStripeSubscriptions}}
+                                <span class="red">
+                                {{t "members.Cannot disconnect while there are members with active Stripe subscriptions."}}
+                                </span>
+                                {{else}}
+                                <span>
+                                    {{#if this.stripeConnectSuccess}}
+                                        {{svg-jar "check-circle" class="stroke-green w4 h4 nudge-top--3"}} <span class="green-d1">{{t "members.Successfully connected to {stripeConnectAccountName}" stripeConnectAccountName=this.stripeConnectAccountName}}</span>
+                                    {{else}}
+                                        {{{t "Connected to <a href=\"https://dashboard.stripe.com/{stripeConnectAccountId}\" target=\"_blank\">{stripeConnectAccountName}</a>" stripeConnectAccountId=this.stripeConnectAccountId stripeConnectAccountName=this.stripeConnectAccountName}}}
+                                    {{/if}}
+
+                                    {{#unless this.stripeConnectLivemode}}
+                                        <span class="gh-members-connect-testmodelabel">{{t "members.Test mode"}}</span>
+                                    {{/unless}}
+                                </span>
+                                {{/if}}
+                            {{else}}
+                                <span>{{t "members.Connect to Stripe to create subscriptions and take payments"}}</span>
+                            {{/if}}
+                        </p>
+                    </div>
+                    {{#if this.stripeConnectAccountId}}
+                        <button type="button" class="gh-btn" {{action "openDisconnectStripeModal"}}><span>{{t "members.Disconnect"}}</span></button>
+                    {{else}}
+                        <button type="button" class="gh-btn" {{action (toggle "membersStripeOpen" this)}} data-test-toggle-membersstripe><span>{{if this.membersStripeOpen (t "common.Close") (t "common.Expand")}}</span></button>
+                    {{/if}}
+                </div>
+                <div class="gh-expandable-content">
+                    {{#liquid-if this.membersStripeOpen}}
+                    <div class="mb2">
+                        <div class="flex flex-column flex-row-l items-start justify-between">
+                            <div class="w-100 w-50-l">
+                                <label class="fw6 f8">{{t "members.Generate secure key"}}</label>
+                                <div class="flex items-center mb4 justify-between gh-members-connectbutton-container mt2">
+                                    <a href="{{if this.stripeConnectTestMode this.testStripeConnectAuthUrl this.liveStripeConnectAuthUrl}}" class="stripe-connect light-blue" target="_blank"><span>{{t "members.Connect with Stripe"}}</span></a>
+                                    <div class="ml2 flex items-center flex-nowrap">
+                                        <span class="mr2 f8 midgrey nowrap {{if this.stripeConnectTestMode "gh-members-connect-testmodeon"}}">{{if this.stripeConnectTestMode (t "members.Using test mode") (t "members.Use test mode")}}</span>
+                                        <div class="for-switch small">
+                                            <label class="switch" for="stripe-connect-test-mode" {{action (toggle "stripeConnectTestMode" this) bubbles="false"}}>
+                                                <input type="checkbox" class="gh-input" checked={{this.stripeConnectTestMode}} onclick={{action (toggle "stripeConnectTestMode" this)}} data-test-checkbox="stripe-connect-test-mode">
+                                                <span class="input-toggle-component mt1"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="nudge-top--3">
+                                    <GhTextarea
+                                        @class="gh-members-stripe-connect-token"
+                                        @placeholder="Paste your secure key here"
+                                        @input={{action "setStripeConnectIntegrationToken"}}
+                                    />
+                                    {{#if this.stripeConnectError}}<p class="mb0 mt2 f8 red">{{this.stripeConnectError}}</p>{{/if}}
+                                </div>
+                            </div>
+                            <div class="mt5 mt5-m mt8-l ml0 ml5-l">
+                                <div class="gh-members-stripe-info">
+                                    <div class="gh-members-stripe-info-header">
+                                        <h4>{{t "members.How you get paid"}}</h4>
+                                        {{svg-jar "stripe-verified-partner-badge" class="gh-members-stripe-badge"}}
+                                    </div>
+                                    <p class="f8 mt2 mb0">
+                                        {{{t "members.Stripe is our exclusive direct payments partner.<br />
+                                        Ghost collects <strong>no fees</strong> on any payments! If you don’t have a Stripe account yet, you can <a href=\"https://stripe.com\" target=\"_blank\"  rel=\"noopener\" class=\"gh-members-stripe-link\">sign up here</a>."}}}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="gh-members-connect-savecontainer {{if this.settings.stripeConnectIntegrationToken "expanded"}}">
+                            <GhTaskButton @buttonText={{t "members.Save Stripe settings"}}
+                                        @task={{this.saveStripeSettings}}
+                                        @successText={{t "taskButton.Saved"}}
+                                        @disabled={{is-empty this.settings.stripeConnectIntegrationToken}}
+                                        @runningText={{t "taskButton.Saving"}}
+                                        @class="gh-btn gh-btn-green gh-btn-icon"
+                                    />
+                        </div>
+                    </div>
+                    {{/liquid-if}}
+                </div>
+            </div>
+
+        {{/if}}
+
+        <div class="gh-expandable-block">
+            <div class="gh-expandable-header">
+                <div>
+                    <h4 class="gh-expandable-title">{{t "members.Subscription pricing"}}</h4>
+                    <p class="gh-expandable-description">{{t "members.Set monthly and yearly recurring subscription prices"}}</p>
+                </div>
+                <button type="button" class="gh-btn" {{action (toggle "membersPricingOpen" this)}} data-test-toggle-memberspricing><span>{{if this.membersPricingOpen (t "common.Close") (t "common.Expand")}}</span></button>
+            </div>
+            <div class="gh-expandable-content">
+                {{#liquid-if this.membersPricingOpen}}
+                    <div class="w-100 w-50-l flex flex-column flex-row-ns">
+                        <div class="w-100">
+                            <GhFormGroup @class="for-select">
+                                <label class="fw6 f8"for="currency">{{t "members.Plan currency"}}</label>
+                                <span class="gh-select mt1">
+                                    {{one-way-select this.selectedCurrency
+                                        id="currency"
+                                        name="currency"
+                                        options=(readonly this.currencies)
+                                        optionValuePath="value"
+                                        optionLabelPath="label"
+                                        update=(action "setStripePlansCurrency")
+                                    }}
+                                    {{svg-jar "arrow-down-small"}}
+                                </span>
+                            </GhFormGroup>
+                        </div>
+                    </div>
+                    <div class="w-100 w-50-l flex flex-column flex-row-ns">
+                        <div class="w-100 w-50-ns mr3-ns">
+                            <GhFormGroup @errors={{this.settings.errors}} @hasValidated={{settings.hasValidated}} @property="stripePlans">
+                            <label class="fw6 f8">{{t "members.Monthly price"}}</label>
+
+                            <div class="flex items-center justify-center mt1 gh-input-group gh-labs-price-label">
+                                <GhTextInput
+                                    @value={{readonly this.stripePlans.monthly.amount}}
+                                    @type="number"
+                                    @input={{action (mut this._scratchStripeMonthlyAmount) value="target.value"}}
+                                    @focus-out={{action "validateStripePlans"}}
+                                />
+                                <span class="gh-input-append">{{{t "members.<span class=\"ttu\">{currency}</span>/month" currency=this.stripePlans.monthly.currency}}}</span>
+                            </div>
+                            </GhFormGroup>
+                        </div>
+                        <div class="w-100 w-50-ns ml2-ns">
+                            <GhFormGroup @errors={{this.settings.errors}} @hasValidated={{settings.hasValidated}} @property="stripePlans">
+                            <label class="fw6 f8">Yearly price</label>
+                            <div class="flex items-center justify-center mt1 gh-input-group gh-labs-price-label">
+                                <GhTextInput
+                                    @value={{readonly this.stripePlans.yearly.amount}}
+                                    @type="number"
+                                    @input={{action (mut this._scratchStripeYearlyAmount) value="target.value"}}
+                                    @focus-out={{action "validateStripePlans"}}
+                                />
+                                <span class="gh-input-append">{{{t "members.<span class=\"ttu\">{currency}</span>/year" currency=this.stripePlans.yearly.currency}}}</span>
+                            </div>
+                            </GhFormGroup>
+                        </div>
+                    </div>
+                    <div class="w-100 w-50-l flex flex-column flex-row-ns">
+                        <GhErrorMessage @errors={{settings.errors}} @property="stripePlans" class="w-100 red"/>
+                    </div>
+                {{/liquid-if}}
+            </div>
+        </div>
+    </section>
+</div>
+
+<div class="gh-main-section">
+    <h4 class="gh-main-section-header small bn">{{t "members.Access"}}</h4>
+    <section class="gh-expandable">
+        <div class="gh-expandable-block">
+            <div class="gh-expandable-header">
+                <div>
+                    <h4 class="gh-expandable-title">{{t "members.Allow free member signup"}}</h4>
+                    <p class="gh-expandable-description">{{t "members.If disabled, members can only be signed up via payment checkout or API integration"}}</p>
+                </div>
+                <div class="for-switch">
+                    <label class="switch" for="members-allow-self-signup" {{action "toggleSelfSignup" bubbles="false"}}>
+                        <input type="checkbox" checked={{this.allowSelfSignup}} class="gh-input" onclick={{action "toggleSelfSignup"}} data-test-checkbox="members-allow-self-signup">
+                        <span class="input-toggle-component mt1"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="gh-expandable-block">
+            <div class="gh-expandable-header">
+                <div>
+                    <h4 class="gh-expandable-title">{{t "members.Default post access"}}</h4>
+                    <p class="gh-expandable-description">{{t "members.When a new post is created, who should have access to it?"}}</p>
+                </div>
+                <button type="button" class="gh-btn" {{action (toggle "membersPostAccessOpen" this)}} data-test-toggle-memberspostaccess><span>{{if this.membersPostAccessOpen (t "common.Close") (t "common.Expand")}}</span></button>
+            </div>
+            <div class="gh-expandable-content">
+                {{#liquid-if this.membersPostAccessOpen}}
+                <div class="flex flex-column w-50 flex">
+                    <div class="gh-radio {{if (eq settings.defaultContentVisibility "public") "active"}}"
+                        {{action "setDefaultContentVisibility" "public" on="click"}}>
+                        <div class="gh-radio-button" data-test-publishmenu-unpublished-option></div>
+                        <div class="gh-radio-content">
+                            <div class="gh-radio-label">{{t "members.Public"}}<br>
+                            <small class="midgrey">{{t "members.All site visitors to your site, no login required"}}</small></div>
+                        </div>
+                    </div>
+
+                    <div class="gh-radio {{if (eq settings.defaultContentVisibility "members") "active"}}"
+                        {{action "setDefaultContentVisibility" "members" on="click"}}>
+                        <div class="gh-radio-button" data-test-publishmenu-published-option></div>
+                        <div class="gh-radio-content">
+                            <div class="gh-radio-label">{{t "members.Members only"}}<br>
+                            <small class="midgrey">{{t "members.All logged-in members"}}</small></div>
+                        </div>
+                    </div>
+
+                    <div class="gh-radio {{if (eq settings.defaultContentVisibility "paid") "active"}}"
+                        {{action "setDefaultContentVisibility" "paid" on="click"}}>
+                        <div class="gh-radio-button" data-test-publishmenu-published-option></div>
+                        <div class="gh-radio-content">
+                            <div class="gh-radio-label">{{t "members.Paid-members only"}}<br>
+                            <small class="midgrey">{{t "members.Only logged-in members with an active Stripe subscription"}}</small></div>
+                        </div>
+                    </div>
+                </div>
+                {{/liquid-if}}
+            </div>
+        </div>
+    </section>
+</div>
+
+{{#if this.showDisconnectStripeConnectModal}}
+    <GhFullscreenModal @modal="disconnect-stripe"
+        @model={{hash
+            stripeConnectAccountName=this.stripeConnectAccountName
+        }}
+        @confirm={{action "disconnectStripeConnectIntegration"}}
+        @close={{action "closeDisconnectStripeModal"}}
+        @modifier="action wide" />
+{{/if}}
+
+{{#if this.showPortalSettings}}
+    <GhFullscreenModal @modal="portal-settings"
+        @model={{hash
+            openStripeSettings=(action "openStripeSettings")
+        }}
+        @close={{action "closePortalSettings"}}
+        @modifier="full-overlay portal-settings" />
+{{/if}}
+
+{{#if this.showLeaveSettingsModal}}
+    <GhFullscreenModal @modal="leave-settings"
+        @confirm={{action "leavePortalSettings"}}
+        @close={{action "closeLeaveSettingsModal"}}
+        @modifier="action wide" />
+{{/if}}

@@ -3,6 +3,7 @@ import Component from '@ember/component';
 import moment from 'moment';
 import {action} from '@ember/object';
 import {computed, get} from '@ember/object';
+import {getSymbol} from 'ghost-admin/utils/currency';
 import {inject as service} from '@ember/service';
 import {task} from 'ember-concurrency';
 
@@ -14,10 +15,25 @@ export default Component.extend({
 
     // public attrs
     nightShift: false,
+    lineColor: '#14b8ff',
 
     stats: null,
+    tagName: '',
+    chartStats: null,
     chartData: null,
     chartOptions: null,
+    showSummary: true,
+    showRange: true,
+    chartType: '',
+    chartSize: '',
+    chartHeading: 'Total members',
+
+    isSmall: computed('chartSize', function () {
+        if (this.chartSize === 'small') {
+            return true;
+        }
+        return false;
+    }),
 
     startDateLabel: computed('membersStats.stats', function () {
         if (!this.membersStats?.stats?.total_on_date) {
@@ -57,8 +73,19 @@ export default Component.extend({
     },
 
     didReceiveAttrs() {
+        if (this.chartStats) {
+            const {options, data, title, stats} = this.chartStats;
+
+            this.set('stats', stats);
+            this.set('chartHeading', title);
+            this.setChartOptions(options);
+            this.setChartData(data);
+        }
+
         if (this._lastNightShift !== undefined && this.nightShift !== this._lastNightShift) {
-            this.setChartOptions();
+            const {options = {}} = this.chartStats;
+
+            this.setChartOptions(options);
         }
         this._lastNightShift = this.nightShift;
     },
@@ -73,10 +100,15 @@ export default Component.extend({
     // Tasks -------------------------------------------------------------------
 
     fetchStatsTask: task(function* () {
-        this.set('stats', null);
+        let stats;
+        if (!this.chartType) {
+            this.set('stats', null);
+            stats = yield this.membersStats.fetch();
+            this.setOriginalChartData(stats);
+        }
+    }),
 
-        let stats = yield this.membersStats.fetch();
-
+    setOriginalChartData(stats) {
         if (stats) {
             this.set('stats', stats);
 
@@ -89,40 +121,58 @@ export default Component.extend({
                 dateValues: Object.values(stats.total_on_date)
             });
         }
-    }),
+    },
 
     // Internal ----------------------------------------------------------------
 
-    setChartData({dateLabels, dateValues}) {
+    setChartData({dateLabels, dateValues, label = 'Total Members'}) {
+        let backgroundColors = this.lineColor;
+        
+        if (this.chartType === 'open-rate') {
+            backgroundColors = dateLabels.map((val) => {
+                if (val) {
+                    return this.lineColor;
+                } else {
+                    return (this.nightShift ? '#7C8B9A' : '#CED4D9');
+                }
+            });
+        }
+
         this.set('chartData', {
             labels: dateLabels,
             datasets: [{
-                label: 'Total members',
+                label: label,
                 cubicInterpolationMode: 'monotone',
                 data: dateValues,
                 fill: false,
-                backgroundColor: 'rgba(62,176,239,.9)',
+                backgroundColor: backgroundColors,
                 pointRadius: 0,
                 pointHitRadius: 10,
-                borderColor: 'rgba(62,176,239,.9)',
-                borderJoinStyle: 'round'
+                borderColor: this.lineColor,
+                borderJoinStyle: 'miter',
+                maxBarThickness: 20,
+                minBarLength: 2
             }]
         });
     },
 
     setChartOptions({rangeInDays}) {
-        let maxTicksAllowed = this.getTicksForRange(rangeInDays);
+        let maxTicksAllowed = this.isSmall ? 3 : this.getTicksForRange(rangeInDays);
+
+        if (this.chartType === 'open-rate') {
+            maxTicksAllowed = 0;
+        }
 
         this.setChartJSDefaults();
-
-        this.set('chartOptions', {
+        let options = {
             responsive: true,
+            responsiveAnimationDuration: 5,
             maintainAspectRatio: false,
             layout: {
                 padding: {
-                    top: 5, // Needed otherwise the top dot is cut
+                    top: (this.isSmall ? 20 : 5), // Needed otherwise the top dot is cut
                     right: 10,
-                    bottom: 5,
+                    bottom: (this.isSmall ? 20 : 5),
                     left: 10
                 }
             },
@@ -133,21 +183,47 @@ export default Component.extend({
                 intersect: false,
                 mode: 'index',
                 displayColors: false,
-                backgroundColor: '#343f44',
+                backgroundColor: '#15171A',
                 xPadding: 7,
                 yPadding: 7,
                 cornerRadius: 5,
                 caretSize: 7,
                 caretPadding: 5,
-                bodyFontSize: 13,
+                bodyFontSize: 12.5,
+                titleFontSize: 12,
                 titleFontStyle: 'normal',
                 titleFontColor: 'rgba(255, 255, 255, 0.7)',
-                titleMarginBottom: 4,
+                titleMarginBottom: 3,
+                filter: (tooltipItems, data) => {
+                    if (this.chartType === 'open-rate') {
+                        let label = data.labels[tooltipItems.index];
+                        if (label === '') {
+                            return false;
+                        }
+                    }
+                    return true;
+                },
                 callbacks: {
-                    label: function (tooltipItems, data) {
-                        return data.datasets[0].label + `: ` + data.datasets[0].data[tooltipItems.index].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                    label: (tooltipItems, data) => {
+                        const labelText = data.datasets[tooltipItems.datasetIndex].label;
+                        let valueText = data.datasets[tooltipItems.datasetIndex].data[tooltipItems.index].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                        if (this.chartType === 'mrr') {
+                            const currency = getSymbol(this.stats.currency);
+                            valueText = `${currency}${valueText}`;
+                        }
+                        if (this.chartType === 'open-rate') {
+                            valueText = `${valueText}%`;
+                        }
+                        return `${labelText}: ${valueText}`;
                     },
-                    title: function (tooltipItems) {
+                    title: (tooltipItems) => {
+                        if (this.chartType === 'open-rate') {
+                            if (tooltipItems.length) {
+                                return tooltipItems[0].xLabel;
+                            } else {
+                                return '';
+                            }
+                        }
                         return moment(tooltipItems[0].xLabel).format(DATE_FORMAT);
                     }
                 }
@@ -165,8 +241,8 @@ export default Component.extend({
                     labelString: 'Date',
                     gridLines: {
                         drawTicks: false,
-                        color: (this.nightShift ? '#333F44' : '#E5EFF5'),
-                        zeroLineColor: (this.nightShift ? '#333F44' : '#E5EFF5')
+                        color: (this.nightShift ? '#333F44' : '#DDE1E5'),
+                        zeroLineColor: (this.nightShift ? '#333F44' : '#DDE1E5')
                     },
                     ticks: {
                         display: false,
@@ -174,18 +250,19 @@ export default Component.extend({
                         minRotation: 0,
                         padding: 6,
                         autoSkip: false,
+                        fontColor: '#626D79',
                         maxTicksLimit: 10,
-                        callback: function (value, index, values) {
+                        callback: (value, index, values) => {
                             let step = (values.length - 1) / (maxTicksAllowed);
                             let steps = [];
                             for (let i = 0; i < maxTicksAllowed; i++) {
-                                steps.push(Math.round(i * step));
+                                steps.push(Math.ceil(i * step));
                             }
 
                             if (index === 0) {
                                 return value;
                             }
-                            if (index === (values.length - 1)) {
+                            if (index === (values.length - 1) && this.chartType !== 'open-rate') {
                                 return 'Today';
                             }
 
@@ -203,25 +280,38 @@ export default Component.extend({
                     },
                     ticks: {
                         maxTicksLimit: 5,
-                        fontColor: '#9baeb8',
+                        fontColor: '#7C8B9A',
                         padding: 8,
                         precision: 0,
-                        callback: function (value) {
-                            return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                        callback: (value) => {
+                            const currency = this.chartType === 'mrr' ? getSymbol(this.stats.currency) : '';
+                            if (parseInt(value) >= 1000) {
+                                return currency + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                            } else {
+                                return currency + value;
+                            }
                         }
                     }
                 }]
             }
-        });
+        };
+        if (this.chartType === 'mrr' || this.chartType === 'all-members' || this.chartType === 'open-rate') {
+            options.scales.yAxes[0].ticks.suggestedMin = 0;
+        }
+        if (this.isSmall) {
+            options.scales.yAxes[0].ticks.display = false;
+            options.scales.xAxes[0].gridLines.display = true;
+        }
+        this.set('chartOptions', options);
     },
 
     getTicksForRange(rangeInDays) {
         if (rangeInDays <= 30) {
-            return 6;
+            return 5;
         } else if (rangeInDays <= 90) {
-            return 18;
+            return 10;
         } else {
-            return 24;
+            return 15;
         }
     },
 
@@ -244,7 +334,7 @@ export default Component.extend({
                     ctx.moveTo(x, topY);
                     ctx.lineTo(x, bottomY);
                     ctx.lineWidth = 1;
-                    ctx.strokeStyle = (this.nightShift ? 'rgba(62, 176, 239, 0.65)' : 'rgba(62, 176, 239, 0.8)');
+                    ctx.strokeStyle = (this.nightShift ? 'rgba(62, 176, 239, 0.65)' : 'rgba(62, 176, 239, 0.1)');
                     ctx.stroke();
                     ctx.restore();
                 }

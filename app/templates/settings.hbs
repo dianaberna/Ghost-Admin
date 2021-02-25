@@ -1,0 +1,104 @@
+<section class="gh-canvas">
+    <GhCanvasHeader class="gh-canvas-header">
+        <h2 class="gh-canvas-title" data-test-screen-title>
+            {{t "settings.Settings"}}
+        </h2>
+    </GhCanvasHeader>
+
+    <section class="view-container">
+        <div class="gh-setting-header gh-first-header">{{t "settings.Website"}}</div>
+        <div class="gh-settings-main-grid">
+            <LinkTo class="gh-setting-group" @route="settings.general" data-test-nav="settings">
+                <span class="color-1">{{svg-jar "settings"}}</span>
+                <div>
+                    <h4>{{t "settings.General"}}</h4>
+                    <p>{{t "settings.Basic publication details and site metadata"}}</p>
+                </div>
+            </LinkTo>
+            <LinkTo class="gh-setting-group" @route="settings.theme" data-test-nav="theme">
+                <span class="color-2">{{svg-jar "view-site"}}</span>
+                <div>
+                    <h4>{{t "settings.Theme"}}</h4>
+                    <p>{{t "settings.Install and update themes"}}</p>
+                </div>
+            </LinkTo>
+            <button type="button" class="gh-setting-group" {{action (toggle "showBrandingModal" this)}} data-test-nav="design">
+                <span class="color-3">{{svg-jar "paint-palette"}}</span>
+                <div>
+                    <h4>{{t "settings.Branding"}}</h4>
+                    <p>{{t "settings.Upload site logo and set accent color"}}</p>
+                </div>
+            </button>
+            <LinkTo class="gh-setting-group" @route="settings.navigation" data-test-nav="theme">
+                <span class="color-4">{{svg-jar "compass-2"}}</span>
+                <div>
+                    <h4>{{t "settings.Navigation"}}</h4>
+                    <p>{{t "settings.Set up primary and secondary menus"}}</p>
+                </div>
+            </LinkTo>
+        </div>
+
+        <div class="gh-setting-header">{{t "settings.Members"}}</div>
+        <div class="gh-settings-main-grid">
+            <button type="button" class="gh-setting-group portal" {{action (toggle "showPortalSettings" this)}} data-test-toggle-membersFrom>
+                <span class="color-3">{{svg-jar "portal-logo-stroke"}}</span>
+                <div>
+                    <h4>{{t "settings.Portal"}}</h4>
+                    <p>{{t "settings.Customize members modal signup flow"}}</p>
+                </div>
+            </button>
+            <LinkTo class="gh-setting-group" @route="settings.members-email" data-test-nav="design">
+                <span class="color-4">{{svg-jar "email-stroke"}}</span>
+                <div>
+                    <h4>{{t "settings.Email newsletter"}}</h4>
+                    <p>{{t "settings.Customise emails and set email addresses"}}</p>
+                </div>
+            </LinkTo>
+            <LinkTo class="gh-setting-group" @route="settings.members-payments" data-test-nav="design">
+                <span class="color-1">{{svg-jar "piggy-bank"}}</span>
+                <div>
+                    <h4>{{t "settings.Payments"}}</h4>
+                    <p>{{t "settings.Connect to Stripe and set up prices"}}</p>
+                </div>
+            </LinkTo>
+        </div>
+
+        <div class="gh-setting-header">{{t "settings.Extensions"}}</div>
+        <div class="gh-settings-main-grid">
+            <LinkTo class="gh-setting-group" @route="settings.code-injection" data-test-nav="code-injection">
+                <span class="color-2">{{svg-jar "brackets"}}</span>
+                <div>
+                    <h4>{{t "settings.Code injection"}}</h4>
+                    <p>{{t "settings.Add code to your publication"}}</p>
+                </div>
+            </LinkTo>
+            <LinkTo class="gh-setting-group" @route="settings.labs" data-test-nav="labs">
+                <span class="color-3">{{svg-jar "labs"}}</span>
+                <div>
+                    <h4>{{t "settings.Labs"}}</h4>
+                    <p>{{t "settings.Testing ground for new features"}}</p>
+                </div>
+            </LinkTo>
+        </div>
+    </section>
+</section>
+
+{{#if this.showPortalSettings}}
+    <GhFullscreenModal @modal="portal-settings"
+        @model={{hash
+            openStripeSettings=(action "openStripeSettings")
+        }}
+        @close={{action "closePortalSettings"}}
+        @modifier="full-overlay portal-settings" />
+{{/if}}
+{{#if this.showBrandingModal}}
+    <GhFullscreenModal @modal="branding"
+        @close={{action "closeBrandingModal"}}
+        @modifier="full-overlay branding-modal" />
+{{/if}}
+{{#if this.showLeaveSettingsModal}}
+    <GhFullscreenModal @modal="leave-settings"
+        @confirm={{action "leavePortalSettings"}}
+        @close={{action "closeLeaveSettingsModal"}}
+        @modifier="action wide" />
+{{/if}}

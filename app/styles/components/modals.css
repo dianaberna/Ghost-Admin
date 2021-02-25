@@ -28,7 +28,7 @@
     left: 0;
     z-index: 50;
     height: 100vh;
-    background: #324750;
+    background: #15171A;
     opacity: 0.6;
 }
 
@@ -87,8 +87,15 @@
     padding: 32px;
     background-color: #fff;
     background-clip: padding-box;
-    border-radius: 6px;
-    box-shadow: 1px 3px 8px rgba(0,0,0,.09), 2px 32px 38px -20px rgba(0,0,0,0.25);
+    border-radius: 3px;
+    box-shadow:
+        0 2.8px 2.2px rgba(0, 0, 0, 0.02),
+        0 6.7px 5.3px rgba(0, 0, 0, 0.028),
+        0 12.5px 10px rgba(0, 0, 0, 0.035),
+        0 22.3px 17.9px rgba(0, 0, 0, 0.042),
+        0 41.8px 33.4px rgba(0, 0, 0, 0.05),
+        0 100px 80px rgba(0, 0, 0, 0.07)
+    ;
 }
 
 .modal-content * {
@@ -236,6 +243,7 @@
 
 .modal-fullsettings-topbar {
     height: 66px;
+    padding: 0 24px;
 }
 
 .modal-fullsettings-heading {
@@ -245,7 +253,6 @@
     font-weight: 600;
     padding: 0 24px;
     margin: 0 -24px 1px;
-    border-bottom: 1px solid var(--whitegrey);
 }
 
 .modal-fullsettings-form {
@@ -258,7 +265,7 @@
 }
 
 .modal-fullsettings-section.first {
-    margin-top: 20px;
+    margin-top: 8px;
 }
 
 .modal-fullsettings-section.divider-top {
@@ -332,22 +339,20 @@
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-    padding: 0 20px 20px;
+    padding: 0;
     border-left: 1px solid var(--whitegrey);
 }
 
 .modal-fullsettings-preview-container {
-    border: 1px solid var(--whitegrey);
-    border-radius: 5px;
     overflow: hidden;
     background: var(--whitegrey-l1);
-    height: calc(100vh - 150px);
+    height: calc(100vh - 126px);
     overflow-y: scroll;
 }
 
 .modal-fullsettings-preview-hidescrollbar {
     overflow: hidden;
-    height: calc(100vh - 150px);
+    height: calc(100vh - 126px);
     background: var(--whitegrey-l1);
     border: 1px solid var(--whitegrey);
     border-radius: 5px;

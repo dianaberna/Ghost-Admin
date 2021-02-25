@@ -26,11 +26,6 @@ textarea.gh-tag-details-textarea {
     white-space: nowrap;
 }
 
-.tags-view {
-    max-width: 1220px;
-    margin: 0 auto;
-}
-
 /* Mobile style of tag list */
 @media (max-width: 1000px) {
     .gh-tags-list-item {
@@ -134,19 +129,40 @@ textarea.gh-tag-details-textarea {
 /* Tag details
 /* ---------------------------------------------------------- */
 
+.gh-tag-basic-settings-form {
+    display: flex;
+    align-items: flex-start;
+    padding: 20px 0;
+}
+
 .gh-tag-image-uploader .gh-image-uploader {
     margin: 4px 0 0;
-    border: 1px solid var(--lightgrey);
+    background: transparent;
+    border: 1px dashed var(--lightgrey);
     min-height: 147px;
 }
 
 .gh-tag-setting-codeinjection .CodeMirror {
     padding: 0 !important;
     min-height: 240px;
+    background: var(--white);
+    color: var(--darkgrey);
+    border: 1px solid var(--whitegrey);
+    border-radius: 4px;
+    margin-bottom: 24px;
+}
+
+.gh-tag-setting-codeinjection .CodeMirror-gutters {
+    background-color: var(--whitegrey-l2);
+    border-right: 1px solid var(--lightgrey);
 }
 
 .gh-tag-setting-codeinjection .CodeMirror-scroll {
     min-height: 240px;
+}
+
+.gh-tag-setting-codeinjection .CodeMirror-cursor {
+    border: 1px solid var(--midgrey);
 }
 
 label.gh-tag-setting-codeheader {

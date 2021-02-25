@@ -64,21 +64,6 @@ describe('Acceptance: Error Handling', function () {
                 expect(findAll('.gh-alert').length).to.equal(1);
                 expect(find('.gh-alert').textContent).to.match(/refresh/);
             });
-
-            it('displays alert and aborts the transition when an ember-ajax error is thrown whilst navigating', async function () {
-                await visit('/tags');
-
-                this.server.get('/settings/', versionMismatchResponse);
-
-                await click('[data-test-nav="settings"]');
-
-                // navigation is blocked
-                expect(currentRouteName()).to.equal('settings.general_loading');
-
-                // has the refresh to update alert
-                expect(findAll('.gh-alert').length).to.equal(1);
-                expect(find('.gh-alert').textContent).to.match(/refresh/);
-            });
         });
 
         describe('logged out', function () {
@@ -123,7 +108,7 @@ describe('Acceptance: Error Handling', function () {
         it('handles ember-ajax HTML response', async function () {
             this.server.del('/themes/foo/', htmlErrorResponse);
 
-            await visit('/settings/design');
+            await visit('/settings/theme');
             await click('[data-test-theme-id="foo"] [data-test-theme-delete-button]');
             await click('.fullscreen-modal [data-test-delete-button]');
 

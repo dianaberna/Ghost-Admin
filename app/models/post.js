@@ -92,7 +92,6 @@ export default Model.extend(Comparable, ValidationEngine, {
     twitterDescription: attr('string'),
     emailSubject: attr('string'),
     html: attr('string'),
-    locale: attr('string'),
     visibility: attr('string'),
     metaDescription: attr('string'),
     metaTitle: attr('string'),
@@ -148,6 +147,9 @@ export default Model.extend(Comparable, ValidationEngine, {
     isDraft: equal('status', 'draft'),
     internalTags: filterBy('tags', 'isInternal', true),
     isScheduled: equal('status', 'scheduled'),
+
+    isPost: equal('displayName', 'post'),
+    isPage: equal('displayName', 'page'),
 
     willEmail: computed('emailRecipientFilter', function () {
         return this.emailRecipientFilter !== 'none';

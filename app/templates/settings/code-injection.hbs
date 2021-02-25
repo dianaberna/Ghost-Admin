@@ -1,10 +1,12 @@
 <section class="gh-canvas">
     <GhCanvasHeader class="gh-canvas-header">
         <h2 class="gh-canvas-title" data-test-screen-title>
-            {{t "Code injection"}}
+            <LinkTo @route="settings">{{t "settings.Settings"}}</LinkTo>
+            <span>{{svg-jar "arrow-right"}}</span>
+            {{t "settings.Code injection"}}
         </h2>
         <section class="view-actions">
-            <GhTaskButton @task={{this.saveTask}} @class="gh-btn gh-btn-blue gh-btn-icon" data-test-save-button={{true}} />
+            <GhTaskButton @task={{this.saveTask}} @class="gh-btn gh-btn-primary gh-btn-icon" data-test-save-button={{true}} />
         </section>
     </GhCanvasHeader>
 
@@ -20,19 +22,21 @@
             <fieldset>
                 <p class="gh-box gh-box-tip">
                     {{svg-jar "idea"}}
-                    {{t "Ghost allows you to inject code into the top and bottom of your theme files without editing them. This allows for quick modifications to insert useful things like tracking codes and meta tags."}}
+                    {{t "settings.Ghost allows you to inject code into the top and bottom of your theme files without editing them. This allows for quick modifications to insert useful things like tracking codes and meta tags."}}
                 </p>
 
-                <div class="br3 shadow-1 bg-grouped-table pa5 pt3 pb1">
+                <div class="gh-main-section">
+                    <label for="ghost-head" class="gh-main-section-header bn">{{t "settings.Site Header"}}</label>
+                    <p class="gh-main-section-description bn">{{{t "settings.Code here will be injected into the <code>\{{ghost_head}}</code> tag on every page of the site"}}}</p>
                     <div class="form-group settings-code">
-                        <label for="ghost-head">{{t "Site Header"}}</label>
-                        <p>{{{t "Code here will be injected into the <code>{{ghost_head}}</code> tag on every page of the site"}}}</p>
                         <GhCmEditor @value={{this.settings.codeinjectionHead}} @id="ghost-head" @class="gh-input settings-code-editor" @name="codeInjection[ghost_head]" @type="text" @update={{action (mut this.settings.codeinjectionHead)}} />
                     </div>
+                </div>
 
+                <div class="gh-main-section">
+                    <label for="ghost-foot" class="gh-main-section-header bn">{{t "settings.Site Footer"}}</label>
+                    <p class="gh-main-section-description bn">{{{t "settings.Code here will be injected into the <code>\{{ghost_foot}}</code> tag on every page of the site"}}}</p>
                     <div class="form-group settings-code">
-                        <label for="ghost-foot">{{t "Site Footer"}}</label>
-                        <p>{{{t "Code here will be injected into the <code>{{ghost_foot}}</code> tag on every page of the site"}}}</p>
                         <GhCmEditor @value={{this.settings.codeinjectionFoot}} @id="ghost-foot" @class="gh-input settings-code-editor" @name="codeInjection[ghost_foot]" @type="text" @update={{action (mut this.settings.codeinjectionFoot)}} />
                     </div>
                 </div>

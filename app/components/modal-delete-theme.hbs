@@ -4,8 +4,8 @@
 <a class="close" href="" role="button" title={{t "common.Close"}} {{action "closeModal"}}>{{svg-jar "close"}}<span class="hidden">{{t "common.Close"}}</span></a>
 
 <div class="modal-body">
-    {{{t "You're about to delete \"<strong>{{name}}</strong>\". This is permanent! We warned you, k?" name=theme.label}}}
-    {{t "Maybe"}}<a href="#" {{action this.download}}>{{t "Download your theme before continuing"}}</a>
+    <p>{{{t "You're about to delete \"<strong>{label}</strong>\". This is permanent! We warned you, k?" label=this.theme.label}}}
+        <a href="#" {{action this.download}}>{{t "Maybe download your theme before continuing"}}</a></p>
 </div>
 
 <div class="modal-footer">

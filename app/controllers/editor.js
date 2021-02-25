@@ -6,6 +6,7 @@ import isNumber from 'ghost-admin/utils/isNumber';
 import moment from 'moment';
 import {action, computed} from '@ember/object';
 import {alias, mapBy} from '@ember/object/computed';
+import {capitalize} from '@ember/string';
 import {inject as controller} from '@ember/controller';
 import {get} from '@ember/object';
 import {htmlSafe} from '@ember/string';
@@ -52,13 +53,13 @@ export default Controller.extend({
 
     /* public properties -----------------------------------------------------*/
 
-    infoMessage: null,
     leaveEditorTransition: null,
     shouldFocusEditor: false,
     showDeletePostModal: false,
     showLeaveEditorModal: false,
     showReAuthenticateModal: false,
     showEmailPreviewModal: false,
+    showPostPreviewModal: false,
     showUpgradeModal: false,
     showDeleteSnippetModal: false,
     hostLimitError: null,
@@ -230,6 +231,10 @@ export default Controller.extend({
             this.toggleProperty('showEmailPreviewModal');
         },
 
+        togglePostPreviewModal() {
+            this.toggleProperty('showPostPreviewModal');
+        },
+
         toggleReAuthenticateModal() {
             this.toggleProperty('showReAuthenticateModal');
         },
@@ -381,7 +386,8 @@ export default Controller.extend({
             post.set('statusScratch', null);
 
             if (!options.silent) {
-                this._showSaveNotification(prevStatus, post.get('status'), isNew);
+                this.set('showPostPreviewModal', false);
+                this._showSaveNotification(prevStatus, post.get('status'), isNew ? true : false);
             }
 
             // redirect to edit route if saving a new record
@@ -575,10 +581,8 @@ export default Controller.extend({
     // load supplementel data such as the members count in the background
     backgroundLoader: task(function* () {
         try {
-            if (this.feature.members) {
-                let membersResponse = yield this.store.query('member', {limit: 1, filter: 'subscribed:true'});
-                this.set('memberCount', get(membersResponse, 'meta.pagination.total'));
-            }
+            let membersResponse = yield this.store.query('member', {limit: 1, filter: 'subscribed:true'});
+            this.set('memberCount', get(membersResponse, 'meta.pagination.total'));
         } catch (error) {
             this.set('memberCount', 0);
         }
@@ -703,7 +707,7 @@ export default Controller.extend({
         this.set('shouldFocusEditor', false);
         this.set('leaveEditorTransition', null);
         this.set('showLeaveEditorModal', false);
-        this.set('infoMessage', null);
+        this.set('showPostPreviewModal', false);
         this.set('wordCount', null);
 
         // remove the onbeforeunload handler as it's only relevant whilst on
@@ -761,13 +765,13 @@ export default Controller.extend({
         let currentTags = (this._tagNames || []).join(', ');
         let previousTags = (this._previousTagNames || []).join(', ');
         if (currentTags !== previousTags) {
-            this._leaveModalReason = {reason: 'tags are different', context: {currentTags, previousTags}};
+            this._leaveModalReason = {reason: this.intl.t('tags are different'), context: {currentTags, previousTags}};
             return true;
         }
 
         // titleScratch isn't an attr so needs a manual dirty check
         if (this.titleScratch !== this.title) {
-            this._leaveModalReason = {reason: 'title is different', context: {current: this.title, scratch: this.titleScratch}};
+            this._leaveModalReason = {reason: this.intl.t('title is different'), context: {current: this.title, scratch: this.titleScratch}};
             return true;
         }
 
@@ -780,7 +784,7 @@ export default Controller.extend({
             let scratchJSON = JSON.stringify(scratch);
 
             if (scratchJSON !== mobiledocJSON) {
-                this._leaveModalReason = {reason: 'mobiledoc is different', context: {current: mobiledocJSON, scratch: scratchJSON}};
+                this._leaveModalReason = {reason: this.intl.t('mobiledoc is different'), context: {current: mobiledocJSON, scratch: scratchJSON}};
                 return true;
             }
         }
@@ -791,7 +795,7 @@ export default Controller.extend({
             let changedAttributes = Object.keys(post.changedAttributes());
 
             if (changedAttributes.length) {
-                this._leaveModalReason = {reason: 'post.changedAttributes.length > 0', context: post.changedAttributes()};
+                this._leaveModalReason = {reason: this.intl.t('post.changedAttributes.length > 0'), context: post.changedAttributes()};
             }
             return !!changedAttributes.length;
         }
@@ -801,7 +805,7 @@ export default Controller.extend({
         let {hasDirtyAttributes} = post;
 
         if (hasDirtyAttributes) {
-            this._leaveModalReason = {reason: 'post.hasDirtyAttributes === true', context: post.changedAttributes()};
+            this._leaveModalReason = {reason: this.intl.t('post.hasDirtyAttributes === true'), context: post.changedAttributes()};
         }
 
         return hasDirtyAttributes;
@@ -823,7 +827,7 @@ export default Controller.extend({
             : this.get('post.previewUrl');
         actions = `<a href="${path}" target="_blank">${this.intl.t(`${this.get('post.displayName')}.notification.${type}`)}</a>`;
 
-        notifications.showNotification(message, {type: 'success', actions: actions.htmlSafe(), delayed});
+        notifications.showNotification(message, {type: 'success', actions: (actions && actions.htmlSafe()), delayed});
     },
 
     _showScheduledNotification(delayed) {
@@ -853,7 +857,7 @@ export default Controller.extend({
 
         description = description.join(' ').htmlSafe();
 
-        let actions = `<a href="${previewUrl}" target="_blank">View Preview</a>`.htmlSafe();
+        let actions = `<a href="${previewUrl}" target="_blank">${this.intl.t('View Preview')}</a>`.htmlSafe();
 
         return this.notifications.showNotification(title, {description, actions, type: 'success', delayed});
     },

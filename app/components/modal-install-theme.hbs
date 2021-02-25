@@ -1,0 +1,161 @@
+<div class="theme-validation-container" {{did-update this.reset @model}}>
+    <header class="modal-header" data-test-modal="install-theme">
+        <h1>
+            {{#if this.installSuccess}}
+                {{#if this.hasWarningsOrErrors}}
+                    {{#if this.validationErrors}}
+                        {{t "themes.Install successful with errors"}}
+                    {{else}}
+                        {{t "themes.Install successful with warnings"}}
+                    {{/if}}
+                {{else}}
+                    {{t "themes.Install successful!"}}
+                {{/if}}
+            {{else if this.hasWarningsOrErrors}}
+                {{t "themes.Invalid theme"}}
+            {{else}}
+                {{t "themes.Install theme"}}
+            {{/if}}
+        </h1>
+    </header>
+    <button type="button" class="close" title={{t "common.Close"}} {{on "click" this.close}}>{{svg-jar "close"}}<span class="hidden">{{t "common.Close"}}</span></button>
+
+    <div class="modal-body">
+        {{#if this.isReady}}
+            <p>
+                {{{t "themes.You're about to install <strong>{name}</strong> from the theme directory." name=this.themeName}}}
+            </p>
+            {{#if this.willOverwriteExisting}}
+                <p>
+                    {{#if this.willOverwriteExisting.active}}
+                        {{t "themes.This will overwrite your existing version of {name} which is your active theme. Any custom changes will be lost." name=this.themenName}}
+                    {{else}}
+                        {{t "themes.This will overwrite your existing version of {name}. Any custom changes will be lost." name=this.themenName}}
+                    {{/if}}
+                </p>
+            {{/if}}
+
+            {{#if this.marketplaceTheme.shortImage}}
+                <div class="theme-validation-screenshot relative">
+                    <img style="object-fit:contain;" src={{this.marketplaceTheme.shortImage}} alt={{t "themes.Edition Theme"}} />
+                </div>
+            {{/if}}
+        {{/if}}
+
+        {{#if this.willOverwriteDefault}}
+            <p>
+                {{{t "themes.Sorry, the default Casper theme cannot be overwritten.<br>If you wish to make changes please download the theme and upload a renamed zip file."}}}
+            </p>
+        {{/if}}
+
+        {{#if this.installSuccess}}
+            {{#if this.hasWarningsOrErrors}}
+                <p>
+                    {{#if this.validationErrors}}
+                        {{{t "themes.The theme <strong>\"{name}\"</strong> was installed successfully but we detected some errors." name=this.themeName}}}
+                        {{#unless this.theme.active}}
+                            {{t "themes.You are still able to activate and use the theme but it is recommended to fix these errors before you do so."}}
+                        {{/unless}}
+                    {{else}}
+                        {{{t "themes.The theme <strong>\"{name}\"</strong> was installed successfully but we detected some warnings." name=this.themeName}}}
+                        {{#unless this.theme.active}}
+                            {{t "themes.You are still able to activate and use the theme but it is recommended to fix these warnings before you do so."}}
+                        {{/unless}}
+                    {{/if}}
+                </p>
+            {{else}}
+            {{!-- Installed with no errors --}}
+                <p>{{{t "themes.The theme <strong>\"{name}}\"</strong> was installed successfully." name=this.themeName}}}
+                    {{unless this.theme.active (t "themes.Do you want to activate it now?")}}</p>
+            {{/if}}
+        {{/if}}
+
+        {{#if this.installError}}
+        {{!-- Outright failure - not found, not a theme, server error, etc --}}
+            <p>{{t "themes.{name} failed to install." name=this.themeName}}</p>
+            <p class="error"><strong class="response">{{this.installError}}</strong></p>
+        {{/if}}
+
+        {{#if this.installFailure}}
+        {{!-- Invalid theme --}}
+            <p>{{t "themes.This theme is invalid and cannot be activated. Contact the theme developer."}}</p>
+        {{/if}}
+
+        {{#if this.fatalValidationErrors}}
+            <div>
+                <h2 class="mb0 mt4 f5 fw6">{{t "themes.Fatal Errors"}}</h2>
+                <p class="mb2">{{t "themes.Must-fix to activate theme"}}</p>
+            </div>
+
+            <ul class="pa0">
+                {{#each this.fatalValidationErrors as |error|}}
+                    <li class="theme-validation-item theme-fatal-error">
+                        <GhThemeErrorLi @error={{error}} />
+                    </li>
+                {{/each}}
+            </ul>
+        {{/if}}
+
+        {{#if this.validationErrors}}
+            <div>
+                <h2 class="mb0 mt4 f5 fw6">{{t "themes.Errors"}}</h2>
+                <p class="mb2">{{{t "themes.Highly recommended to fix, functionality <strong>could</strong> be restricted"}}}</p>
+            </div>
+            <ul class="pa0">
+                {{#each this.validationErrors as |error|}}
+                    <li class="theme-validation-item theme-error">
+                        <GhThemeErrorLi @error={{error}} />
+                    </li>
+                {{/each}}
+            </ul>
+        {{/if}}
+
+        {{#if this.validationWarnings}}
+            <div>
+                <h2 class="mb0 mt4 f5 fw6">{{t "themes.Warnings"}}</h2>
+            </div>
+            <ul class="pa0">
+                {{#each this.validationWarnings as |error|}}
+                    <li class="theme-validation-item theme-warning">
+                        <GhThemeErrorLi @error={{error}} />
+                    </li>
+                {{/each}}
+            </ul>
+        {{/if}}
+    </div>
+
+    <div class="modal-footer">
+        <div class="flex items-center justify-between {{if this.hasActionButton "flex-auto"}}">
+            <button type="button" class="gh-btn" {{on "click" this.close}} data-test-button="cancel">
+                <span>{{#if (or this.installSuccess this.installFailure)}}{{t "common.Close"}}{{else}}{{t "common.Cancel"}}{{/if}}</span>
+            </button>
+
+            {{#if this.hasActionButton}}
+                <div class="flex items-center">
+                    {{#if this.shouldShowInstall}}
+                        <GhTaskButton
+                                @task={{this.installTask}}
+                                @type="button"
+                                @class="gh-btn gh-btn-icon gh-btn-green"
+                                @buttonText={{if this.willOverwriteExisting (t "taskButton.Overwrite") (t "taskButton.Install")}}
+                                @runningText={{t "taskButton.Installing"}}
+                                @successText={{t "taskButton.Installed"}}
+                                data-test-button="install"
+                        />
+                    {{/if}}
+
+                    {{#if this.shouldShowActivate}}
+                        <GhTaskButton
+                                @task={{this.activateTask}}
+                                @type="button"
+                                @class="gh-btn gh-btn-icon gh-btn-green"
+                                @buttonText={{t "taskButton.Activate"}}
+                                @runningText={{t "taskButton.Activating"}}
+                                data-test-button="activate"
+                        />
+                    {{/if}}
+                </div>
+            {{/if}}
+        </div>
+    </div>
+</div>

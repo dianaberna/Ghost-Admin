@@ -1,0 +1,128 @@
+import Component from '@glimmer/component';
+import validator from 'validator';
+import {action} from '@ember/object';
+import {htmlSafe} from '@ember/string';
+import {inject as service} from '@ember/service';
+import {task} from 'ember-concurrency-decorators';
+import {timeout} from 'ember-concurrency';
+import {tracked} from '@glimmer/tracking';
+
+const INJECTED_CSS = `
+html::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    background: transparent
+}
+html {
+    scrollbar-width: none;
+}
+`;
+
+// TODO: remove duplication with <ModalPostEmailPreview>
+export default class ModalPostPreviewEmailComponent extends Component {
+    @service ajax;
+    @service config;
+    @service ghostPaths;
+    @service settings;
+
+    @tracked html = '';
+    @tracked subject = '';
+    @tracked previewEmailAddress = '';
+    @tracked sendPreviewEmailError = '';
+
+    get mailgunIsEnabled() {
+        return this.config.get('mailgunIsConfigured') ||
+            !!(this.settings.get('mailgunApiKey') && this.settings.get('mailgunDomain') && this.settings.get('mailgunBaseUrl'));
+    }
+
+    @action
+    async renderEmailPreview(iframe) {
+        await this._fetchEmailData();
+        // avoid timing issues when _fetchEmailData didn't perform any async ops
+        await timeout(100);
+
+        if (iframe) {
+            iframe.contentWindow.document.open();
+            iframe.contentWindow.document.write(this.html);
+            iframe.contentWindow.document.close();
+        }
+    }
+
+    @task({drop: true})
+    *sendPreviewEmailTask() {
+        try {
+            const resourceId = this.args.post.id;
+            const testEmail = this.previewEmailAddress.trim();
+
+            if (!validator.isEmail(testEmail)) {
+                this.sendPreviewEmailError = 'Please enter a valid email';
+                return false;
+            }
+            if (!this.mailgunIsEnabled) {
+                this.sendPreviewEmailError = 'Please verify your email settings';
+                return false;
+            }
+            this.sendPreviewEmailError = '';
+
+            const url = this.ghostPaths.url.api('/email_preview/posts', resourceId);
+            const data = {emails: [testEmail]};
+            const options = {
+                data,
+                dataType: 'json'
+            };
+
+            return yield this.ajax.post(url, options);
+        } catch (error) {
+            if (error) {
+                let message = 'Email could not be sent, verify mail settings';
+
+                // grab custom error message if present
+                if (
+                    error.payload && error.payload.errors
+                    && error.payload.errors[0] && error.payload.errors[0].message) {
+                    message = htmlSafe(error.payload.errors[0].message);
+                }
+
+                this.sendPreviewEmailError = message;
+                throw error;
+            }
+        }
+    }
+
+    async _fetchEmailData() {
+        let {html, subject} = this;
+        let {post} = this.args;
+
+        if (html && subject) {
+            return {html, subject};
+        }
+
+        // model is an email
+        if (post.html && post.subject) {
+            html = post.html;
+            subject = post.subject;
+        // model is a post with an existing email
+        } else if (post.email) {
+            html = post.email.html;
+            subject = post.email.subject;
+        // model is a post, fetch email preview
+        } else {
+            let url = this.ghostPaths.url.api('/email_preview/posts', post.id);
+            let response = await this.ajax.request(url);
+            let [emailPreview] = response.email_previews;
+            html = emailPreview.html;
+            subject = emailPreview.subject;
+        }
+
+        // inject extra CSS into the html for disabling links and scrollbars etc
+        let domParser = new DOMParser();
+        let htmlDoc = domParser.parseFromString(html, 'text/html');
+        let stylesheet = htmlDoc.querySelector('style');
+        let originalCss = stylesheet.innerHTML;
+        stylesheet.innerHTML = `${originalCss}\n\n${INJECTED_CSS}`;
+        html = htmlDoc.documentElement.innerHTML;
+
+        this.html = html;
+        this.subject = subject;
+    }
+}

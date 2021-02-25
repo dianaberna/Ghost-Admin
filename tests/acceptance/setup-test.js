@@ -126,7 +126,7 @@ describe('Acceptance: Setup', function () {
 
             // it redirects to the home / "content" screen
             expect(currentURL(), 'url after submitting invites')
-                .to.equal('/site');
+                .to.equal('/dashboard');
 
             // it displays success alert
             expect(findAll('.gh-alert-green').length, 'number of success alerts')
@@ -334,7 +334,7 @@ describe('Acceptance: Setup', function () {
 
             // it redirects to the home / "content" screen
             expect(currentURL(), 'url after submitting invites')
-                .to.equal('/site');
+                .to.equal('/dashboard');
 
             // it displays success alert
             expect(findAll('.gh-alert-green').length, 'number of success alerts')

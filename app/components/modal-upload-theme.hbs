@@ -3,14 +3,18 @@
         <h1>
             {{#if this.theme}}
                 {{#if this.hasWarningsOrErrors}}
-                    {{t "Upload successful with {type}" type=(if this.validationErrors (t "errors") (t "warnings"))}}
+                    {{#if this.validationErrors}}
+                        {{t "themes.Upload successful with errors"}}
+                    {{else}}
+                        {{t "themes.Upload successful with warnings"}}
+                    {{/if}}
                 {{else}}
-                    {{t "Upload successful!"}}
+                    {{t "themes.Upload successful!"}}
                 {{/if}}
             {{else if (or this.validationErrors this.fatalValidationErrors)}}
-                {{t "Invalid theme"}}
+                {{t "themes.Invalid theme"}}
             {{else}}
-                {{t "Upload a theme"}}
+                {{t "themes.Upload a theme"}}
             {{/if}}
         </h1>
     </header>
@@ -20,17 +24,24 @@
         {{#if this.theme}}
             {{#if this.hasWarningsOrErrors}}
                 <p>
+                    {{#if this.validationErrors}}
+                        {{{t "themes.The theme <strong>\"{themeName}\"</strong> was installed successfully but we detected some errors." themeName=this.themeName}}}
+                    {{eles}}
+                        {{{t "themes.The theme <strong>\"{themeName}\"</strong> was installed successfully but we detected some warnings." themeName=this.themeName}}}
+                    {{/if}}
                     {{#if this.canActivateTheme}}
-                        {{{t "The theme <strong>\"{themeName}\"</strong> was uploaded successfully but we detected some {problems}. You are still able to activate and use the theme but it is recommended to fix these {problems} before you do so." themeName=this.themeName problems=(if this.validationErrors (t "errors") (t "warnings"))}}}
-                    {{else}}
-                        {{{t "The theme <strong>\"{themeName}\"</strong> was uploaded successfully but we detected some {problems}." themeName=this.themeName problems=(if this.validationErrors (t "errors") (t "warnings"))}}}
+                        {{#if this.validationErrors}}
+                            {{t "themes.You are still able to activate and use the theme but it is recommended to fix these errors before you do so."}}
+                        {{else}}
+                            {{t "themes.You are still able to activate and use the theme but it is recommended to fix these warnings before you do so."}}
+                        {{/if}}
                     {{/if}}
                 </p>
 
                 {{#if this.validationErrors}}
                     <div>
-                        <h2 class="mb0 mt4 f5 fw6">{{t "Errors"}}</h2>
-                        <p class="mb2">{{{t "Highly recommended to fix, functionality <strong>could</strong> be restricted"}}}</p>
+                        <h2 class="mb0 mt4 f5 fw6">{{t "themes.Errors"}}</h2>
+                        <p class="mb2">{{{t "themes.Highly recommended to fix, functionality <strong>could</strong> be restricted"}}}</p>
                     </div>
                     <ul class="pa0">
                     {{#each this.validationErrors as |error|}}
@@ -43,7 +54,7 @@
 
                 {{#if this.validationWarnings}}
                     <div>
-                        <h2 class="mb0 mt4 f5 fw6">{{t "Warnings"}}</h2>
+                        <h2 class="mb0 mt4 f5 fw6">{{t "themes.Warnings"}}</h2>
                     </div>
                     <ul class="pa0">
                     {{#each this.validationWarnings as |error|}}
@@ -55,18 +66,18 @@
                 {{/if}}
             {{else}}
                 <p>
-                    {{t "\"{themeName}\" uploaded successfully." themeName=this.themeName}}
-                    {{#if this.canActivateTheme}}{{t "Do you want to activate it now?"}}{{/if}}
+                    {{t "themes.\"{themeName}\" uploaded successfully." themeName=this.themeName}}
+                    {{#if this.canActivateTheme}}{{t "themes.Do you want to activate it now?"}}{{/if}}
                 </p>
             {{/if}}
         {{else if this.displayOverwriteWarning}}
             <p>
-                {{{t "The theme folder <strong>\"{fileThemeName}\"</strong> already exists. Do you want to overwrite it?" fileThemeName=this.fileThemeName}}}
+                {{{t "themes.The theme folder <strong>\"{fileThemeName}\"</strong> already exists. Do you want to overwrite it?" fileThemeName=this.fileThemeName}}}
             </p>
         {{else if (or this.validationErrors this.fatalValidationErrors)}}
 
             <p>
-                {{t "This theme is invalid and cannot be activated. Fix the following errors and re-upload the theme."}}
+                {{t "themes.This theme is invalid and cannot be activated. Fix the following errors and re-upload the theme."}}
             </p>
 
             {{#if this.fatalValidationErrors}}
@@ -86,8 +97,8 @@
 
             {{#if this.validationErrors}}
                 <div>
-                    <h2 class="mb0 mt4 f5 fw6">{{t "Errors"}}</h2>
-                    <p class="mb2">{{{t "Highly recommended to fix, functionality <strong>could</strong> be restricted"}}}</p>
+                    <h2 class="mb0 mt4 f5 fw6">{{t "themes.Errors"}}</h2>
+                    <p class="mb2">{{{t "themes.Highly recommended to fix, functionality <strong>could</strong> be restricted"}}}</p>
                 </div>
                 <ul class="pa0">
                 {{#each this.validationErrors as |error|}}
@@ -102,7 +113,7 @@
                 @url={{this.uploadUrl}}
                 @paramName="file"
                 @accept={{this.accept}}
-                @labelText={{t "Click to select or drag-and-drop your theme zip file here."}}
+                @labelText={{t "themes.Click to select or drag-and-drop your theme zip file here."}}
                 @validate={{action "validateTheme"}}
                 @uploadStarted={{action "uploadStarted"}}
                 @uploadFinished={{action "uploadFinished"}}
@@ -121,17 +132,17 @@
         <div class="flex items-center">
             {{#if this.displayOverwriteWarning}}
                 <button {{action "confirmOverwrite"}} class="gh-btn gh-btn-red" data-test-overwrite-button>
-                    <span>{{t "Overwrite"}}</span>
+                    <span>{{t "themes.Overwrite"}}</span>
                 </button>
             {{/if}}
             {{#if this.canActivateTheme}}
                 <button {{action "activate"}} class="gh-btn" data-test-activate-now-button>
-                    <span>{{#if this.validationErrors}}{{t "Activate with errors"}}{{else}}{{t "Activate"}}{{/if}}</span>
+                    <span>{{#if this.validationErrors}}{{t "themes.Activate with errors"}}{{else}}{{t "themes.Activate"}}{{/if}}</span>
                 </button>
             {{/if}}
             {{#if (or this.validationErrors this.fatalValidationErrors)}}
                 <button {{action "reset"}} class="gh-btn gh-btn-blue ml2" data-test-try-again-button>
-                    <span>{{t "Try Again"}}</span>
+                    <span>{{t "themes.Try Again"}}</span>
                 </button>
             {{/if}}
         </div>

@@ -39,13 +39,12 @@ export default Component.extend({
 
     hasEmailPermission: or('session.user.isOwner', 'session.user.isAdmin', 'session.user.isEditor'),
 
-    canSendEmail: computed('feature.labs.members', 'post.{displayName,email}', 'settings.{mailgunApiKey,mailgunDomain,mailgunBaseUrl}', 'config.mailgunIsConfigured', function () {
-        let membersEnabled = this.feature.get('labs.members');
+    canSendEmail: computed('post.{isPost,email}', 'settings.{mailgunApiKey,mailgunDomain,mailgunBaseUrl}', 'config.mailgunIsConfigured', function () {
         let mailgunIsConfigured = this.get('settings.mailgunApiKey') && this.get('settings.mailgunDomain') && this.get('settings.mailgunBaseUrl') || this.get('config.mailgunIsConfigured');
-        let isPost = this.post.displayName === 'post';
+        let isPost = this.post.isPost;
         let hasSentEmail = !!this.post.email;
 
-        return membersEnabled && mailgunIsConfigured && isPost && !hasSentEmail;
+        return mailgunIsConfigured && isPost && !hasSentEmail;
     }),
 
     postState: computed('post.{isPublished,isScheduled}', 'forcePublishedMenu', function () {
@@ -220,7 +219,7 @@ export default Component.extend({
     }),
 
     countPaidMembersTask: task(function* () {
-        const result = yield this.store.query('member', {filter: 'subscribed:true', paid: true, limit: 1, page: 1});
+        const result = yield this.store.query('member', {filter: 'subscribed:true+status:-free', limit: 1, page: 1});
         const paidMemberCount = result.meta.pagination.total;
         const freeMemberCount = this.memberCount - paidMemberCount;
         this.set('paidMemberCount', paidMemberCount);

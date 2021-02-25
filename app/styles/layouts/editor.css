@@ -64,7 +64,6 @@
     position: relative;
     z-index: 1000;
     display: inline-block;
-    padding: 10px;
     color: var(--midgrey);
     line-height: 0;
     transition: all 0.15s ease-out 0s;
@@ -97,16 +96,19 @@
 
 .post-view-link {
     position: absolute;
-    top: 1px;
+    top: -1px;
     right: 0;
     font-size: 1.3rem;
+    color: var(--green);
 }
 
 .post-view-link svg {
     display: inline;
-    width: 10px;
-    height: 10px;
-    fill: var(--blue);
+    width: 12px;
+    height: 12px;
+    vertical-align: middle;
+    margin-bottom: 2px;
+    fill: var(--green);
 }
 
 
@@ -294,8 +296,34 @@
     align-items: center;
     height: 36px;
     padding: 0;
-    margin: 24px;
+    margin: 30px;
     z-index: 799;
+}
+
+.gh-btn-editor {
+    background: var(--white) !important;
+}
+
+.gh-btn-editor span {
+    color: var(--darkgrey);
+}
+
+.gh-btn-editor:hover {
+    background: var(--whitegrey) !important;
+}
+
+.gh-btn-editor.green span {
+    color: var(--green);
+}
+
+.gh-editor-wordcount-container {
+    position: absolute;
+    right: 30px;
+    bottom: 30px;
+    display: flex;
+    align-items: center;
+    border-radius: 3px;
+    background: transparent;
 }
 
 @media (max-width: 750px) {
@@ -358,7 +386,7 @@
     min-height: auto;
     margin-bottom: 1.6rem;
     border: none;
-    color: var(--darkgrey-d1);
+    color: var(--black);
     font-size: 4.8rem;
     line-height: 1.15em;
     font-weight: 600;
@@ -369,6 +397,75 @@
 .gh-editor-title:focus {
     box-shadow: none !important;
     border: none !important;
+}
+
+.gh-editor-back-button {
+    height: 33px;
+    margin-right: 8px;
+    padding: 5px 12px 6px;
+    outline: none;
+    border: none;
+    color: var(--darkgrey);
+    font-size: 1.35rem;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+    white-space: nowrap;
+    background: var(--white);
+    border-radius: 3px;
+    transition: all 0.25s ease;
+}
+
+.gh-editor-back-button:hover {
+    color: var(--darkgrey);
+    cursor: pointer;
+    background: var(--whitegrey);
+}
+
+.gh-editor-back-button span {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.gh-editor-back-button svg {
+    width: .8em;
+    height: .8em;
+    margin-right: .5em;
+    padding-top: 2px;
+    fill: var(--darkgrey);
+}
+
+.gh-editor-post-status {
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    font-size: 1.35rem;
+    font-weight: 400;
+    color: var(--midgrey-l2);
+    letter-spacing: .2px;
+    background: var(--white)
+}
+
+.gh-editor-preview-trigger {
+    background: var(--white);
+    font-size: 1.35rem;
+    font-weight: 500;
+    color: var(--green-d1);
+    letter-spacing: 0.2px;
+    height: 33px;
+    padding: 5px 12px 6px;
+    margin-right: 8px;
+    outline: none;
+    border: none;
+    border-radius: 3px;
+    white-space: nowrap;
+    transition: all 0.25s ease;
+}
+
+.gh-editor-preview-trigger:hover {
+    cursor: pointer;
+    color: var(--green-d1);
+    background: var(--whitegrey);
 }
 
 .gh-editor-wordcount {

@@ -2,17 +2,7 @@
 /* ---------------------------------------------------------- */
 
 .gh-publishmenu-trigger {
-    color: var(--blue);
-    border: none;
     cursor: pointer;
-    text-shadow: none;
-    background: none;
-    box-shadow: none;
-}
-
-.gh-publishmenu-trigger:hover {
-    background: none;
-    box-shadow: none;
 }
 
 .gh-publishmenu-trigger svg {
@@ -21,8 +11,8 @@
 }
 
 .gh-publishmenu-trigger svg path {
-    stroke: var(--blue);
-    stroke-width: 1px;
+    stroke: var(--darkgrey);
+    stroke-width: 4px;
 }
 
 .gh-publishmenu-trigger:focus {
@@ -33,7 +23,6 @@
     position: relative;
     z-index: 1000;
     display: flex;
-    align-items: center;
 }
 
 .gh-publishmenu-dropdown {
@@ -46,13 +35,15 @@
     background-color: #fff;
     background-clip: padding-box;
     border-radius: 4px;
-    box-shadow: 0 0 0 1px rgba(99,114,130,0.06), 0 8px 16px rgba(27,39,51,0.08);
     list-style: none;
     text-align: left;
     text-transform: none;
     font-size: 1.4rem;
     font-weight: normal;
     will-change: transform, opacity;
+    z-index: 99999; /* needs to sit on top of preview modal */
+    /* box-shadow: 0 0 0 1px rgba(99,114,130,0.06), 0 8px 16px rgba(27,39,51,0.08); */
+    box-shadow: var(--box-shadow-m);
 }
 
 .gh-publishmenu-dropdown.ember-basic-dropdown--transitioning-in {
@@ -73,7 +64,7 @@
 }
 
 .gh-publishmenu-content {
-    border-bottom: var(--lightgrey) 1px solid;
+    border-bottom: var(--whitegrey) 1px solid;
 }
 
 .gh-publishmenu-footer {
@@ -96,7 +87,7 @@
 
 .gh-publishmenu-section {
     padding: 0 20px;
-    border-top: var(--lightgrey) 1px solid;
+    border-top: var(--whitegrey) 1px solid;
 }
 
 .gh-publishmenu-radio-button {
@@ -104,7 +95,7 @@
     position: relative;
     width: 15px;
     height: 15px;
-    border: color-mod(var(--lightgrey) l(-10%)) 1px solid;
+    border: color-mod(var(--whitegrey) l(-10%)) 1px solid;
     border-radius: 100%;
     background: #fff;
 }
@@ -137,8 +128,8 @@
 }
 
 .gh-publishmenu-radio.active .gh-publishmenu-radio-button {
-    border-color: color-mod(var(--blue) l(-12%));
-    background: var(--blue);
+    border-color: var(--black);
+    background: var(--black);
 }
 
 .gh-publishmenu-radio.active .gh-publishmenu-radio-button:before {
@@ -149,7 +140,7 @@
     left: 3px;
     width: 7px;
     height: 7px;
-    background: #fff;
+    background: var(--white);
     border-radius: 100%;
     box-shadow: rgba(0,0,0,0.25) 0 1px 3px;
 }
@@ -208,7 +199,7 @@
 
 .gh-date-time-picker-date:focus,
 .gh-date-time-picker-time:focus {
-    border-color: color-mod(var(--lightgrey) l(-15%) s(-10%));
+    border-color: color-mod(var(--whitegrey) l(-15%) s(-10%));
 }
 
 .gh-date-time-picker-date svg {

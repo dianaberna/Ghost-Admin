@@ -76,7 +76,7 @@
                 {{/unless}}
 
 
-                {{#if (and this.feature.members this.showVisibilityInput)}}
+                {{#if this.showVisibilityInput}}
                     <div class="form-group">
                         <label for="visibility-input">{{t "Post access"}}</label>
                         <GhPsmVisibilityInput @post={{this.post}} @triggerId="visibility-input" />
@@ -128,7 +128,7 @@
                         </button>
                         {{svg-jar "arrow-right"}}
                     </li>
-                    {{#if (and this.feature.members (eq this.post.displayName "post") showEmailNewsletter)}}
+                    {{#if (and this.post.isPost showEmailNewsletter)}}
                         <li class="nav-list-item" {{action "showSubview" "email-settings"}} data-test-button="email-settings">
                             <button type="button">
                                 <b>{{t "Email newsletter"}}</b>
@@ -231,10 +231,16 @@
 
                                 <div class="form-group">
                                     <label>{{t "Search Engine Result Preview"}}</label>
-                                    <div class="seo-preview">
-                                        <div class="seo-preview-title">{{truncate this.seoTitle 70}}</div>
-                                        <div class="seo-preview-link">{{truncate this.seoURL 70}}</div>
-                                        <div class="seo-preview-description">{{truncate this.seoDescription 300}}</div>
+                                    <div class="gh-seo-container">
+                                        <div class="gh-seo-preview">
+                                            <div class="flex mb7">
+                                                {{svg-jar "google"}}
+                                                <div class="gh-seo-search-bar">{{svg-jar "google-search"}}</div>
+                                            </div>
+                                            <div class="gh-seo-preview-link">{{this.seoURL}}</div>
+                                            <div class="gh-seo-preview-title">{{this.seoTitle}}</div>
+                                            <div class="gh-seo-preview-desc">{{this.seoDescription}}</div>
+                                        </div>
                                     </div>
                                 </div>
                             </form>
@@ -289,20 +295,17 @@
                                 </GhFormGroup>
 
                                 <div class="form-group">
-                                    <label>{{t "Preview"}}</label>
-                                    <div class="gh-twitter-preview">
+                                    <label>{{t "Twitter preview"}}</label>
+                                    <div class="gh-social-twitter-post-preview">
                                         {{#if this.twitterImage}}
-                                        <div class="gh-twitter-preview-image" style={{background-image-style this.twitterImage}}></div>
+                                            <div class="gh-social-twitter-preview-image" style={{background-image-style this.twitterImage}}></div>
                                         {{/if}}
-                                        <div class="gh-twitter-preview-content">
-                                            <div class="gh-twitter-preview-title">{{this.twitterTitle}}</div>
-                                            <div class="gh-twitter-preview-description">{{truncate this.twitterDescription 155}}</div>
-                                            <div class="gh-twitter-preview-footer">
-                                                <div class="gh-twitter-preview-footer-left">
-                                                    {{this.config.blogDomain}}
-                                                </div>
-                                                <div class="gh-twitter-preview-footer-right">
-                                                </div>
+                                        <div class="gh-social-twitter-preview-content">
+                                            <div class="gh-social-twitter-preview-title">{{this.twitterTitle}}</div>
+                                            <div class="gh-social-twitter-preview-desc">{{truncate this.twitterDescription}}</div>
+                                            <div class="gh-social-twitter-preview-meta">
+                                                {{svg-jar "twitter-link"}}
+                                                {{this.config.blogDomain}}
                                             </div>
                                         </div>
                                     </div>
@@ -367,21 +370,17 @@
                                 </GhFormGroup>
 
                                 <div class="form-group">
-                                    <label>{{t "Preview"}}</label>
-                                    <div class="gh-og-preview">
+                                    <label>{{t "Facebook preview"}}</label>
+                                    <div class="gh-social-og-preview no-container">
                                         {{#if this.facebookImage}}
-                                        <div class="gh-og-preview-image" style={{background-image-style this.facebookImage}}></div>
+                                            <div class="gh-social-og-preview-image" style={{background-image-style this.facebookImage}}></div>
                                         {{/if}}
-                                        <div class="gh-og-preview-content">
-                                            <div class="gh-og-preview-title">{{truncate this.facebookTitle 88}}</div>
-                                            <div class="gh-og-preview-description">{{truncate this.facebookDescription 300}}</div>
-                                            <div class="gh-og-preview-footer">
-                                                <div class="gh-og-preview-footer-left">
-                                                    {{{t "{blog} <span class=\"gh-og-preview-footer-left-divider\">|</span> by <span class=\"gh-og-preview-footer-author\">{name}</span>" blog=this.config.blogDomain name=(author-names this.post.authors)}}}
-                                                </div>
-                                                <div class="gh-og-preview-footer-right">
-                                                </div>
+                                        <div class="gh-social-og-preview-content">
+                                            <div class="gh-social-og-preview-meta">
+                                                {{this.config.blogDomain}}
                                             </div>
+                                            <div class="gh-social-og-preview-title">{{truncate this.facebookTitle 88}}</div>
+                                            <div class="gh-social-og-preview-desc">{{truncate this.facebookDescription}}</div>
                                         </div>
                                     </div>
                                 </div>
