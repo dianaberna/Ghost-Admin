@@ -63,6 +63,7 @@
     <section class="gh-main-section">
         <h4 class="gh-main-section-header small">{{t "settings.Built-in integrations"}}</h4>
         <div class="apps-grid">
+            {{#unless this.zapierDisabled}}
             <div class="apps-grid-cell" data-test-app="zapier">
                 <LinkTo @route="integrations.zapier" data-test-link="zapier">
                 <article class="apps-card-app">
@@ -82,6 +83,7 @@
                 </article>
                 </LinkTo>
             </div>
+            {{/unless}}
 
             <div class="apps-grid-cell" data-test-app="slack">
                 <LinkTo @route="integrations.slack" data-test-link="slack">

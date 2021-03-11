@@ -1,4 +1,5 @@
 import Controller from '@ember/controller';
+import {action} from '@ember/object';
 import {getSymbol} from 'ghost-admin/utils/currency';
 import {inject as service} from '@ember/service';
 import {tracked} from '@glimmer/tracking';
@@ -49,9 +50,15 @@ export default class DashboardController extends Controller {
 
     @tracked
     whatsNewEntries = null;
+    @tracked
+    whatsNewEntriesLoading = null;
+    @tracked
+    whatsNewEntriesError = null;
 
-    get showTopMembers() {
-        return this.feature.get('emailAnalytics') && this.settings.get('emailTrackOpens');
+    get topMembersDataHasOpenRates() {
+        return this.topMembersData && this.topMembersData.find((member) => {
+            return member.emailOpenRate !== null;
+        });
     }
 
     initialise() {
@@ -65,19 +72,20 @@ export default class DashboardController extends Controller {
         this.mrrStatsLoading = true;
         this.membersStats.fetchMRR().then((stats) => {
             this.mrrStatsLoading = false;
-
-            let currencyStats = stats[0] || {
+            const statsData = stats.data;
+            let currencyStats = statsData[0] || {
                 data: [],
                 currency: 'usd'
             };
             if (currencyStats) {
-                currencyStats.data = this.membersStats.fillDates(currencyStats.data) || {};
-                const dateValues = Object.values(currencyStats.data).map(val => val / 100);
+                const currencyStatsData = this.membersStats.fillDates(currencyStats.data) || {};
+                const dateValues = Object.values(currencyStatsData).map(val => val / 100);
                 const currentMRR = dateValues.length ? dateValues[dateValues.length - 1] : 0;
                 const rangeStartMRR = dateValues.length ? dateValues[0] : 0;
                 const percentGrowth = rangeStartMRR !== 0 ? ((currentMRR - rangeStartMRR) / rangeStartMRR) * 100 : 0;
                 this.mrrStatsData = {
-                    current: `${getSymbol(currencyStats.currency)}${currentMRR}`,
+                    currentAmount: currentMRR,
+                    currency: getSymbol(currencyStats.currency),
                     percentGrowth: percentGrowth.toFixed(1),
                     percentClass: (percentGrowth > 0 ? 'positive' : (percentGrowth < 0 ? 'negative' : '')),
                     options: {
@@ -85,7 +93,7 @@ export default class DashboardController extends Controller {
                     },
                     data: {
                         label: this.intl.t('dashboard.MRR'),
-                        dateLabels: Object.keys(currencyStats.data),
+                        dateLabels: Object.keys(currencyStatsData),
                         dateValues
                     },
                     title: this.intl.t('dashboard.MRR'),
@@ -104,8 +112,8 @@ export default class DashboardController extends Controller {
             this.memberCountStatsLoading = false;
 
             if (stats) {
-                stats.data = this.membersStats.fillCountDates(stats.data) || {};
-                const dateValues = Object.values(stats.data);
+                const statsDateObj = this.membersStats.fillCountDates(stats.data) || {};
+                const dateValues = Object.values(statsDateObj);
                 const currentAllCount = dateValues.length ? dateValues[dateValues.length - 1].total : 0;
                 const currentPaidCount = dateValues.length ? dateValues[dateValues.length - 1].paid : 0;
                 const rangeStartAllCount = dateValues.length ? dateValues[0].total : 0;
@@ -123,7 +131,7 @@ export default class DashboardController extends Controller {
                         },
                         data: {
                             label: this.intl.t('dashboard.Members'),
-                            dateLabels: Object.keys(stats.data),
+                            dateLabels: Object.keys(statsDateObj),
                             dateValues: dateValues.map(d => d.total)
                         },
                         title: this.intl.t('dashboard.Total Members'),
@@ -138,7 +146,7 @@ export default class DashboardController extends Controller {
                         },
                         data: {
                             label: this.intl.t('dashboard.Members'),
-                            dateLabels: Object.keys(stats.data),
+                            dateLabels: Object.keys(statsDateObj),
                             dateValues: dateValues.map(d => d.paid)
                         },
                         title: this.intl.t('dashboard.Paid Members'),
@@ -177,6 +185,7 @@ export default class DashboardController extends Controller {
             const percentGrowth = rangeStartOpenRate !== 0 ? ((rangeEndOpenRate - rangeStartOpenRate) / rangeStartOpenRate) * 100 : 0;
             this.newsletterOpenRatesData = {
                 percentGrowth: percentGrowth.toFixed(1),
+                percentClass: (percentGrowth > 0 ? 'positive' : (percentGrowth < 0 ? 'negative' : '')),
                 current: rangeEndOpenRate,
                 options: {
                     rangeInDays: 30
@@ -201,20 +210,39 @@ export default class DashboardController extends Controller {
         let query = {
             filter: 'email_open_rate:-null',
             order: 'email_open_rate desc',
-            limit: 10
+            limit: 5
         };
         this.store.query('member', query).then((result) => {
+            if (!result.length) {
+                return this.store.query('member', {
+                    filter: 'status:paid',
+                    order: 'created_at asc',
+                    limit: 5
+                });
+            }
+            return result;
+        }).then((result) => {
             this.topMembersData = result;
             this.topMembersLoading = false;
-        }, (error) => {
+        }).catch((error) => {
             this.topMembersError = error;
             this.topMembersLoading = false;
         });
     }
 
     loadWhatsNew() {
+        this.whatsNewEntriesLoading = true;
         this.whatsNew.fetchLatest.perform().then(() => {
+            this.whatsNewEntriesLoading = false;
             this.whatsNewEntries = this.whatsNew.entries.slice(0, 3);
+        }, (error) => {
+            this.whatsNewEntriesError = error;
+            this.whatsNewEntriesLoading = false;
         });
+    }
+
+    @action
+    dismissLaunchBanner() {
+        this.feature.set('launchComplete', true);
     }
 }

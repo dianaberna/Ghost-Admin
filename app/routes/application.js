@@ -36,7 +36,6 @@ export default Route.extend(ApplicationRouteMixin, ShortcutsRoute, {
     notifications: service(),
     router: service(),
     settings: service(),
-    tour: service(),
     ui: service(),
     intl: service(),
     lazyLoader: service(),
@@ -87,8 +86,7 @@ export default Route.extend(ApplicationRouteMixin, ShortcutsRoute, {
             return RSVP.all([
                 this.config.fetchAuthenticated(),
                 this.feature.fetch(),
-                this.settings.fetch(),
-                this.tour.fetchViewed()
+                this.settings.fetch()
             ]).then((results) => {
                 this._appLoaded = true;
 

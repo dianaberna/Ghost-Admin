@@ -23,7 +23,9 @@ export default class ModalPostPreviewEmailComponent extends Component {
     @service ajax;
     @service config;
     @service ghostPaths;
+    @service session;
     @service settings;
+    @service intl;
 
     @tracked html = '';
     @tracked subject = '';
@@ -48,6 +50,12 @@ export default class ModalPostPreviewEmailComponent extends Component {
         }
     }
 
+    @action
+    async initPreviewEmailAddress() {
+        const user = await this.session.user;
+        this.previewEmailAddress = user.email;
+    }
+
     @task({drop: true})
     *sendPreviewEmailTask() {
         try {
@@ -55,11 +63,11 @@ export default class ModalPostPreviewEmailComponent extends Component {
             const testEmail = this.previewEmailAddress.trim();
 
             if (!validator.isEmail(testEmail)) {
-                this.sendPreviewEmailError = 'Please enter a valid email';
+                this.sendPreviewEmailError = this.intl.t('Please enter a valid email');
                 return false;
             }
             if (!this.mailgunIsEnabled) {
-                this.sendPreviewEmailError = 'Please verify your email settings';
+                this.sendPreviewEmailError = this.intl.t('Please verify your email settings');
                 return false;
             }
             this.sendPreviewEmailError = '';
@@ -74,7 +82,7 @@ export default class ModalPostPreviewEmailComponent extends Component {
             return yield this.ajax.post(url, options);
         } catch (error) {
             if (error) {
-                let message = 'Email could not be sent, verify mail settings';
+                let message = this.intl.t('Email could not be sent, verify mail settings');
 
                 // grab custom error message if present
                 if (

@@ -76,7 +76,7 @@
 
 .gh-post-preview-browser-container iframe {
     width: 100%;
-    height: 100%;
+    /* height: 100%; */
     border: none;
 }
 
@@ -282,9 +282,30 @@
     background-position: center center;
 }
 
-.gh-social-og-preview-content {
-    padding: 10px 12px;
+.gh-social-og-preview-img-add {
+    width: 100%;
+    padding: .6rem 0;
+    color: var(--green-d1);
+    font-weight: 500;
+    letter-spacing: 0.2px;
+    border: 1px dashed var(--lightgrey-d1);
+}
+
+.gh-social-og-preview-bookmark {
+    padding: 10px 12px 8px;
     border-bottom: 1px solid #dddfe2;
+}
+
+.gh-social-og-preview-content {
+    height: 69px;
+    overflow: hidden;
+    margin: 0 -1px 0 -4px;
+    padding: 0 1px 0 4px;
+}
+
+.gh-social-og-preview-content.edit-mode {
+    height: auto;
+    overflow-y: visible;
 }
 
 .gh-social-og-preview-meta {
@@ -403,6 +424,15 @@
     border-bottom: solid 1px #c4cfd6;
     background-size: cover;
     background-position: center center;
+}
+
+.gh-social-twitter-preview-img-add {
+    width: 100%;
+    padding: .6rem 0;
+    color: var(--green-d1);
+    font-weight: 500;
+    letter-spacing: 0.2px;
+    border-bottom: 1px dashed var(--lightgrey-d1);
 }
 
 .gh-social-twitter-preview-content {

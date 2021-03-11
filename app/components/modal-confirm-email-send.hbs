@@ -11,20 +11,24 @@
              </div>
         {{else}}
             <p>
-                Your post will be delivered to
+                {{t "Your post will be delivered to"}}
                 <strong>
                     {{#if (eq this.model.sendEmailWhenPublished 'paid')}}
                         {{!-- TODO: remove editor fallback once editors can query member counts --}}
-                        {{if this.session.user.isEditor "all paid members" (gh-pluralize this.paidMemberCount "paid member")}}
+                        {{if this.session.user.isEditor (t "all paid members") (t "paid member" count=this.paidMemberCount)}}
                     {{else if (eq this.model.sendEmailWhenPublished 'free')}}
                         {{!-- TODO: remove editor fallback once editors can query member counts --}}
-                        {{if this.session.user.isEditor "all free members" (gh-pluralize this.freeMemberCount "free member")}}
+                        {{if this.session.user.isEditor (t "all free members") (t "free member" count=this.freeMemberCount)}}
                     {{else}}
                         {{!-- TODO: remove editor fallback once editors can query member counts --}}
-                        {{if this.session.user.isEditor "all members" (gh-pluralize this.model.memberCount "member")}}
+                        {{if this.session.user.isEditor (t "all members") (t "member" count=this.model.memberCount)}}
                     {{/if}}
                 </strong>
-                and will be published on your site{{#if this.model.isScheduled}} at the scheduled time{{/if}}. Sound good?
+                {{#if this.model.isScheduled}}
+                    {{t "and will be published on your site at the scheduled time. Sound good?"}}
+                {{else}}
+                    {{t "and will be published on your site. Sound good?"}}
+                {{/if}}
             </p>
         {{/if}}
     </div>
@@ -38,7 +42,7 @@
             @buttonText={{if this.model.isScheduled (t "taskButton.Schedule") (t "taskButton.Publish and send")}}
             @runningText={{if this.model.isScheduled (t "taskButoon.Scheduling...") (t "taskButton.Publishing...")}}
             @task={{this.confirmAndCheckErrorTask}}
-            @class="gh-btn gh-btn-green gh-btn-icon"
+            @class="gh-btn gh-btn-black gh-btn-icon"
             data-test-button="confirm-publish-and-email"
         />
     </div>

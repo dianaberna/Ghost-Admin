@@ -4,6 +4,7 @@ import {computed} from '@ember/object';
 import {inject as service} from '@ember/service';
 
 export default Controller.extend({
+    billing: service(),
     customViews: service(),
     config: service(),
     dropdown: service(),
@@ -12,7 +13,7 @@ export default Controller.extend({
     settings: service(),
     ui: service(),
 
-    showBilling: computed.reads('config.billingUrl'),
+    showBilling: computed.reads('config.hostSettings.billing.enabled'),
     showNavMenu: computed('router.currentRouteName', 'session.{isAuthenticated,user.isFulfilled}', 'ui.isFullScreen', function () {
         let {router, session, ui} = this;
 

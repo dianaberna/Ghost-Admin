@@ -134,24 +134,24 @@
                 <div class="flex items-center">
                     {{#if this.shouldShowInstall}}
                         <GhTaskButton
-                                @task={{this.installTask}}
-                                @type="button"
-                                @class="gh-btn gh-btn-icon gh-btn-green"
-                                @buttonText={{if this.willOverwriteExisting (t "taskButton.Overwrite") (t "taskButton.Install")}}
-                                @runningText={{t "taskButton.Installing"}}
-                                @successText={{t "taskButton.Installed"}}
-                                data-test-button="install"
+                            @task={{this.installTask}}
+                            @type="button"
+                            @class="gh-btn gh-btn-icon gh-btn-black"
+                            @buttonText={{if this.willOverwriteExisting (t "taskButton.Overwrite") (t "taskButton.Install")}}
+                            @runningText={{t "taskButton.Installing"}}
+                            @successText={{t "taskButton.Installed"}}
+                            data-test-button="install"
                         />
                     {{/if}}
 
                     {{#if this.shouldShowActivate}}
                         <GhTaskButton
-                                @task={{this.activateTask}}
-                                @type="button"
-                                @class="gh-btn gh-btn-icon gh-btn-green"
-                                @buttonText={{t "taskButton.Activate"}}
-                                @runningText={{t "taskButton.Activating"}}
-                                data-test-button="activate"
+                            @task={{this.activateTask}}
+                            @type="button"
+                            @class="gh-btn gh-btn-icon gh-btn-black"
+                            @buttonText={{t "taskButton.Activate"}}
+                            @runningText={{t "taskButton.Activating"}}
+                            data-test-button="activate"
                         />
                     {{/if}}
                 </div>
