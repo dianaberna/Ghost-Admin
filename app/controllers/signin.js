@@ -37,7 +37,7 @@ export default Controller.extend(ValidationEngine, {
     signin: alias('model'),
 
     accentColor: computed('config.accent_color', function () {
-        let color = this.get('config.accent_color') || '#15171A';
+        let color = this.get('config.accent_color');
         return color;
     }),
 
@@ -48,7 +48,7 @@ export default Controller.extend(ValidationEngine, {
             return htmlSafe(`background-image: url(${icon})`);
         }
 
-        icon = 'https://static.ghost.org/v4.0.0/images/ghost-squircle.png';
+        icon = 'https://static.ghost.org/v4.0.0/images/ghost-orb-2.png';
         return htmlSafe(`background-image: url(${icon})`);
     }),
 

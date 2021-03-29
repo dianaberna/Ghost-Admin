@@ -20,10 +20,6 @@ export default ModalComponent.extend(ValidationEngine, {
 
     validationType: 'inviteUser',
 
-    init() {
-        this._super(...arguments);
-    },
-
     didInsertElement() {
         this._super(...arguments);
         this.fetchRoles.perform();

@@ -1,8 +1,10 @@
 import AuthenticatedRoute from 'ghost-admin/routes/authenticated';
 import {inject as service} from '@ember/service';
 
+// TODO: rename billing route and service to /pro
 export default AuthenticatedRoute.extend({
     billing: service(),
+    session: service(),
 
     queryParams: {
         action: {refreshModel: true}
@@ -10,7 +12,14 @@ export default AuthenticatedRoute.extend({
 
     beforeModel(transition) {
         this._super(...arguments);
-        this.billing.set('previousTransition', transition);
+
+        return this.session.user.then((user) => {
+            if (!user.isOwner) {
+                return this.transitionTo('home');
+            }
+
+            this.billing.set('previousTransition', transition);
+        });
     },
 
     model(params) {
@@ -32,7 +41,7 @@ export default AuthenticatedRoute.extend({
                         ? transition.intent.url
                         : '');
 
-                if (destinationUrl?.includes('/billing')) {
+                if (destinationUrl?.includes('/pro')) {
                     isBillingTransition = true;
                 }
             }
@@ -43,7 +52,7 @@ export default AuthenticatedRoute.extend({
 
     buildRouteInfoMetadata() {
         return {
-            titleToken: 'Billing'
+            titleToken: 'Ghost(Pro)'
         };
     }
 });

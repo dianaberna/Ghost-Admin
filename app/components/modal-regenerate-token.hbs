@@ -1,11 +1,11 @@
 <header class="modal-header">
-    <h1>{{t "Regenerate your Personal Token"}}</h1>
+    <h1>{{t "Regenerate your Staff Access Token"}}</h1>
 </header>
 <a class="close" href="" role="button" title={{t "common.Close"}} {{action "closeModal"}}>{{svg-jar "close"}}<span class="hidden">{{t "common.Close"}}</span></a>
 
 <div class="modal-body">
     <p>
-        {{t "You can regenerate your Personal Token any time, but any scripts or applications using it will need to be updated."}}
+        {{t "You can regenerate your Staff Access Token any time, but any scripts or applications using it will need to be updated."}}
     </p>
     {{#if this.errorMessage}}
         <p class='red'> {{this.errorMessage}}</p>

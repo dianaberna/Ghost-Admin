@@ -87,7 +87,13 @@ export default class MembersStatsService extends Service {
 
         let endDate = moment().add(1, 'hour');
         const output = {};
-        let lastVal = 0;
+
+        const firstDateInRangeIndex = data.findIndex((val) => {
+            return moment(val.date).isAfter(currentRangeDate);
+        });
+        const initialDateInRangeVal = firstDateInRangeIndex > 0 ? data[firstDateInRangeIndex - 1] : null;
+        let lastVal = initialDateInRangeVal ? initialDateInRangeVal.value : 0;
+
         while (currentRangeDate.isBefore(endDate)) {
             let dateStr = currentRangeDate.format('YYYY-MM-DD');
             const dataOnDate = data.find(d => d.date === dateStr);
@@ -106,7 +112,10 @@ export default class MembersStatsService extends Service {
         const firstDateInRangeIndex = data.findIndex((val) => {
             return moment(val.date).isAfter(currentRangeDate);
         });
-        const initialDateInRangeVal = firstDateInRangeIndex > 0 ? data[firstDateInRangeIndex - 1] : null;
+        let initialDateInRangeVal = firstDateInRangeIndex > 0 ? data[firstDateInRangeIndex - 1] : null;
+        if (data.length > 0 && !initialDateInRangeVal && firstDateInRangeIndex !== 0) {
+            initialDateInRangeVal = data[data.length - 1];
+        }
         let lastVal = {
             paid: initialDateInRangeVal ? initialDateInRangeVal.paid : 0,
             free: initialDateInRangeVal ? initialDateInRangeVal.free : 0,

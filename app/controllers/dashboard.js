@@ -72,14 +72,18 @@ export default class DashboardController extends Controller {
         this.mrrStatsLoading = true;
         this.membersStats.fetchMRR().then((stats) => {
             this.mrrStatsLoading = false;
-            const statsData = stats.data;
-            let currencyStats = statsData[0] || {
+            const statsData = stats.data || [];
+            const defaultCurrency = this.getDefaultCurrency() || 'usd';
+            let currencyStats = statsData.find((stat) => {
+                return stat.currency === defaultCurrency;
+            });
+            currencyStats = currencyStats || {
                 data: [],
-                currency: 'usd'
+                currency: defaultCurrency
             };
             if (currencyStats) {
                 const currencyStatsData = this.membersStats.fillDates(currencyStats.data) || {};
-                const dateValues = Object.values(currencyStatsData).map(val => val / 100);
+                const dateValues = Object.values(currencyStatsData).map(val => Math.round((val / 100)));
                 const currentMRR = dateValues.length ? dateValues[dateValues.length - 1] : 0;
                 const rangeStartMRR = dateValues.length ? dateValues[0] : 0;
                 const percentGrowth = rangeStartMRR !== 0 ? ((currentMRR - rangeStartMRR) / rangeStartMRR) * 100 : 0;
@@ -239,6 +243,12 @@ export default class DashboardController extends Controller {
             this.whatsNewEntriesError = error;
             this.whatsNewEntriesLoading = false;
         });
+    }
+
+    getDefaultCurrency() {
+        const plans = this.settings.get('stripePlans') || [];
+        const monthly = plans.find(plan => plan.interval === 'month');
+        return monthly && monthly.currency;
     }
 
     @action

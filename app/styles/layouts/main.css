@@ -335,7 +335,6 @@
 
 /* Navigation
 /* ---------------------------------------------------------- */
-
 .gh-nav-list {
     margin: 32px 0 0;
     padding: 0;
@@ -1290,8 +1289,8 @@
 }
 
 .gh-canvas-title svg {
-    width: 0.6em;
-    height: 0.6em;
+    width: 0.5em;
+    height: 0.5em;
     margin: 0 10px;
 }
 
