@@ -1,54 +1,42 @@
 import AuthenticatedRoute from 'ghost-admin/routes/authenticated';
-import CurrentUserSettings from 'ghost-admin/mixins/current-user-settings';
 import {inject as service} from '@ember/service';
 
-export default AuthenticatedRoute.extend(CurrentUserSettings, {
-    settings: service(),
-    notifications: service(),
-    intl: service(),
-    queryParams: {
-        fromAddressUpdate: {
-            replace: true
-        },
-        supportAddressUpdate: {
-            replace: true
-        }
-    },
+export default class MembersPaymentsRoute extends AuthenticatedRoute {
+    @service session;
+    @service settings;
+    @service intl;
 
     beforeModel() {
-        this._super(...arguments);
-        return this.get('session.user')
-            .then(this.transitionAuthor())
-            .then(this.transitionEditor());
-    },
+        super.beforeModel(...arguments);
+
+        return this.session.get('user').then((user) => {
+            if (!user.isOwner && user.isAdmin) {
+                return this.transitionTo('settings');
+            } else if (!user.isOwner) {
+                return this.transitionTo('home');
+            }
+        });
+    }
 
     model() {
         return this.settings.reload();
-    },
+    }
 
-    setupController(controller) {
-        if (controller.fromAddressUpdate === 'success') {
-            this.notifications.showAlert(
-                `Newsletter email address has been updated`.htmlSafe(),
-                {type: 'success', key: 'members.settings.from-address.updated'}
-            );
-        } else if (controller.supportAddressUpdate === 'success') {
-            this.notifications.showAlert(
-                `Support email address has been updated`.htmlSafe(),
-                {type: 'success', key: 'members.settings.support-address.updated'}
-            );
+    actions = {
+        willTransition(transition) {
+            return this.controller.leaveRoute(transition);
         }
-    },
+    }
 
     resetController(controller, isExiting) {
         if (isExiting) {
             controller.reset();
         }
-    },
+    }
 
     buildRouteInfoMetadata() {
         return {
             titleToken: this.intl.t('pageTitle.Settings - Members')
         };
     }
-});
+}

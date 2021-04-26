@@ -21,6 +21,7 @@ export default Controller.extend({
     two: controller('setup/two'),
     notifications: service(),
     intl: service(),
+    session: service(),
 
     users: '',
 
@@ -118,7 +119,7 @@ export default Controller.extend({
         },
 
         skipInvite() {
-            this.send('loadServerNotifications');
+            this.session.loadServerNotifications();
             this.transitionToRoute('home');
         }
     },
@@ -171,7 +172,7 @@ export default Controller.extend({
             this._showNotifications(invites);
 
             run.schedule('actions', this, function () {
-                this.send('loadServerNotifications');
+                this.session.loadServerNotifications();
                 this._transitionAfterSubmission();
             });
         } else if (users.length === 0) {

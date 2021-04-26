@@ -6,10 +6,9 @@ import {inject as service} from '@ember/service';
 import {task} from 'ember-concurrency';
 
 export default Component.extend({
-    feature: service(),
     config: service(),
-    mediaQueries: service(),
     intl: service(),
+
     ghostPaths: service(),
     ajax: service(),
     settings: service(),
@@ -20,16 +19,11 @@ export default Component.extend({
     stripePlanInvalidAmount: false,
     _scratchStripeYearlyAmount: null,
     _scratchStripeMonthlyAmount: null,
-    showLeaveSettingsModal: false,
 
     // passed in actions
     setStripeConnectIntegrationTokenSetting() {},
 
-    defaultContentVisibility: reads('settings.defaultContentVisibility'),
-
     stripeDirect: reads('config.stripeDirect'),
-
-    allowSelfSignup: reads('settings.membersAllowFreeSignup'),
 
     /** OLD **/
     stripeDirectPublicKey: reads('settings.stripePublishableKey'),
@@ -39,16 +33,8 @@ export default Component.extend({
     stripeConnectAccountName: reads('settings.stripeConnectDisplayName'),
     stripeConnectLivemode: reads('settings.stripeConnectLivemode'),
 
-    portalSettingsBorderColor: reads('settings.accentColor'),
-
     selectedCurrency: computed('stripePlans.monthly.currency', function () {
         return this.get('currencies').findBy('value', this.get('stripePlans.monthly.currency')) || this.get('topCurrencies').findBy('value', this.get('stripePlans.monthly.currency'));
-    }),
-
-    blogDomain: computed('config.blogDomain', function () {
-        let blogDomain = this.config.blogDomain || '';
-        const domainExp = blogDomain.replace('https://', '').replace('http://', '').match(new RegExp('^([^/:?#]+)(?:[/:?#]|$)', 'i'));
-        return (domainExp && domainExp[1]) || '';
     }),
 
     stripePlans: computed('settings.stripePlans', function () {
@@ -107,23 +93,6 @@ export default Component.extend({
     },
 
     actions: {
-        closePortalSettings() {
-            const changedAttributes = this.settings.changedAttributes();
-            if (changedAttributes && Object.keys(changedAttributes).length > 0) {
-                this.set('showLeaveSettingsModal', true);
-            } else {
-                this.set('showPortalSettings', false);
-            }
-        },
-
-        setDefaultContentVisibility(value) {
-            this.setDefaultContentVisibility(value);
-        },
-
-        toggleSelfSignup() {
-            this.set('settings.membersAllowFreeSignup', !this.get('allowSelfSignup'));
-        },
-
         setStripeDirectPublicKey(event) {
             this.set('settings.stripeProductName', this.get('settings.title'));
             this.set('settings.stripePublishableKey', event.target.value);
@@ -183,16 +152,6 @@ export default Component.extend({
 
         disconnectStripeConnectIntegration() {
             this.disconnectStripeConnectIntegration.perform();
-        },
-
-        closeLeaveSettingsModal() {
-            this.set('showLeaveSettingsModal', false);
-        },
-
-        leavePortalSettings() {
-            this.settings.rollbackAttributes();
-            this.set('showPortalSettings', false);
-            this.set('showLeaveSettingsModal', false);
         },
 
         openStripeSettings() {

@@ -29,8 +29,9 @@ export default Controller.extend({
     showSuspendUserModal: false,
     showTransferOwnerModal: false,
     showUploadCoverModal: false,
-    showUplaodImageModal: false,
+    showUploadImageModal: false,
     showRegenerateTokenModal: false,
+    showRoleSelectionModal: false,
     _scratchFacebook: null,
     _scratchTwitter: null,
 
@@ -83,6 +84,11 @@ export default Controller.extend({
     }),
 
     actions: {
+        toggleRoleSelectionModal(event) {
+            event?.preventDefault?.();
+            this.toggleProperty('showRoleSelectionModal');
+        },
+
         changeRole(newRole) {
             this.user.set('role', newRole);
             this.set('dirtyAttributes', true);

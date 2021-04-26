@@ -216,68 +216,6 @@
     </section>
 </div>
 
-<div class="gh-main-section">
-    <h4 class="gh-main-section-header small bn">{{t "members.Access"}}</h4>
-    <section class="gh-expandable">
-        <div class="gh-expandable-block">
-            <div class="gh-expandable-header">
-                <div>
-                    <h4 class="gh-expandable-title">{{t "members.Allow free member signup"}}</h4>
-                    <p class="gh-expandable-description">{{t "members.If disabled, members can only be signed up via payment checkout or API integration"}}</p>
-                </div>
-                <div class="for-switch">
-                    <label class="switch" for="members-allow-self-signup" {{action "toggleSelfSignup" bubbles="false"}}>
-                        <input type="checkbox" checked={{this.allowSelfSignup}} class="gh-input" onclick={{action "toggleSelfSignup"}} data-test-checkbox="members-allow-self-signup">
-                        <span class="input-toggle-component mt1"></span>
-                    </label>
-                </div>
-            </div>
-        </div>
-
-        <div class="gh-expandable-block">
-            <div class="gh-expandable-header">
-                <div>
-                    <h4 class="gh-expandable-title">{{t "members.Default post access"}}</h4>
-                    <p class="gh-expandable-description">{{t "members.When a new post is created, who should have access to it?"}}</p>
-                </div>
-                <button type="button" class="gh-btn" {{action (toggle "membersPostAccessOpen" this)}} data-test-toggle-memberspostaccess><span>{{if this.membersPostAccessOpen (t "common.Close") (t "common.Expand")}}</span></button>
-            </div>
-            <div class="gh-expandable-content">
-                {{#liquid-if this.membersPostAccessOpen}}
-                <div class="flex flex-column w-50 flex">
-                    <div class="gh-radio {{if (eq settings.defaultContentVisibility "public") "active"}}"
-                        {{action "setDefaultContentVisibility" "public" on="click"}}>
-                        <div class="gh-radio-button" data-test-publishmenu-unpublished-option></div>
-                        <div class="gh-radio-content">
-                            <div class="gh-radio-label">{{t "members.Public"}}<br>
-                            <small class="midgrey">{{t "members.All site visitors to your site, no login required"}}</small></div>
-                        </div>
-                    </div>
-
-                    <div class="gh-radio {{if (eq settings.defaultContentVisibility "members") "active"}}"
-                        {{action "setDefaultContentVisibility" "members" on="click"}}>
-                        <div class="gh-radio-button" data-test-publishmenu-published-option></div>
-                        <div class="gh-radio-content">
-                            <div class="gh-radio-label">{{t "members.Members only"}}<br>
-                            <small class="midgrey">{{t "members.All logged-in members"}}</small></div>
-                        </div>
-                    </div>
-
-                    <div class="gh-radio {{if (eq settings.defaultContentVisibility "paid") "active"}}"
-                        {{action "setDefaultContentVisibility" "paid" on="click"}}>
-                        <div class="gh-radio-button" data-test-publishmenu-published-option></div>
-                        <div class="gh-radio-content">
-                            <div class="gh-radio-label">{{t "members.Paid-members only"}}<br>
-                            <small class="midgrey">{{t "members.Only logged-in members with an active Stripe subscription"}}</small></div>
-                        </div>
-                    </div>
-                </div>
-                {{/liquid-if}}
-            </div>
-        </div>
-    </section>
-</div>
-
 {{#if this.showDisconnectStripeConnectModal}}
     <GhFullscreenModal @modal="disconnect-stripe"
         @model={{hash
@@ -285,21 +223,5 @@
         }}
         @confirm={{action "disconnectStripeConnectIntegration"}}
         @close={{action "closeDisconnectStripeModal"}}
-        @modifier="action wide" />
-{{/if}}
-
-{{#if this.showPortalSettings}}
-    <GhFullscreenModal @modal="portal-settings"
-        @model={{hash
-            openStripeSettings=(action "openStripeSettings")
-        }}
-        @close={{action "closePortalSettings"}}
-        @modifier="full-overlay portal-settings" />
-{{/if}}
-
-{{#if this.showLeaveSettingsModal}}
-    <GhFullscreenModal @modal="leave-settings"
-        @confirm={{action "leavePortalSettings"}}
-        @close={{action "closeLeaveSettingsModal"}}
         @modifier="action wide" />
 {{/if}}

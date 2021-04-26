@@ -52,7 +52,7 @@ export default Model.extend(ValidationEngine, {
      * Members settings
      */
     defaultContentVisibility: attr('string'),
-    membersAllowFreeSignup: attr('boolean'),
+    membersSignupAccess: attr('string'),
     membersFromAddress: attr('string'),
     membersSupportAddress: attr('string'),
     membersReplyAddress: attr('string'),
@@ -74,5 +74,10 @@ export default Model.extend(ValidationEngine, {
     newsletterShowHeader: attr('boolean'),
     newsletterBodyFontCategory: attr('string'),
     newsletterShowBadge: attr('boolean'),
-    newsletterFooterContent: attr('string')
+    newsletterFooterContent: attr('string'),
+    /**
+     * OAuth settings
+     */
+    oauthClientId: attr('string'),
+    oauthClientSecret: attr('string')
 });

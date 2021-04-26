@@ -1,57 +1,54 @@
 /* eslint-disable ghost/ember/alias-model-in-controller */
 import Controller from '@ember/controller';
-import {computed} from '@ember/object';
+import {action} from '@ember/object';
 import {inject as service} from '@ember/service';
-import {task} from 'ember-concurrency';
+import {task} from 'ember-concurrency-decorators';
+import {tracked} from '@glimmer/tracking';
 
-export default Controller.extend({
-    ajax: service(),
-    config: service(),
-    feature: service(),
-    ghostPaths: service(),
-    notifications: service(),
-    session: service(),
-    settings: service(),
+export default class MembersPaymentsController extends Controller {
+    @service settings;
 
-    importErrors: null,
-    importSuccessful: false,
-    showDeleteAllModal: false,
-    submitting: false,
-    uploadButtonText: 'Import',
+    @tracked showLeaveSettingsModal = false;
 
-    importMimeType: null,
-    jsonExtension: null,
-    jsonMimeType: null,
-    yamlExtension: null,
-    yamlMimeType: null,
+    @action
+    setDefaultContentVisibility(value) {
+        this.settings.set('defaultContentVisibility', value);
+    }
 
-    yamlAccept: null,
+    @action
+    setStripeConnectIntegrationTokenSetting(stripeConnectIntegrationToken) {
+        this.settings.set('stripeConnectIntegrationToken', stripeConnectIntegrationToken);
+    }
 
-    blogDomain: computed('config.blogDomain', function () {
-        let blogDomain = this.config.blogDomain || '';
-        const domainExp = blogDomain.replace('https://', '').replace('http://', '').match(new RegExp('^([^/:?#]+)(?:[/:?#]|$)', 'i'));
-        return (domainExp && domainExp[1]) || '';
-    }),
+    @task({drop: true})
+    *saveSettings() {
+        return yield this.settings.save();
+    }
 
-    actions: {
-        setDefaultContentVisibility(value) {
-            this.set('settings.defaultContentVisibility', value);
-        },
-
-        setStripeConnectIntegrationTokenSetting(stripeConnectIntegrationToken) {
-            this.set('settings.stripeConnectIntegrationToken', stripeConnectIntegrationToken);
+    leaveRoute(transition) {
+        if (this.settings.get('hasDirtyAttributes')) {
+            transition.abort();
+            this.leaveSettingsTransition = transition;
+            this.showLeaveSettingsModal = true;
         }
-    },
+    }
 
-    saveSettings: task(function* () {
-        const response = yield this.settings.save();
-        // Reset from address value on save
-        return response;
-    }).drop(),
+    @action
+    async confirmLeave() {
+        this.settings.rollbackAttributes();
+        this.showLeaveSettingsModal = false;
+        this.leaveSettingsTransition.retry();
+    }
+
+    @action
+    cancelLeave() {
+        this.showLeaveSettingsModal = false;
+        this.leaveSettingsTransition = null;
+    }
 
     reset() {
         // stripeConnectIntegrationToken is not a persisted value so we don't want
         // to keep it around across transitions
         this.settings.set('stripeConnectIntegrationToken', undefined);
     }
-});
+}

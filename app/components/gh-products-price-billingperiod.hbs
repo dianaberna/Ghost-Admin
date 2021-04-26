@@ -1,0 +1,11 @@
+<span class="gh-select">
+    <OneWaySelect
+        @value={{this.value}}
+        @disabled={{this.disabled}}
+        @options={{this.availablePeriods}}
+        @optionValuePath="period"
+        @optionLabelPath="label"
+        @optionTargetPath="period"
+    />
+    {{svg-jar "arrow-down-small"}}
+</span>
