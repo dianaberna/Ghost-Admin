@@ -5,26 +5,14 @@
             <span>{{svg-jar "arrow-right"}}</span>
             <LinkTo @route="settings.products">{{t "settings.Products"}}</LinkTo>
             <span>{{svg-jar "arrow-right"}}</span>
-            {{product.name}}
+            {{#if product.name}}
+                {{product.name}}
+            {{else}}
+                <span class="midlightgrey">New product</span>
+            {{/if}}
         </h2>
         <section class="view-actions">
-            <span class="dropdown">
-                <GhDropdownButton @dropdownName="product-actions-menu" @classNames="gh-btn gh-btn-white gh-btn-icon only-has-icon user-actions-cog" @title={{t "settings.User Actions"}}>
-                    <span>
-                        {{svg-jar "settings"}}
-                        <span class="hidden">{{t "settings.Product actions"}}</span>
-                    </span>
-                </GhDropdownButton>
-                <GhDropdown @name="product-actions-menu" @tagName="ul" @classNames="product-actions-menu dropdown-menu dropdown-align-right">
-                    <li>
-                        <button class="delete">
-                            {{t "settings.Delete product"}}
-                        </button>
-                    </li>
-                </GhDropdown>
-            </span>
-
-            <GhTaskButton @buttonText={{t "taskButton.Save product"}}
+            <GhTaskButton @buttonText={{"taskButton.Save product"}}
                 @task={{this.saveTask}}
                 @successText={{t "taskButton.Saved"}}
                 @runningText={{t "taskButton.Saving"}}
@@ -35,60 +23,83 @@
     </GhCanvasHeader>
 
     <form>
-    <div class="gh-product-details">
-        <section class="gh-product-config">
-            <h4 class="gh-main-section-header small bn">{{t "settings.Product details"}}</h4>
-            <div class="gh-main-section-content grey gh-product-details-form">
-                {{!-- <GhFormGroup @property="name" @class="gh-product-icon-container">
-                    <label for="member-name">ICON</label>
-                    <div class="gh-product-icon whitegrey">Icon</div>
-                </GhFormGroup> --}}
-                <div class="gh-product-details-fields">
-                    <GhFormGroup @property="name" @classNames="max-width">
-                        <label for="product-name">{{t "settings.Product name"}}</label>
-                        <GhTextInput data-test-input="product-name" @id="product-name" @value={{product.name}}/>
-                        <GhErrorMessage @property="name" />
-                    </GhFormGroup>
 
-                    <GhFormGroup @property="name" @classNames="max-width gh-product-description-container">
-                        <label for="member-name">{{t "settings.Description"}}</label>
-                        <GhTextInput data-test-input="member-name" />
-                        <GhErrorMessage @property="name" />
-                    </GhFormGroup>
-                </div>
+    <section class="gh-main-section">
+    <div class="gh-main-section-block">
+        <h4 class="gh-main-section-header small bn">Product details</h4>
+        <div class="gh-main-section-content grey gh-product-details-form">
+            <div class="gh-product-details-fields">
+                <GhFormGroup @errors={{this.product.errors}} @hasValidated={{this.product.hasValidated}} @property="name" @classNames="max-width">
+                    <label for="product-name">Product name</label>
+                    <GhTextInput data-test-input="product-name" @id="product-name" @value={{product.name}}/>
+                    <GhErrorMessage @errors={{this.product.errors}} @property="name" />
+                </GhFormGroup>
+
+                <GhFormGroup @property="description" @classNames="max-width">
+                    <label for="product-description">Description</label>
+                    <GhTextInput data-test-input="product-description" @value={{product.description}} />
+                    <GhErrorMessage @property="description" />
+                </GhFormGroup>
+
+                <GhFormGroup @property="_welcome-page" @classNames="max-width">
+                    <label for="_welcome-page">Welcome page</label>
+                    <GhUrlInput
+                        @value={{readonly this.settings.membersPaidSignupRedirect}}
+                        @baseUrl={{readonly this.siteUrl}}
+                        @setResult={{action "setPaidSignupRedirect"}}
+                        @validateUrl={{action "validatePaidSignupRedirect"}}
+                        @placeholder={{readonly this.siteUrl}}
+                    />
+                    <p>Redirect to this URL after signup for this product</p>
+                    <GhErrorMessage
+                        @errors={{settings.errors}}
+                        @property="membersPaidSignupRedirect"
+                    />
+                </GhFormGroup>
             </div>
-        </section>
-        {{!-- <section class="gh-product-stats">
-            <h4 class="gh-main-section-header small bn">Members</h4>
-            <div class="gh-product-stat-container">
-                <div class="gh-product-chart">CHART</div>
-                <div class="gh-product-stat-details">
-                    <h3 class="data">330</h3>
-                    <p class="info">members have access to this product</p>
-                </div>
-                <LinkTo @route="members">See members &rarr;</LinkTo>
-            </div>
-        </section> --}}
+        </div>
     </div>
+    </section>
     </form>
 
     <div class="gh-main-section">
         <div class="gh-main-section-block p0">
             <ol class="gh-price-list gh-list">
                 <li class="gh-list-row header">
-                    <div class="gh-list-header">{{t "settings.Prices({noOfPrices})" noOfPrices=this.noOfPrices}}</div>
-                    <div class="gh-list-header">{{t "settings.Price"}}</div>
-                    <div class="gh-list-header">{{t "settings.Subscriptions"}}</div>
+                    <div class="gh-list-header">Prices({{this.noOfPrices}})</div>
+                    <div class="gh-list-header">Price</div>
                     <div class="gh-list-header"></div>
                 </li>
+                {{#unless this.stripePrices}}
+                    <tr class="gh-list-row {{if price.active "" "gh-price-list-archived"}}">
+                        <td colspan="4" class="gh-list-data">
+                            <div class="gh-price-list-noprices">
+                                <div class="mb2">There are no prices for this product</div>
+                                {{#if this.settings.stripeConnectAccountId}}
+                                    {{#unless this.product.isNew}}
+                                        <button type="button" class="gh-btn gh-btn-green" {{action "openNewPrice"}}
+                                        disabled={{this.saveTask.isRunning}} >
+                                            <span>Add price</span>
+                                        </button>
+                                    {{/unless}}
+                                {{else}}
+                                    You need to <LinkTo class="gh-setting-group" @route="settings.members-payments" data-test-nav="members-payments">connect to Stripe</LinkTo> to add prices
+                                {{/if}}
+                            </div>
+                        </td>
+                    </tr>
+                {{/unless}}
                 {{#each this.stripePrices as |price|}}
                 <li class="gh-list-row {{if price.active "" "gh-price-list-archived"}}">
                     <div class="gh-list-data gh-price-list-title">
                         <h3 class="gh-price-list-name">
-                            {{price.nickname}}
+                            <span class="name">{{price.nickname}}</span>
+                            {{#unless price.active}}
+                            <span class="gh-badge archived">Archived</span>
+                            {{/unless}}
                         </h3>
                         <p class="ma0 pa0 f8 midgrey gh-price-list-description">
-                            TODO: {{t "settings.Description"}}
+                            {{price.description}}
                         </p>
                     </div>
 
@@ -96,21 +107,19 @@
                         <span>{{currency-symbol price.currency}}{{price.amount}} / {{price.interval}}</span>
                     </div>
 
-                    <div class="gh-list-data gh-price-list-subscriptions">
-                        <span>TODO</span>
-                    </div>
-
                     <div class="gh-list-data gh-price-list-actions">
                         <div class="gh-price-list-actionlist">
-                            <button class="gh-btn gh-btn-link archive" {{action "openEditPrice" price}}>
-                                <span>{{t "settings.Edit"}}</span>
+                            <button class="gh-btn gh-btn-link" {{action "openEditPrice" price}}>
+                                <span>Edit</span>
                             </button>
                             {{#if price.active}}
-                                <button class="gh-btn gh-btn-link archive">
-                                    <span>{{t "settings.Archive"}}</span>
+                                <button class="gh-btn gh-btn-link gh-btn-archive-toggle archived" {{action "archivePrice" price}} disabled={{this.saveTask.isRunning}}>
+                                    <span>Archive</span>
                                 </button>
                             {{else}}
-                                <button class="gh-btn gh-btn-link"><span>{{t "settings.Activate"}}</span></button>
+                                <button class="gh-btn gh-btn-link gh-btn-archive-toggle" {{action "activatePrice" price}} disabled={{this.saveTask.isRunning}}>
+                                    <span>Activate</span>
+                                </button>
                             {{/if}}
                         </div>
                     </div>
@@ -118,9 +127,13 @@
                 {{/each}}
             </ol>
 
-            <button type="button" class="gh-btn gh-btn-green" {{action "openNewPrice"}}>
-                <span>{{t "settings.New price"}}</span>
-            </button>
+            {{#if this.stripePrices}}
+                {{#unless this.product.isNew}}
+                    <button type="button" class="gh-btn gh-btn-green" {{action "openNewPrice"}}>
+                        <span>Add price</span>
+                    </button>
+                {{/unless}}
+            {{/if}}
         </div>
     </div>
 
@@ -130,16 +143,16 @@
             @model={{hash
                 price=this.priceModel
             }}
+            @confirm={{action "savePrice"}}
             @close={{this.closePriceModal}}
-            @modifier="action wide body-scrolling product-price" />
+            @modifier="action wide product-ssprice" />
     {{/if}}
 
-    {{#if this.showLeaveSettingsModal}}
+    {{#if this.showUnsavedChangesModal}}
         <GhFullscreenModal
             @modal="leave-settings"
-            @confirm={{this.confirmLeave}}
-            @close={{this.cancelLeave}}
-            @modifier="action wide"
-        />
+            @confirm={{this.leaveScreen}}
+            @close={{this.toggleUnsavedChangesModal}}
+            @modifier="action wide" />
     {{/if}}
 </section>

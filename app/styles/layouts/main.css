@@ -109,7 +109,7 @@
 }
 
 .gh-nav-menu-dropdown .dropdown-menu {
-    top: -406px;
+    top: -360px;
     left: -13px;
     margin: 10px 0 0;
     box-shadow: var(--box-shadow-m);
@@ -1228,7 +1228,7 @@
 
 /* Grey background modifiers */
 .gh-main-section-content.grey .gh-btn:not(.gh-btn-white):not(.gh-btn-green):not(.gh-btn-blue):not(.gh-btn-red),
-.gh-expandable-content .gh-btn:not(.gh-btn-white):not(.gh-btn-green):not(.gh-btn-blue):not(.gh-btn-red) {
+.gh-expandable-content .gh-btn:not(.gh-btn-white):not(.gh-btn-green):not(.gh-btn-blue):not(.gh-btn-red):not(.gh-btn-black) {
     background: var(--whitegrey-d2);
 }
 
@@ -1324,8 +1324,8 @@
 /* What's new badges
 /* ---------------------------------------------------- */
 .gh-whats-new-badge-account {
-    top: -3px;
-    right: -4px;
+    top: -1px;
+    right: -3px;
     border: 1px solid #fff;
     width: 12px;
     height: 12px;

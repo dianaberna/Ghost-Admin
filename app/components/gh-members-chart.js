@@ -12,6 +12,7 @@ const DATE_FORMAT = 'D MMM YYYY';
 export default Component.extend({
     ajax: service(),
     membersStats: service(),
+    intl: service(),
 
     // public attrs
     nightShift: false,
@@ -51,16 +52,16 @@ export default Component.extend({
 
     availableRanges: computed(function () {
         return [{
-            name: '30 days',
+            name: this.intl.t('charts.30 days'),
             days: '30'
         }, {
-            name: '90 days',
+            name: this.intl.t('charts.90 days'),
             days: '90'
         }, {
-            name: '365 days',
+            name: this.intl.t('charts.365 days'),
             days: '365'
         }, {
-            name: 'All time',
+            name: this.intl.t('charts.All time'),
             days: 'all-time'
         }];
     }),
@@ -127,7 +128,7 @@ export default Component.extend({
 
     setChartData({dateLabels, dateValues, label = 'Total Members'}) {
         let backgroundColors = this.lineColor;
-        
+
         if (this.chartType === 'open-rate') {
             backgroundColors = dateLabels.map((val) => {
                 if (val) {
@@ -141,7 +142,7 @@ export default Component.extend({
         this.set('chartData', {
             labels: dateLabels,
             datasets: [{
-                label: label,
+                label: this.intl.t(`charts.${label}`),
                 cubicInterpolationMode: 'monotone',
                 data: dateValues,
                 fill: false,
@@ -238,7 +239,7 @@ export default Component.extend({
             },
             scales: {
                 xAxes: [{
-                    labelString: 'Date',
+                    labelString: this.intl.t('charts.Date'),
                     gridLines: {
                         drawTicks: false,
                         color: (this.nightShift ? '#333F44' : '#DDE1E5'),
@@ -315,7 +316,7 @@ export default Component.extend({
         if (this.chartType === 'open-rate') {
             options.scales.yAxes[0].ticks.suggestedMin = 0;
         }
-        
+
         if (this.isSmall) {
             options.scales.yAxes[0].ticks.display = false;
             options.scales.xAxes[0].gridLines.display = true;

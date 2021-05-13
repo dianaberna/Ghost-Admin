@@ -9,6 +9,7 @@ const DATE_FORMAT = 'YYYY-MM-DD';
 
 export default Component.extend({
     settings: service(),
+    intl: service(),
 
     tagName: '',
 
@@ -230,13 +231,13 @@ export default Component.extend({
 
     _setDate(dateStr) {
         if (!dateStr.match(/^\d\d\d\d-\d\d-\d\d$/)) {
-            this._setScratchDateError('Invalid date format, must be YYYY-MM-DD');
+            this._setScratchDateError(this.intl.t('picker.Invalid date format, must be {format}', {format: 'YYYY-MM-DD'}));
             return false;
         }
 
         let date = moment(dateStr, DATE_FORMAT);
         if (!date.isValid()) {
-            this._setScratchDateError('Invalid date');
+            this._setScratchDateError(this.intl.t('picker.Invalid date'));
             return false;
         }
 

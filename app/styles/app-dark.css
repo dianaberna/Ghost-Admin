@@ -240,17 +240,17 @@ input:focus,
     color: var(--white);
 }
 
-.gh-btn-black:hover,
-.gh-btn-primary:hover {
+.gh-btn-black:not(.gh-btn-green):not(.gh-btn-blue):not(.gh-btn-red):hover,
+.gh-btn-primary:not(.gh-btn-green):not(.gh-btn-blue):not(.gh-btn-red):hover {
     background: var(--black) !important;
 }
 
-.gh-btn:not(.gh-btn-green):not(.gh-btn-blue):not(.gh-btn-red):not(.gh-btn-primary):not(.gh-btn-black) {
+.gh-btn:not(.gh-btn-green):not(.gh-btn-blue):not(.gh-btn-red):not(.gh-btn-primary):not(.gh-btn-black):not(.gh-btn-text) {
     background: var(--lightgrey);
     color: var(--black);
 }
 
-.gh-btn:not(.gh-btn-green):not(.gh-btn-blue):not(.gh-btn-red):not(.gh-btn-primary):not(.gh-btn-black):hover {
+.gh-btn:not(.gh-btn-green):not(.gh-btn-blue):not(.gh-btn-red):not(.gh-btn-primary):not(.gh-btn-black):not(.gh-btn-text):hover {
     background: var(--lightgrey-d1);
     color: var(--black);
 }
@@ -730,6 +730,28 @@ input:focus,
     background: var(--main-color-content-greybg) !important;
 }
 
+/* Segment input */
+
+.token-segment-status-free {
+    border: 1px solid var(--green-d1);
+    background: var(--green-d1);
+}
+
+.token-segment-status-paid {
+    border: 1px solid var(--pink-d1);
+    background: var(--pink-d1);
+}
+
+.token-segment-product {
+    background: var(--darkgrey);
+    color: var(--white);
+}
+
+.token-segment-product svg path {
+    stroke: var(--lightgrey);
+    fill: var(--lightgrey);
+}
+
 /* Post preview modal */
 .gh-post-preview-header,
 .gh-post-preview-browser-footer {
@@ -902,4 +924,9 @@ input:focus,
 
 .user-image {
     border-color: var(--dark-main-bg-color);
+}
+
+.gh-whats-new-badge-account {
+    top: 0;
+    right: -2px;
 }

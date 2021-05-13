@@ -13,15 +13,18 @@
             <p>
                 {{t "Your post will be delivered to"}}
                 <strong>
-                    {{#if (eq this.model.sendEmailWhenPublished 'paid')}}
+                    {{#if (eq this.model.sendEmailWhenPublished 'status:-free')}}
                         {{!-- TODO: remove editor fallback once editors can query member counts --}}
-                        {{if this.session.user.isEditor (t "all paid members") (t "paid member" count=this.paidMemberCount)}}
-                    {{else if (eq this.model.sendEmailWhenPublished 'free')}}
+                        {{if this.session.user.isEditor (t "all paid members") (t "{paidMembers, plural}" paidMembers=this.model.memberCount)}}
+                    {{else if (eq this.model.sendEmailWhenPublished 'status:free')}}
                         {{!-- TODO: remove editor fallback once editors can query member counts --}}
-                        {{if this.session.user.isEditor (t "all free members") (t "free member" count=this.freeMemberCount)}}
+                        {{if this.session.user.isEditor (t "all free members") (t "{freeMembers, plural}" freeMembers=this.model.memberCount)}}
+                    {{else if (eq this.model.sendEmailWhenPublished 'status:free,status:-free')}}
+                        {{!-- TODO: remove editor fallback once editors can query member counts --}}
+                        {{if this.session.user.isEditor (t "all members") (t "{members, plural}" members=this.model.memberCount)}}
                     {{else}}
                         {{!-- TODO: remove editor fallback once editors can query member counts --}}
-                        {{if this.session.user.isEditor (t "all members") (t "member" count=this.model.memberCount)}}
+                        {{if this.session.user.isEditor (t "a custom members segment") (t "{members, plural}" members=this.model.memberCount)}}
                     {{/if}}
                 </strong>
                 {{#if this.model.isScheduled}}

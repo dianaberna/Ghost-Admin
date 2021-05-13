@@ -77,10 +77,36 @@
 
 
                 {{#if this.showVisibilityInput}}
-                    <div class="form-group">
+                    <GhFormGroup @errors={{this.post.errors}} @hasValidated={{this.post.hasValidated}} @property="visibility">
                         <label for="visibility-input">{{t "Post access"}}</label>
-                        <GhPsmVisibilityInput @post={{this.post}} @triggerId="visibility-input" />
-                    </div>
+                        <div
+                            class="gh-radio {{if this.post.isPublic "active"}}"
+                            {{on "click" (action "setVisibility" "public")}}
+                        >
+                            <div class="gh-radio-button"></div>
+                            <div class="gh-radio-content">
+                                <div class="gh-radio-label">Public</div>
+                            </div>
+                        </div>
+                        <div
+                            class="gh-radio {{if (not this.post.isPublic) "active"}}"
+                             {{on "click" (action "setVisibility" this.post.visibilitySegment)}}
+                        >
+                            <div class="gh-radio-button"></div>
+                            <div class="gh-radio-content">
+                                <div class="gh-radio-label">Members-only</div>
+                                <div class="gh-radio-desc">
+                                    <GhMembersSegmentSelect
+                                        @segment={{this.post.visibilitySegment}}
+                                        @onChange={{action "setVisibility"}}
+                                        @renderInPlace={{true}}
+                                        @hideOptionsWhenAllSelected={{true}}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <GhErrorMessage @errors={{this.post.errors}} @property="visibility" class="no-selection" data-test-error="visibility" />
+                    </GhFormGroup>
                 {{/if}}
 
                 <GhFormGroup @errors={{this.post.errors}} @hasValidated={{this.post.hasValidated}} @property="customExcerpt">
@@ -214,7 +240,7 @@
                                         @focus-out={{action "setMetaDescription" this.metaDescriptionScratch}}
                                         @stopEnterKeyDownPropagation="true"
                                         data-test-field="meta-description" />
-                                    <p>{{{t "Recommended: <b>{max}</b> characters. You’ve used {charactersCount}" max=156 charactersCount=(gh-count-down-characters this.metaDescriptionScratch 156)}}}</p>
+                                    <p>{{{t "Recommended: <b>{max}</b> characters. You’ve used {charactersCount}" max=145 charactersCount=(gh-count-down-characters this.metaDescriptionScratch 145)}}}</p>
                                     <GhErrorMessage @errors={{this.post.errors}} @property="meta-description" />
                                 </GhFormGroup>
 
@@ -241,7 +267,7 @@
                                             </div>
                                             <div class="gh-seo-preview-link">{{this.seoURL}}</div>
                                             <div class="gh-seo-preview-title">{{truncate this.seoTitle 60}}</div>
-                                            <div class="gh-seo-preview-desc">{{this.seoDescription}}</div>
+                                            <div class="gh-seo-preview-desc">{{moment-format (now) "DD MMM YYYY"}} — {{truncate this.seoDescription 149}}</div>
                                         </div>
                                     </div>
                                 </div>

@@ -49,9 +49,7 @@
                                 @postStatus={{this.post.status}}
                                 @saveTask={{this.save}}
                                 @setSaveType={{action "setSaveType"}}
-                                @onOpen={{action "cancelAutosave"}}
-                                @backgroundTask={{this.backgroundLoader}}
-                                @memberCount={{this.memberCount}} />
+                                @onOpen={{action "cancelAutosave"}} />
                         </div>
                     {{/if}}
                 {{/unless}}
@@ -142,7 +140,6 @@
             @model={{hash
                 message=hostLimitError.context
                 details=hostLimitError.details
-                upgradeLink=hostLimitError.help
             }}
             @close={{action "closeUpgradeModal"}}
             @modifier="action wide"

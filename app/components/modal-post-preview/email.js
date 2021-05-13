@@ -1,7 +1,7 @@
 import Component from '@glimmer/component';
 import validator from 'validator';
 import {action} from '@ember/object';
-import {htmlSafe} from '@ember/string';
+import {htmlSafe} from '@ember/template';
 import {inject as service} from '@ember/service';
 import {task} from 'ember-concurrency-decorators';
 import {timeout} from 'ember-concurrency';
@@ -63,11 +63,11 @@ export default class ModalPostPreviewEmailComponent extends Component {
             const testEmail = this.previewEmailAddress.trim();
 
             if (!validator.isEmail(testEmail)) {
-                this.sendPreviewEmailError = this.intl.t('Please enter a valid email');
+                this.sendPreviewEmailError = this.intl.t('preview.Please enter a valid email');
                 return false;
             }
             if (!this.mailgunIsEnabled) {
-                this.sendPreviewEmailError = this.intl.t('Please verify your email settings');
+                this.sendPreviewEmailError = this.intl.t('preview.Please verify your email settings');
                 return false;
             }
             this.sendPreviewEmailError = '';
@@ -82,7 +82,7 @@ export default class ModalPostPreviewEmailComponent extends Component {
             return yield this.ajax.post(url, options);
         } catch (error) {
             if (error) {
-                let message = this.intl.t('Email could not be sent, verify mail settings');
+                let message = this.intl.t('preview.Email could not be sent, verify mail settings');
 
                 // grab custom error message if present
                 if (

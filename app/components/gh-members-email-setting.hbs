@@ -16,6 +16,11 @@
 <div class="gh-main-section">
     <h4 class="gh-main-section-header small bn">{{t "members.Email"}}</h4>
     <section class="gh-expandable">
+        <Settings::DefaultEmailRecipients
+            @expanded={{this.emailRecipientsExpanded}}
+            @toggleExpansion={{this.toggleEmailRecipientsExpansion}}
+        />
+
         <div class="gh-expandable-block">
             <div class="gh-expandable-header">
                 <div>
@@ -193,13 +198,6 @@
         {{/unless}}
     </section>
 </div>
-
-{{#if this.showLeaveSettingsModal}}
-    <GhFullscreenModal @modal="leave-settings"
-        @confirm={{action "leavePortalSettings"}}
-        @close={{action "closeLeaveSettingsModal"}}
-        @modifier="action wide" />
-{{/if}}
 
 {{#if this.showEmailDesignSettings}}
     <GhFullscreenModal @modifier="full-overlay portal-settings">

@@ -4,8 +4,8 @@
             <h2 class="gh-portal-settings-title">{{t "potal.Portal settings"}}</h2>
             <div class="gh-portal-form-wrapper">
                 <fieldset class="gh-portal-settings-form">
-                    <div class="gh-portal-setting-section" onclick={{action "switchToSignupPage"}}>
-                        <h3 class="gh-portal-setting-sectionheading">{{t "potal.Signup options"}}</h3>
+                    <div class="gh-portal-setting-section {{if (not-eq this.settings.membersSignupAccess "all") "disabled-overlay"}}" onclick={{action "switchToSignupPage"}}>
+                        <h3 class="gh-portal-setting-sectionheading">{{t "portal.Signup options"}}</h3>
                         <GhFormGroup @classNames="gh-members-subscribed-checkbox gh-portal-setting-first pb5 mb0">
                             <div class="flex justify-between items-center">
                                 <div class="mr3">
@@ -21,7 +21,8 @@
                                             checked={{this.settings.portalName}}
                                             id="signup-name-checkbox"
                                             name="signup-name-checkbox"
-                                            onclick={{action "togglePortalName" value="target.checked"}}
+                                            disabled={{not-eq this.settings.membersSignupAccess "all"}}
+                                            {{on "click" (action "togglePortalName" value="target.checked")}}
                                         >
                                         <span class="input-toggle-component"></span>
                                     </label>
@@ -31,7 +32,7 @@
                         {{#if this.isStripeConfigured}}
                         <div>
                             <div class="mb3">
-                                <h4 class="gh-portal-setting-title">{{t "portal.Plans available at signup"}}</h4>
+                                <h4 class="gh-portal-setting-title">{{t "portal.Prices available at signup"}}</h4>
                             </div>
                             <div class="form-group mb0 for-checkbox">
                                 <label
@@ -43,53 +44,38 @@
                                         checked={{this.isFreeChecked}}
                                         id="free-plan"
                                         name="free-plan"
-                                        disabled={{not this.allowSelfSignup}}
+                                        disabled={{or (not this.isStripeConfigured) (not-eq this.settings.membersSignupAccess "all")}}
                                         class="gh-input post-settings-featured"
-                                        onclick={{action "toggleFreePlan" value="target.checked"}}
+                                        {{on "click" (action "toggleFreePlan" value="target.checked")}}
                                         data-test-checkbox="featured"
                                     >
                                     <span class="input-toggle-component"></span>
                                     <p>{{t "portal.Free"}}</p>
                                 </label>
                             </div>
-                            <div class="form-group mb0 for-checkbox">
-                                <label
-                                    class="checkbox"
-                                    for="monthly-plan"
-                                >
-                                    <input
-                                        type="checkbox"
-                                        id="monthly-plan"
-                                        name="monthly-plan"
-                                        checked={{this.isMonthlyChecked}}
-                                        disabled={{not this.isStripeConfigured}}
-                                        class="gh-input post-settings-featured"
-                                        onclick={{action "toggleMonthlyPlan" value="target.checked"}}
-                                        data-test-checkbox="featured"
-                                    >
-                                    <span class="input-toggle-component"></span>
-                                    <p>{{t "portal.Monthly"}}</p>
-                                </label>
-                            </div>
-                            <div class="form-group mb0 for-checkbox">
-                                <label
-                                    class="checkbox"
-                                    for="yearly-plan"
-                                >
-                                    <input
-                                        type="checkbox"
-                                        id="yearly-plan"
-                                        name="yearly-plan"
-                                        checked={{this.isYearlyChecked}}
-                                        disabled={{not this.isStripeConfigured}}
-                                        class="gh-input post-settings-featured"
-                                        onclick={{action "toggleYearlyPlan" value="target.checked"}}
-                                        data-test-checkbox="featured"
-                                    >
-                                    <span class="input-toggle-component"></span>
-                                    <p>{{t "portal.Yearly"}}</p>
-                                </label>
-                            </div>
+                            {{#if this.prices}}
+                                {{#each this.filteredPrices as |price|}}
+                                    <div class="form-group mb0 for-checkbox">
+                                        <label class="checkbox" for="{{price.id}}">
+                                            <input
+                                                type="checkbox"
+                                                checked={{price.checked}}
+                                                id={{price.id}}
+                                                name={{price.id}}
+                                                disabled={{or
+                                                    (not this.isStripeConfigured)
+                                                    (not-eq this.settings.membersSignupAccess "all")
+                                                }}
+                                                class="gh-input post-settings-featured"
+                                                data-test-checkbox="featured"
+                                                {{on "click" (action "togglePlan" price.id)}}
+                                            />
+                                            <span class="input-toggle-component"></span>
+                                            <p>{{price.nickname}}</p>
+                                        </label>
+                                    </div>
+                                {{/each}}
+                            {{/if}}
                         </div>
                         {{else}}
                         <div class="gh-portal-setting-no-stripe">
@@ -209,55 +195,6 @@
                                 </div>
                             </GhFormGroup>
                             {{/if}}
-                        {{/if}}
-                    </div>
-                    <div class="gh-portal-setting-section redirects">
-                        <h4 class="gh-portal-setting-sectionheading">{{t "potal.Welcome page"}}</h4>
-                        <GhFormGroup
-                            @errors={{settings.errors}}
-                            @hasValidated={{settings.hasValidated}}
-                            @property="membersFreeSignupRedirect"
-                            @classNames="mt2"
-                        >
-                            <h4 class="gh-portal-setting-title">{{t "portal.For free signups"}}</h4>
-                            <div class="flex items-center mt2">
-                                <GhUrlInput
-                                    @value={{readonly this.settings.membersFreeSignupRedirect}}
-                                    @baseUrl={{readonly this.siteUrl}}
-                                    @setResult={{action "setFreeSignupRedirect"}}
-                                    @validateUrl={{action "validateFreeSignupRedirect"}}
-                                    @placeholder={{readonly this.siteUrl}}
-                                />
-                            </div>
-                            <GhErrorMessage
-                                @errors={{settings.errors}}
-                                @property="membersFreeSignupRedirect"
-                            />
-                            <p>Redirect to this URL after free signup</p>
-                        </GhFormGroup>
-                        {{#if (and this.isStripeConfigured (or this.isMonthlyChecked this.isYearlyChecked))}}
-                        <GhFormGroup
-                            @errors={{settings.errors}}
-                            @hasValidated={{settings.hasValidated}}
-                            @property="membersPaidSignupRedirect"
-                            @classNames="space-l pb5"
-                        >
-                            <h4 class="gh-portal-setting-title">{{t "portal.For paid signups"}}</h4>
-                            <div class="flex items-center mt2">
-                                <GhUrlInput
-                                    @value={{readonly this.settings.membersPaidSignupRedirect}}
-                                    @baseUrl={{readonly this.siteUrl}}
-                                    @setResult={{action "setPaidSignupRedirect"}}
-                                    @validateUrl={{action "validatePaidSignupRedirect"}}
-                                    @placeholder={{readonly this.siteUrl}}
-                                />
-                            </div>
-                            <GhErrorMessage
-                                @errors={{settings.errors}}
-                                @property="membersPaidSignupRedirect"
-                            />
-                            <p>{{t "portal.Redirect to this URL after paid signup"}}</p>
-                        </GhFormGroup>
                         {{/if}}
                     </div>
                 </fieldset>

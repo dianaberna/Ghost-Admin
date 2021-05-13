@@ -1,10 +1,13 @@
 import Component from '@glimmer/component';
 import {UnsupportedMediaTypeError} from 'ghost-admin/services/ajax';
 import {action} from '@ember/object';
+import {inject as service} from '@ember/service';
 import {tracked} from '@glimmer/tracking';
 
 export default class CsvFileSelect extends Component {
     labelText = 'Select or drop a CSV file'
+
+    @service intl;
 
     @tracked
     error = null
@@ -72,7 +75,7 @@ export default class CsvFileSelect extends Component {
 
         if (extension.toLowerCase() !== 'csv') {
             throw new UnsupportedMediaTypeError({
-                message: 'The file type you uploaded is not supported'
+                message: this.intl.t('csv.The file type you uploaded is not supported')
             });
         }
 

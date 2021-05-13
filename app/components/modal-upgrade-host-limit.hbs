@@ -6,7 +6,7 @@
 
 <div class="modal-body">
     <p>
-        {{{t "Your current plan allows you to have up to <strong>{limit, plural}</strong>, but you currently have <strong>{total, plural}</strong>" limit=upgradeMessage.limit total=upgradeMessage.total}}}.
+        {{html-safe upgradeMessage.message}}
     </p>
 </div>
 
@@ -15,7 +15,7 @@
         <span>{{t "common.Cancel"}}</span>
     </button>
 
-    <button {{on "click" (action "upgrade")}} class="gh-btn gh-btn-black" data-test-button="upgrade-plan">
-        <span>{{t "common.Upgrade"}}</span>
+    <button {{on "click" (action "upgrade")}} class="gh-btn gh-btn-green" data-test-button="upgrade-plan">
+        <span>{{t "Upgrade"}}</span>
     </button>
 </div>

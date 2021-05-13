@@ -19,9 +19,7 @@ const REPLY_ADDRESSES = [
 ];
 
 export default Component.extend({
-    feature: service(),
     config: service(),
-    mediaQueries: service(),
     ghostPaths: service(),
     ajax: service(),
     settings: service(),
@@ -31,9 +29,7 @@ export default Component.extend({
     showFromAddressConfirmation: false,
     showSupportAddressConfirmation: false,
     showEmailDesignSettings: false,
-    showLeaveSettingsModal: false,
 
-    // passed in actions
     mailgunIsConfigured: reads('config.mailgunIsConfigured'),
     emailTrackOpens: reads('settings.emailTrackOpens'),
 
@@ -138,10 +134,6 @@ export default Component.extend({
             const newReplyAddress = event.value;
 
             this.set('settings.membersReplyAddress', newReplyAddress);
-        },
-
-        closeLeaveSettingsModal() {
-            this.set('showLeaveSettingsModal', false);
         }
     },
 

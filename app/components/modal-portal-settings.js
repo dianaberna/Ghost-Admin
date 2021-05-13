@@ -2,8 +2,8 @@ import $ from 'jquery';
 import ModalComponent from 'ghost-admin/components/modal-base';
 import copyTextToClipboard from 'ghost-admin/utils/copy-text-to-clipboard';
 import {computed} from '@ember/object';
-import {equal, reads} from '@ember/object/computed';
-import {htmlSafe} from '@ember/string';
+import {htmlSafe} from '@ember/template';
+import {reads} from '@ember/object/computed';
 import {run} from '@ember/runloop';
 import {inject as service} from '@ember/service';
 import {task, timeout} from 'ember-concurrency';
@@ -37,6 +37,7 @@ export default ModalComponent.extend({
     intl: service(),
     membersUtils: service(),
     settings: service(),
+    store: service(),
 
     page: 'signup',
     iconExtensions: null,
@@ -47,12 +48,34 @@ export default ModalComponent.extend({
     showLeaveSettingsModal: false,
     freeSignupRedirect: undefined,
     paidSignupRedirect: undefined,
+    prices: null,
 
     confirm() {},
 
-    allowSelfSignup: equal('settings.membersSignupAccess', 'all'),
-
     isStripeConfigured: reads('membersUtils.isStripeEnabled'),
+
+    filteredPrices: computed('prices', 'settings.portalPlans.[]', function () {
+        const portalPlans = this.get('settings.portalPlans');
+        const prices = this.prices || [];
+        return prices.filter((d) => {
+            return d.amount !== 0 && d.type === 'recurring';
+        }).map((price) => {
+            return {
+                ...price,
+                checked: !!portalPlans.find(d => d === price.id)
+            };
+        });
+    }),
+
+    hasPaidPriceChecked: computed('prices', 'settings.portalPlans.[]', function () {
+        const portalPlans = this.get('settings.portalPlans');
+        const prices = this.prices || [];
+        return prices.filter((d) => {
+            return d.amount !== 0 && d.type === 'recurring';
+        }).some((price) => {
+            return !!portalPlans.find(d => d === price.id);
+        });
+    }),
 
     buttonIcon: computed('settings.portalButtonIcon', function () {
         const defaultIconKeys = this.defaultButtonIcons.map(buttonIcon => buttonIcon.value);
@@ -71,8 +94,9 @@ export default ModalComponent.extend({
         return `data-portal`;
     }),
 
-    portalPreviewUrl: computed('buttonIcon', 'page', 'isFreeChecked', 'isMonthlyChecked', 'isYearlyChecked', 'settings.{portalName,portalButton,portalButtonSignupText,portalButtonStyle,accentColor}', function () {
+    portalPreviewUrl: computed('buttonIcon', 'page', 'isFreeChecked', 'isMonthlyChecked', 'isYearlyChecked', 'settings.{portalName,portalButton,portalButtonSignupText,portalButtonStyle,accentColor,portalPlans.[]}', function () {
         const options = this.getProperties(['buttonIcon', 'page', 'isFreeChecked', 'isMonthlyChecked', 'isYearlyChecked']);
+        options.portalPlans = this.get('settings.portalPlans');
         return this.membersUtils.getPortalPreviewUrl(options);
     }),
 
@@ -86,9 +110,9 @@ export default ModalComponent.extend({
         return selectedButtonStyle.includes('text');
     }),
 
-    isFreeChecked: computed('settings.portalPlans.[]', 'allowSelfSignup', function () {
+    isFreeChecked: computed('settings.{portalPlans.[],membersSignupAccess}', function () {
         const allowedPlans = this.settings.get('portalPlans') || [];
-        return (this.allowSelfSignup && allowedPlans.includes('free'));
+        return (this.settings.get('membersSignupAccess') === 'all' && allowedPlans.includes('free'));
     }),
 
     isMonthlyChecked: computed('settings.portalPlans.[]', 'isStripeConfigured', function () {
@@ -122,7 +146,7 @@ export default ModalComponent.extend({
         if (portalButtonIcon && !defaultIconKeys.includes(portalButtonIcon)) {
             this.set('customIcon', this.settings.get('portalButtonIcon'));
         }
-
+        this.getAvailablePrices.perform();
         this.siteUrl = this.config.get('blogUrl');
     },
 
@@ -143,6 +167,9 @@ export default ModalComponent.extend({
         },
         toggleYearlyPlan(isChecked) {
             this.updateAllowedPlan('yearly', isChecked);
+        },
+        togglePlan(priceId, event) {
+            this.updateAllowedPlan(priceId, event.target.checked);
         },
         togglePortalButton(showButton) {
             this.settings.set('portalButton', showButton);
@@ -252,13 +279,14 @@ export default ModalComponent.extend({
     },
 
     updateAllowedPlan(plan, isChecked) {
-        const allowedPlans = this.settings.get('portalPlans') || [];
+        const portalPlans = this.settings.get('portalPlans') || [];
+        const allowedPlans = [...portalPlans];
 
         if (!isChecked) {
             this.settings.set('portalPlans', allowedPlans.filter(p => p !== plan));
         } else {
             allowedPlans.push(plan);
-            this.settings.set('portalPlans', [...allowedPlans]);
+            this.settings.set('portalPlans', allowedPlans);
         }
     },
 
@@ -299,5 +327,15 @@ export default ModalComponent.extend({
         }
         yield this.settings.save();
         this.closeModal();
+    }).drop(),
+
+    getAvailablePrices: task(function* () {
+        const products = yield this.store.query('product', {include: 'stripe_prices'});
+        const product = products.firstObject;
+        const prices = product.get('stripePrices');
+        const activePrices = prices.filter((d) => {
+            return !!d.active;
+        });
+        this.set('prices', activePrices);
     }).drop()
 });

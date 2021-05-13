@@ -3,9 +3,12 @@ import MemberImportError from 'ghost-admin/errors/member-import-error';
 import papaparse from 'papaparse';
 import {action} from '@ember/object';
 import {isNone} from '@ember/utils';
+import {inject as service} from '@ember/service';
 import {tracked} from '@glimmer/tracking';
 
 export default class CsvFileMapping extends Component {
+    @service intl;
+
     @tracked
     error = null;
 
@@ -42,11 +45,11 @@ export default class CsvFileMapping extends Component {
     setMapping(mapping) {
         if (this.fileData.length === 0) {
             this.error = new MemberImportError({
-                message: 'File is empty, nothing to import. Please select a different file.'
+                message: this.intl.t('csv.File is empty, nothing to import. Please select a different file.')
             });
         } else if (!mapping.getKeyByValue('email')) {
             this.error = new MemberImportError({
-                message: 'Please map "Email" to one of the fields in the CSV.'
+                message: this.intl.t('csv.Please map "Email" to one of the fields in the CSV.')
             });
         } else {
             this.error = null;

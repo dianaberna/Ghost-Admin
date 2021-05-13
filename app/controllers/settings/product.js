@@ -1,15 +1,24 @@
 import Controller from '@ember/controller';
-import {action} from '@ember/object';
+import EmberObject, {action} from '@ember/object';
 import {inject as service} from '@ember/service';
 import {task} from 'ember-concurrency-decorators';
 import {tracked} from '@glimmer/tracking';
 
 export default class ProductController extends Controller {
     @service settings;
+    @service config;
+    @service intl;
 
     @tracked showLeaveSettingsModal = false;
     @tracked showPriceModal = false;
     @tracked priceModel = null;
+    @tracked showUnsavedChangesModal = false;
+    @tracked paidSignupRedirect;
+
+    constructor() {
+        super(...arguments);
+        this.siteUrl = this.config.get('blogUrl');
+    }
 
     get product() {
         return this.model;
@@ -22,6 +31,12 @@ export default class ProductController extends Controller {
                 ...d,
                 amount: d.amount / 100
             };
+        }).sort((a, b) => {
+            return a.amount - b.amount;
+        }).sort((a, b) => {
+            return a.currency.localeCompare(b.currency, undefined, {ignorePunctuation: true});
+        }).sort((a, b) => {
+            return (a.active === b.active) ? 0 : (a.active ? -1 : 1);
         });
     }
 
@@ -29,12 +44,35 @@ export default class ProductController extends Controller {
         return (this.product.stripePrices || []).length;
     }
 
-    leaveRoute(transition) {
-        if (this.settings.get('hasDirtyAttributes')) {
-            transition.abort();
-            this.leaveSettingsTransition = transition;
-            this.showLeaveSettingsModal = true;
+    @action
+    toggleUnsavedChangesModal(transition) {
+        let leaveTransition = this.leaveScreenTransition;
+
+        if (!transition && this.showUnsavedChangesModal) {
+            this.leaveScreenTransition = null;
+            this.showUnsavedChangesModal = false;
+            return;
         }
+
+        if (!leaveTransition || transition.targetName === leaveTransition.targetName) {
+            this.leaveScreenTransition = transition;
+
+            // if a save is running, wait for it to finish then transition
+            if (this.saveTask.isRunning) {
+                return this.saveTask.last.then(() => {
+                    transition.retry();
+                });
+            }
+
+            // we genuinely have unsaved data, show the modal
+            this.showUnsavedChangesModal = true;
+        }
+    }
+
+    @action
+    leaveScreen() {
+        this.product.rollbackAttributes();
+        return this.leaveScreenTransition.retry();
     }
 
     @action
@@ -47,6 +85,20 @@ export default class ProductController extends Controller {
     async openNewPrice() {
         this.priceModel = null;
         this.showPriceModal = true;
+    }
+
+    @action
+    async archivePrice(price) {
+        price.active = false;
+        price.amount = price.amount * 100;
+        this.send('savePrice', price);
+    }
+
+    @action
+    async activatePrice(price) {
+        price.active = true;
+        price.amount = price.amount * 100;
+        this.send('savePrice', price);
     }
 
     @action
@@ -63,12 +115,88 @@ export default class ProductController extends Controller {
     }
 
     @action
+    save() {
+        return this.saveTask.perform();
+    }
+
+    @action
+    savePrice(price) {
+        const stripePrices = this.product.stripePrices.map((d) => {
+            if (d.id === price.id) {
+                return EmberObject.create({
+                    ...price,
+                    active: !!price.active
+                });
+            }
+            return {
+                ...d,
+                active: !!d.active
+            };
+        });
+        if (!price.id) {
+            stripePrices.push(EmberObject.create({
+                ...price,
+                active: !!price.active
+            }));
+        }
+        this.product.set('stripePrices', stripePrices);
+        this.saveTask.perform();
+    }
+
+    @action
     closePriceModal() {
         this.showPriceModal = false;
     }
 
-    @task({drop: true})
+    @action
+    setPaidSignupRedirect(url) {
+        this.paidSignupRedirect = url;
+    }
+
+    @action
+    validatePaidSignupRedirect() {
+        return this._validateSignupRedirect(this.paidSignupRedirect, 'membersPaidSignupRedirect');
+    }
+
+    @task({restartable: true})
     *saveTask() {
-        return yield this.settings.save();
+        this.send('validatePaidSignupRedirect');
+        this.product.validate();
+        if (this.product.get('errors').length !== 0) {
+            return;
+        }
+        if (this.settings.get('errors').length !== 0) {
+            return;
+        }
+        yield this.settings.save();
+        const response = yield this.product.save();
+        if (this.showPriceModal) {
+            this.closePriceModal();
+        }
+        return response;
+    }
+
+    _validateSignupRedirect(url, type) {
+        let errMessage = this.intl.t(`portal.Please enter a valid URL`);
+        this.settings.get('errors').remove(type);
+        this.settings.get('hasValidated').removeObject(type);
+
+        if (url === null) {
+            this.settings.get('errors').add(type, errMessage);
+            this.settings.get('hasValidated').pushObject(type);
+            return false;
+        }
+
+        if (url === undefined) {
+            // Not initialised
+            return;
+        }
+
+        if (url.href.startsWith(this.siteUrl)) {
+            const path = url.href.replace(this.siteUrl, '');
+            this.settings.set(type, path);
+        } else {
+            this.settings.set(type, url.href);
+        }
     }
 }

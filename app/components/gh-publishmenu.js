@@ -17,16 +17,18 @@ export default Component.extend({
     config: service(),
     session: service(),
     store: service(),
+    limit: service(),
 
-    backgroundTask: null,
     classNames: 'gh-publishmenu',
     displayState: 'draft',
     post: null,
     postStatus: 'draft',
     runningText: null,
     saveTask: null,
-    sendEmailWhenPublished: 'none',
+    sendEmailWhenPublished: null,
     typedDateError: null,
+    isSendingEmailLimited: false,
+    sendingEmailLimitError: '',
 
     _publishedAtBlogTZ: null,
     _previousStatus: null,
@@ -39,12 +41,17 @@ export default Component.extend({
 
     hasEmailPermission: or('session.user.isOwner', 'session.user.isAdmin', 'session.user.isEditor'),
 
-    canSendEmail: computed('post.{isPost,email}', 'settings.{mailgunApiKey,mailgunDomain,mailgunBaseUrl}', 'config.mailgunIsConfigured', function () {
-        let mailgunIsConfigured = this.get('settings.mailgunApiKey') && this.get('settings.mailgunDomain') && this.get('settings.mailgunBaseUrl') || this.get('config.mailgunIsConfigured');
+    canSendEmail: computed('hasEmailPermission', 'post.{isPost,email}', 'settings.{editorDefaultEmailRecipients,membersSignupAccess,mailgunIsConfigured}', 'config.mailgunIsConfigured', function () {
+        let isDisabled = this.settings.get('editorDefaultEmailRecipients') === 'disabled' || this.settings.get('membersSignupAccess') === 'none';
+        let mailgunIsConfigured = this.settings.get('mailgunIsConfigured') || this.config.get('mailgunIsConfigured');
         let isPost = this.post.isPost;
         let hasSentEmail = !!this.post.email;
 
-        return mailgunIsConfigured && isPost && !hasSentEmail;
+        return this.hasEmailPermission &&
+            !isDisabled &&
+            mailgunIsConfigured &&
+            isPost &&
+            !hasSentEmail;
     }),
 
     postState: computed('post.{isPublished,isScheduled}', 'forcePublishedMenu', function () {
@@ -129,6 +136,24 @@ export default Component.extend({
         return this.intl.t(buttonText || 'taskButton.Published').toString();
     }),
 
+    defaultEmailRecipients: computed('settings.{editorDefaultEmailRecipients,editorDefaultEmailRecipientsFilter}', 'post.visibility', function () {
+        const defaultEmailRecipients = this.settings.get('editorDefaultEmailRecipients');
+
+        if (defaultEmailRecipients === 'disabled') {
+            return null;
+        }
+
+        if (defaultEmailRecipients === 'visibility') {
+            if (this.post.visibility === 'public') {
+                return 'status:free,status:-free';
+            }
+
+            return this.post.visibility;
+        }
+
+        return this.settings.get('editorDefaultEmailRecipientsFilter');
+    }),
+
     didReceiveAttrs() {
         this._super(...arguments);
 
@@ -149,15 +174,8 @@ export default Component.extend({
         }
 
         this._postStatus = this.postStatus;
-        if (this.postStatus === 'draft' && this.canSendEmail && this.hasEmailPermission) {
-            // Set default newsletter recipients
-            if (this.post.visibility === 'public' || this.post.visibility === 'members') {
-                this.set('sendEmailWhenPublished', 'all');
-            } else {
-                this.set('sendEmailWhenPublished', 'paid');
-            }
-        }
-        this.countPaidMembers();
+        this.setDefaultSendEmailWhenPublished();
+        this.checkIsSendingEmailLimited();
     },
 
     actions: {
@@ -183,6 +201,9 @@ export default Component.extend({
             this._cachePublishedAtBlogTZ();
             this.set('isClosing', false);
             this.get('post.errors').clear();
+
+            this.setDefaultSendEmailWhenPublished();
+
             if (this.onOpen) {
                 this.onOpen();
             }
@@ -208,39 +229,41 @@ export default Component.extend({
             this.set('isClosing', true);
 
             return true;
+        },
+
+        updateMemberCount(count) {
+            this.memberCount = count;
         }
     },
 
-    countPaidMembers: action(function () {
-        // TODO: remove editor conditional once editors can query member counts
-        if (!this.session.get('user.isEditor') && this.canSendEmail) {
-            this.countPaidMembersTask.perform();
+    setDefaultSendEmailWhenPublished() {
+        if (this.postStatus === 'draft' && this.canSendEmail) {
+            // Set default newsletter recipients
+            this.set('sendEmailWhenPublished', this.defaultEmailRecipients);
+        } else {
+            this.set('sendEmailWhenPublished', this.post.emailRecipientFilter);
+        }
+    },
+
+    checkIsSendingEmailLimited: action(function () {
+        if (this.limit.limiter && this.limit.limiter.isLimited('emails')) {
+            this.checkIsSendingEmailLimitedTask.perform();
+        } else {
+            this.set('isSendingEmailLimited', false);
+            this.set('sendingEmailLimitError', null);
         }
     }),
 
-    countPaidMembersTask: task(function* () {
-        const result = yield this.store.query('member', {filter: 'subscribed:true+status:-free', limit: 1, page: 1});
-        const paidMemberCount = result.meta.pagination.total;
-        const freeMemberCount = this.memberCount - paidMemberCount;
-        this.set('paidMemberCount', paidMemberCount);
-        this.set('freeMemberCount', freeMemberCount);
+    checkIsSendingEmailLimitedTask: task(function* () {
+        try {
+            yield this.limit.limiter.errorIfWouldGoOverLimit('emails');
 
-        if (this.postStatus === 'draft' && this.canSendEmail && this.hasEmailPermission) {
-            // Set default newsletter recipients
-            if (this.post.visibility === 'public' || this.post.visibility === 'members') {
-                if (paidMemberCount > 0 && freeMemberCount > 0) {
-                    this.set('sendEmailWhenPublished', 'all');
-                } else if (!paidMemberCount && freeMemberCount > 0) {
-                    this.set('sendEmailWhenPublished', 'free');
-                } else if (!freeMemberCount && paidMemberCount > 0) {
-                    this.set('sendEmailWhenPublished', 'paid');
-                } else if (!freeMemberCount && !paidMemberCount) {
-                    this.set('sendEmailWhenPublished', 'none');
-                }
-            } else {
-                const type = paidMemberCount > 0 ? 'paid' : 'none';
-                this.set('sendEmailWhenPublished', type);
-            }
+            this.set('isSendingEmailLimited', false);
+            this.set('sendingEmailLimitError', null);
+        } catch (error) {
+            this.set('isSendingEmailLimited', true);
+            this.set('sendingEmailLimitError', error.message);
+            this.set('sendEmailWhenPublished', 'none');
         }
     }),
 

@@ -1,24 +1,69 @@
 /* Product list */
-.gh-product-list .gh-list-row.header .gh-list-header {
-    margin: 0;
-    padding: 0;
-    height: 0;
-    line-height: 0;
+.gh-product-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 32px;
 }
 
-.gh-product-list-chevron {
-    padding-right: 0;
+@media (max-width: 980px) {
+    .gh-product-list {
+        grid-template-columns: repeat(1, 1fr);
+    }
 }
 
-.gh-product-chevron {
+.gh-product-card {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: center;
+    text-align: center;
+    border: 1px solid var(--whitegrey);
+    border-radius: 2px;
+    padding: 8vmin 48px;
+}
+
+@media (max-width: 980px) {
+    .gh-product-card {
+        padding: 4vmin 48px;
+    }
+}
+
+.gh-product-card-name {
+    font-size: 1.75rem;
+    margin: 0;
+}
+
+.gh-product-card-description {
+    margin: 0 0 16px;
     color: var(--midgrey);
 }
 
-.gh-product-chevron span {
-    line-height: 0;
+.gh-product-list-icon {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    color: var(--green);
+    margin-bottom: 8px;
+    height: 72px;
+}
+
+.gh-product-list-icon svg {
+    width: 60px;
+    height: 60px;
+}
+
+.gh-product-list-siteicon {
+    width: 54px;
+    height: 54px;
+    background-color: transparent;
+    background-size: 54px;
+    border-radius: 3px;
+    margin-bottom: 6px;
+}
+
+.gh-product-list-icon svg circle,
+.gh-product-list-icon svg path {
+    stroke-width: 1px !important;
 }
 
 /* Product details */
@@ -27,10 +72,6 @@
     grid-template-columns: 1fr;
     grid-gap: 32px;
     margin-bottom: 3vw;
-}
-
-.gh-product-details .max-width {
-    max-width: 620px;
 }
 
 .gh-product-details-form {
@@ -61,7 +102,11 @@
     width: 100%;
 }
 
-.gh-product-description-container {
+.gh-product-details-fields .max-width {
+    max-width: 840px;
+}
+
+.gh-product-details-fields .form-group:last-of-type {
     padding-bottom: 0;
     margin-bottom: 0;
 }
@@ -120,7 +165,7 @@
     align-items: center;
     justify-content: flex-end;
     width: 100%;
-    opacity: 0;
+    line-height: 1;
 }
 
 .gh-price-list .gh-list-row:hover .gh-price-list-actionlist {
@@ -129,38 +174,67 @@
 
 .gh-price-list-actionlist a,
 .gh-price-list-actionlist button {
+    margin-left: 15px;
+    padding: 0;
     line-height: 0;
-    margin-left: 24px;
-    color: var(--darkgrey);
-    font-weight: 500;
 }
 
-.gh-price-list-actionlist button.archive {
+.gh-price-list-actionlist a span,
+.gh-price-list-actionlist button span {
+    display: inline-block;
+    line-height: 1;
+    height: unset;
+    border-radius: 3px;
+    padding: 4px 6px;
+    color: var(--darkgrey);
+    font-weight: 500;
+    font-size: 1.2rem !important;
+    text-transform: uppercase;
+}
+
+.gh-price-list-actionlist a:hover span,
+.gh-price-list-actionlist button:hover span {
+    background: var(--whitegrey);
+}
+
+.gh-price-list-actionlist a.archived:hover span,
+.gh-price-list-actionlist button.archived:hover span {
+    background: color-mod(var(--red) a(10%));
     color: var(--red);
 }
 
 .gh-price-list-title,
 .gh-price-list-price {
-    width: 35%;
+    width: 50%;
 }
 
 .gh-price-list-name span.archived {
-    background: var(--midgrey);
-    color: #fff;
+    background: var(--lightgrey-l2);
+    color: var(--midgrey);
     font-size: 1.2rem;
 }
 
-.gh-price-list-archived .gh-price-list-name,
+.gh-price-list-archived .gh-price-list-name .name,
 .gh-price-list-archived .gh-price-list-description,
 .gh-price-list-archived .gh-price-list-price span,
 .gh-price-list-archived .gh-price-list-subscriptions span {
     opacity: 0.5;
 }
 
+.gh-price-list-noprices {
+    text-align: center;
+    padding: 48px 0;
+    color: var(--midgrey);
+}
+
 .product-actions-menu {
     top: calc(100% + 6px);
     right: 10px;
     left: auto;
+}
+
+.gh-btn-archive-toggle {
+    width: 80px;
 }
 
 .product-actions-menu.fade-out {
@@ -173,8 +247,8 @@
     margin-bottom: 32px;
 }
 
-.gh-product-priceform-period {
+.gh-product-priceform-pricecurrency {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 2fr;
     grid-gap: 20px;
 }

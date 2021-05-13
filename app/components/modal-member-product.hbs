@@ -1,13 +1,9 @@
-{{!-- <header class="modal-header" data-test-modal="webhook-form">
-    <h1 data-test-text="title">Add product</h1>
-</header> --}}
-<button class="close" href title="Close" {{action "closeModal"}} {{action (optional this.noop) on="mouseDown"}}>
+<button class="close" href title={{t "common.Close"}} {{action "closeModal"}} {{action (optional this.noop) on="mouseDown"}}>
     {{svg-jar "close"}}
 </button>
 
 <form>
 <div class="modal-body">
-
     <div class="gh-main-section-block">
         <div class="gh-main-section-content gh-member-product-memberdetails">
             <GhMemberAvatar
@@ -24,13 +20,18 @@
         </div>
 
         <div class="gh-main-section-content grey gh-member-product-form-block">
-            <GhFormGroup @errors={{this.price.errors}} @hasValidated={{this.price.hasValidated}} @property="product">
-                <label for="product" class="fw6">Product</label>
-                <GhMemberProductProducts @triggerId="product-input" />
-            </GhFormGroup>
-            <GhFormGroup @errors={{this.price.errors}} @hasValidated={{this.price.hasValidated}} @property="price">
-                <label for="price" class="fw6">Price</label>
-                <GhMemberProductPrices @triggerId="price-input" />
+            <GhFormGroup>
+                <label for="price" class="fw6">{{t "settings.Add subscription"}}</label>
+                <span class="gh-select">
+                    <OneWaySelect
+                        @options={{this.prices}}
+                        @optionValuePath="id"
+                        @optionLabelPath="label"
+                        @update={{this.setPrice}}
+                    />
+                    {{svg-jar "arrow-down-small"}}
+                </span>
+                <p>{{{t "settings.You can only use zero value prices when adding a product manually. Use <a href=\"https://dashboard.stripe.com\" target=\"_blank\">Stripe Dashboard</a> to add product with non-zero prices."}}}</p>
             </GhFormGroup>
         </div>
     </div>
@@ -41,15 +42,16 @@
     <button
         class="gh-btn"
         {{action "closeModal"}}
-        {{!-- disable mouseDown so it doesn't trigger focus-out validations --}}
+        {{!-- disable mouseDown so it does not trigger focus-out validations --}}
         {{action (optional this.noop) on="mouseDown"}}
         data-test-button="cancel-webhook"
     >
-        <span>Cancel</span>
+        <span>{{if this.prices.length (t "common.Cancel") (t "common.OK")}}</span>
     </button>
-    <GhTaskButton @buttonText="Add product to member"
+    <GhTaskButton @buttonText={{t "settings.Add subscription"}}
         @successText={{this.successText}}
-        {{!-- @task={{this.saveWebhook}} --}}
-        @class="gh-btn gh-btn-black gh-btn-icon"
+        @task={{this.addPriceTask}}
+        @disabled={{this.cannotAddPrice}}
+        @class="gh-btn gh-btn-black gh-btn-icon gh-btn-add-memberproduct"
         data-test-button="save-webhook" />
 </div>

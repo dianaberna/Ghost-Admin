@@ -25,12 +25,12 @@
                         <li class="divider" role="separator"></li>
                         <li role="presentation">
                             <LinkTo @route="about" @classNames="dropdown-item" @role="menuitem" @tabindex="-1" data-test-nav="about">
-                                About Ghost
+                                {{t "nav.About Ghost"}}
                             </LinkTo>
                         </li>
                         <li role="presentation">
                             <button class="dropdown-item" role="menuitem" tabindex="-1" {{on "click" this.whatsNew.showModal}}>
-                                What's new?
+                                {{t "nav.What's new?"}}
                                 {{#if this.whatsNew.hasNew}}
                                     <div class="flex-grow-1 flex justify-end"><span class="dib w2 h2 top-0 right-0 bg-green br-100"></span></div>
                                 {{/if}}
@@ -39,25 +39,25 @@
                         <li class="divider" role="separator"></li>
                         <li role="presentation">
                             <LinkTo @route="staff.user" @model={{this.session.user.slug}} @classNames="dropdown-item" @role="menuitem" @tabindex="-1" data-test-nav="user-profile">
-                                Your profile
+                                {{t "nav.Your profile"}}
                             </LinkTo>
                         </li>
                         <li role="presentation">
                             <a class="dropdown-item" role="menuitem" tabindex="-1" href="https://ghost.org/docs/" target="_blank">
-                                Support center
+                                {{t "nav.Support center"}}
                             </a>
                         </li>
-                        <li role="presentation">
+                        {{!-- <li role="presentation">
                             <a class="dropdown-item" role="menuitem" tabindex="-1" target="_blank"
                                 href="https://twitter.com/intent/tweet?text=%40Ghost+Hi%21+Can+you+help+me+with+&related=Ghost"
                                 onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;"
                             >
                                 Tweet @Ghost!
                             </a>
-                        </li>
+                        </li> --}}
                         <li role="presentation">
                             <a class="dropdown-item" role="menuitem" tabindex="-1" href="https://ghost.org/help/topic/setting-up/" target="_blank">
-                                How to use Ghost
+                                {{t "nav.How to use Ghost"}}
                             </a>
                         </li>
 
@@ -78,7 +78,7 @@
                         <li class="divider" role="separator"></li>
                         <li role="presentation">
                             <LinkTo @route="signout" @classNames="dropdown-item user-menu-signout" @role="menuitem" @tabindex="-1">
-                                Sign out
+                                {{t "nav.Sign out"}}
                             </LinkTo>
                         </li>
                     </ul>
