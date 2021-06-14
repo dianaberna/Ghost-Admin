@@ -148,6 +148,14 @@ export default Component.extend({
                 return 'status:free,status:-free';
             }
 
+            if (this.post.visibility === 'members') {
+                return 'status:free,status:-free';
+            }
+
+            if (this.post.visibility === 'paid') {
+                return 'status:-free';
+            }
+
             return this.post.visibility;
         }
 

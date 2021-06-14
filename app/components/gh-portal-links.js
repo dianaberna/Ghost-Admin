@@ -15,19 +15,6 @@ export default Component.extend({
     prices: null,
     copiedPrice: null,
 
-    filteredPrices: computed('prices', 'settings.portalPlans.[]', function () {
-        const portalPlans = this.get('settings.portalPlans');
-        const prices = this.prices || [];
-        return prices.filter((d) => {
-            return d.amount !== 0 && d.type === 'recurring';
-        }).map((price) => {
-            return {
-                ...price,
-                checked: !!portalPlans.find(d => d === price.id)
-            };
-        });
-    }),
-
     toggleValue: computed('isLink', function () {
         return this.isLink ? this.intl.t('portal.Data attributes') : this.intl.t('portal.Links');
     }),
@@ -39,7 +26,6 @@ export default Component.extend({
     init() {
         this._super(...arguments);
         this.siteUrl = this.config.get('blogUrl');
-        this.getAvailablePrices.perform();
     },
 
     actions: {
@@ -68,14 +54,5 @@ export default Component.extend({
         }
         copyTextToClipboard(data);
         yield timeout(this.isTesting ? 50 : 3000);
-    }),
-    getAvailablePrices: task(function* () {
-        const products = yield this.store.query('product', {include: 'stripe_prices'});
-        const product = products.firstObject;
-        const prices = product.get('stripePrices');
-        const activePrices = prices.filter((d) => {
-            return !!d.active;
-        });
-        this.set('prices', activePrices);
-    }).drop()
+    })
 });

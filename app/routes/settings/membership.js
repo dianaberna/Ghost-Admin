@@ -1,7 +1,7 @@
 import AuthenticatedRoute from 'ghost-admin/routes/authenticated';
 import {inject as service} from '@ember/service';
 
-export default class MembersAccessRoute extends AuthenticatedRoute {
+export default class MembershipSettingsRoute extends AuthenticatedRoute {
     @service settings;
     @service intl;
 
@@ -17,7 +17,13 @@ export default class MembersAccessRoute extends AuthenticatedRoute {
 
     buildRouteInfoMetadata() {
         return {
-            titleToken: this.intl.t('pageTitle.Settings - Members')
+            titleToken: this.intl.t('pageTitle.Settings - Membership')
         };
+    }
+
+    resetController(controller, isExiting) {
+        if (isExiting) {
+            controller.reset();
+        }
     }
 }

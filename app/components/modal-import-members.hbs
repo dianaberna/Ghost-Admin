@@ -75,14 +75,14 @@
                 </div>
                 {{else}}
                 <div class="gh-member-import-result-summary">
-                    <p>{{{t "members.A total of <strong>{importedCount}</strong> persons were successfully added or updated in your list of members, and now have access to your site." importedCount=(format-number this.importResponse.importedCount)}}}</p>
+                    <p>{{t "members.A total of <strong>{importedCount}</strong> persons were successfully added or updated in your list of members, and now have access to your site." importedCount=(format-number this.importResponse.importedCount) htmlSafe=true}}</p>
                 </div>
                 {{/if}}
                 {{#if this.importResponse.errorCount}}
                     {{#unless (eq this.importResponse.importedCount 0)}}
                         <hr>
                         <div class="gh-member-import-result-summary">
-                            <p>{{{t "members.<strong>{errorCount}</strong> members were skipped due to the following errors:" errorCount=(format-number this.importResponse.errorCount)}}}</p>
+                            <p>{{t "members.<strong>{errorCount}</strong> members were skipped due to the following errors:" errorCount=(format-number this.importResponse.errorCount) htmlSafe=true}}</p>
                         </div>
                     {{/unless}}
                     <div class="gh-member-import-errorlist">

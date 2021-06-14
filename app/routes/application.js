@@ -5,6 +5,8 @@ import ShortcutsRoute from 'ghost-admin/mixins/shortcuts-route';
 import ctrlOrCmd from 'ghost-admin/utils/ctrl-or-cmd';
 import moment from 'moment';
 import windowProxy from 'ghost-admin/utils/window-proxy';
+import {InitSentryForEmber} from '@sentry/ember';
+import {configureScope} from '@sentry/browser';
 import {
     isAjaxError,
     isNotFoundError,
@@ -52,25 +54,36 @@ export default Route.extend(ShortcutsRoute, {
     },
 
     beforeModel() {
-        return this.config.fetchUnauthenticated().then(() => {
-            return this.ajax.request(`${this.ghostPaths.adminRoot}assets/locales/en.json`)
+        return this.config.fetchUnauthenticated()
+            .then(() => this.ajax.request(`${this.ghostPaths.adminRoot}assets/locales/en.json`)
                 .then(translations => this.intl.addTranslations('en', translations))
                 .then(() => this.intl.setLocale(['en']))
                 .then(() => {
-                    if (this.config.get('defaultLocale')) {
+                    if (this.config.get('default_locale')) {
                         return RSVP.all([
                             this.lazyLoader
-                                .loadScript('moment-locale', `assets/moment/locale/${this.config.get('defaultLocale')}.js`)
-                                .then(() => moment.locale(this.config.get('defaultLocale')))
-                                .catch(() => (`Looks like momentjs doesn't support your "${this.config.get('defaultLocale')}" locale`)),
-                            this.ajax.request(`${this.ghostPaths.adminRoot}assets/locales/${this.config.get('defaultLocale')}.json`)
-                                .then(translations => this.intl.addTranslations(this.config.get('defaultLocale'), translations))
-                                .then(() => this.intl.setLocale([this.config.get('defaultLocale')].concat(this.intl.locales)))
-                                .catch(e => (`Failed to init translations for "${this.config.get('defaultLocale')}" locale: ${e.message}`))
+                                .loadScript('moment-locale', `assets/moment/locale/${this.config.get('default_locale')}.js`)
+                                .then(() => moment.locale(this.config.get('default_locale')))
+                                .catch(() => (`Looks like momentjs doesn't support your "${this.config.get('default_locale')}" locale`)),
+                            this.ajax.request(`${this.ghostPaths.adminRoot}assets/locales/${this.config.get('default_locale')}.json`)
+                                .then(translations => this.intl.addTranslations(this.config.get('default_locale'), translations))
+                                .then(() => this.intl.setLocale([this.config.get('default_locale')].concat(this.intl.locales)))
+                                .catch(e => (`Failed to init translations for "${this.config.get('default_locale')}" locale: ${e.message}`))
                         ]);
                     }
-                });
-        });
+                })
+            )
+            .then(() => {
+                // init Sentry here rather than app.js so that we can use API-supplied
+                // sentry_dsn and sentry_env rather than building it into release assets
+                if (this.config.get('sentry_dsn')) {
+                    InitSentryForEmber({
+                        dsn: this.config.get('sentry_dsn'),
+                        environment: this.config.get('sentry_env'),
+                        release: `ghost@${this.config.get('version')}`
+                    });
+                }
+            });
     },
 
     afterModel(model, transition) {
@@ -88,6 +101,20 @@ export default Route.extend(ShortcutsRoute, {
                 this.settings.fetch()
             ]).then((results) => {
                 this._appLoaded = true;
+
+                // update Sentry with the full Ghost version which we only get after authentication
+                if (this.config.get('sentry_dsn')) {
+                    configureScope((scope) => {
+                        scope.addEventProcessor((event) => {
+                            return new Promise((resolve) => {
+                                resolve({
+                                    ...event,
+                                    release: `ghost@${this.config.get('version')}`
+                                });
+                            });
+                        });
+                    });
+                }
 
                 // kick off background update of "whats new"
                 // - we don't want to block the router for this

@@ -117,6 +117,24 @@ input {
 /* Input Icons
 /* ---------------------------------------------------------- */
 
+.gh-input svg {
+    position: absolute;
+    top: 50%;
+    right: 1.2rem;
+    left: inherit;
+    width: 12px;
+    height: 6px;
+    margin-top: -0.2em;
+    transform: inherit;
+    pointer-events: none;
+
+    speak: none;
+}
+
+.gh-input svg path {
+    stroke: var(--midlightgrey);
+}
+
 .gh-input-icon {
     position: relative;
     display: block;
@@ -557,6 +575,24 @@ textarea {
     transform: translateX(16px);
 }
 
+.for-switch.x-small .input-toggle-component {
+    width: 34px !important;
+    height: 20px !important;
+}
+
+.for-switch.x-small .input-toggle-component:before {
+    height: 16px !important;
+    width: 16px !important;
+}
+
+.for-switch.x-small input:checked + .input-toggle-component:before {
+    transform: translateX(14px);
+}
+
+.for-switch.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
 
 /* Select
 /* ---------------------------------------------------------- */
@@ -643,13 +679,8 @@ textarea {
     border-right: none;
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
-    padding-right: 0;
+    padding-right: 2px;
     min-width: 0; /* Firefox fix */
-}
-
-.form-group:not(.error) .gh-input-group .gh-input:focus + .gh-input-append {
-    border-color: color-mod(var(--green));
-    box-shadow: inset 0 0 0 1px var(--green);
 }
 
 .gh-input-group .gh-input:focus + .gh-input-append,
@@ -677,6 +708,21 @@ textarea {
     border-bottom-left-radius: 0;
     flex: 1;
     color: var(--midlightgrey);
+}
+
+@media (max-width: 430px) {
+    .gh-input-append {
+        padding: 6px 8px;
+    }
+}
+
+.gh-expandable-content .gh-input-append {
+    border-color: var(--whitegrey-d1);
+}
+
+.form-group:not(.error) .gh-input-group .gh-input:focus + .gh-input-append {
+    border-color: color-mod(var(--green));
+    box-shadow: inset 0 0 0 1px var(--green);
 }
 
 .gh-input-append:before {
@@ -708,6 +754,63 @@ textarea {
 
 .form-group.error .gh-input-group .gh-input:focus + .gh-input-append {
     box-shadow: inset 0 0 0 1px var(--red);
+}
+
+
+/* Email newsletter design settings
+/* -------------------------------------------------------- */
+.form-rich-radio .gh-radio {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: -1px 0 0;
+    padding: 0;
+}
+
+.form-rich-radio .gh-radio-content {
+    border: 1px solid var(--whitegrey);
+    margin: 0 -32px 0 0;
+}
+
+.form-rich-radio .gh-radio:first-of-type .gh-radio-content {
+    border-radius: 3px 3px 0 0;
+}
+
+.form-rich-radio .gh-radio:last-of-type .gh-radio-content {
+    border-radius: 0 0 3px 3px;
+}
+
+.form-rich-radio .active .gh-radio-content {
+    border: 1px solid transparent;
+    box-shadow: 0px 0px 0px 2px var(--green);
+    z-index: 9999;
+}
+
+.form-rich-radio .gh-radio-button {
+    margin-right: 12px;
+    opacity: 0;
+}
+
+.form-rich-radio .gh-radio-label {
+    padding: 12px 12px 12px 14px;
+    display: flex;
+    align-items: center;
+}
+
+.form-rich-radio .gh-radio-label .description h4 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    padding: 0;
+    line-height: 1.4em;
+}
+
+.form-rich-radio .gh-radio-label .description p {
+    font-size: 1.25rem !important;
+    font-weight: 400;
+    line-height: 1.45em;
+    margin: 2px 0 0;
+    padding: 0;
 }
 
 

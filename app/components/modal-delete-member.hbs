@@ -5,7 +5,7 @@
 
 <div class="modal-body">
     <p class="mb6">
-        {{{t "members.Permanently delete <strong>{email}</strong> from Ghost." email=this.member.email}}}
+        {{t "members.Permanently delete <strong>{email}</strong> from Ghost." email=this.member.email htmlSafe=true}}
     </p>
 
     {{#if this.hasActiveStripeSubscriptions}}

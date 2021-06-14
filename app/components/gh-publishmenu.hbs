@@ -16,7 +16,7 @@
                 @saveType={{this.saveType}}
                 @isClosing={{this.isClosing}}
                 @canSendEmail={{this.canSendEmail}}
-                @recipientsSegment={{this.sendEmailWhenPublished}}
+                @recipientsFilter={{this.sendEmailWhenPublished}}
                 @setSaveType={{action "setSaveType"}}
                 @setTypedDateError={{action (mut this.typedDateError)}}
                 @isSendingEmailLimited={{this.isSendingEmailLimited}}
@@ -29,7 +29,7 @@
                 @setSaveType={{action "setSaveType"}}
                 @setTypedDateError={{action (mut this.typedDateError)}}
                 @canSendEmail={{this.canSendEmail}}
-                @recipientsSegment={{this.sendEmailWhenPublished}}
+                @recipientsFilter={{this.sendEmailWhenPublished}}
                 @updateMemberCount={{action "updateMemberCount"}}
                 @setSendEmailWhenPublished={{action "setSendEmailWhenPublished"}}
                 @isSendingEmailLimited={{this.isSendingEmailLimited}}
@@ -62,9 +62,7 @@
         @modal="confirm-email-send"
         @model={{hash
             sendEmailWhenPublished=this.sendEmailWhenPublished
-            memberCount=this.memberCount
             isScheduled=(eq this.saveType "schedule")
-            paidOnly=(eq this.post.visibility "paid")
             retryEmailSend=this.retryEmailSend
         }}
         @confirm={{this.confirmEmailSend}}

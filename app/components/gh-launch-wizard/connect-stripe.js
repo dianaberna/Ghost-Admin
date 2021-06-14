@@ -5,11 +5,15 @@ import {task} from 'ember-concurrency-decorators';
 import {timeout} from 'ember-concurrency';
 import {tracked} from '@glimmer/tracking';
 
+const RETRY_PRODUCT_SAVE_POLL_LENGTH = 1000;
+const RETRY_PRODUCT_SAVE_MAX_POLL = 15 * RETRY_PRODUCT_SAVE_POLL_LENGTH;
+
 export default class GhLaunchWizardConnectStripeComponent extends Component {
     @service ajax;
     @service config;
     @service ghostPaths;
     @service settings;
+    @service store;
 
     @tracked hasActiveStripeSubscriptions = false;
     @tracked showDisconnectStripeConnectModal = false;
@@ -57,6 +61,45 @@ export default class GhLaunchWizardConnectStripeComponent extends Component {
         this.settings.set('stripeProductName', this.settings.get('title'));
         this.settings.set('stripeConnectIntegrationToken', event.target.value);
         this.stripeConnectError = null;
+    }
+
+    calculateDiscount(monthly, yearly) {
+        if (isNaN(monthly) || isNaN(yearly)) {
+            return 0;
+        }
+
+        return monthly ? 100 - Math.floor((yearly / 12 * 100) / monthly) : 0;
+    }
+
+    getActivePrice(prices, interval, amount, currency) {
+        return prices.find((price) => {
+            return (
+                price.active && price.amount === amount && price.type === 'recurring' &&
+                price.interval === interval && price.currency.toLowerCase() === currency.toLowerCase()
+            );
+        });
+    }
+
+    @task({drop: true})
+    *saveProduct() {
+        let pollTimeout = 0;
+        while (pollTimeout < RETRY_PRODUCT_SAVE_MAX_POLL) {
+            yield timeout(RETRY_PRODUCT_SAVE_POLL_LENGTH);
+
+            try {
+                const updatedProduct = yield this.product.save();
+                return updatedProduct;
+            } catch (error) {
+                if (error.payload?.errors && error.payload.errors[0].code === 'STRIPE_NOT_CONFIGURED') {
+                    pollTimeout += RETRY_PRODUCT_SAVE_POLL_LENGTH;
+                    // no-op: will try saving again as stripe is not ready
+                    continue;
+                } else {
+                    throw error;
+                }
+            }
+        }
+        return this.product;
     }
 
     @task({drop: true})
@@ -114,6 +157,34 @@ export default class GhLaunchWizardConnectStripeComponent extends Component {
 
         try {
             yield this.settings.save();
+
+            const products = yield this.store.query('product', {include: 'monthly_price,yearly_price'});
+            this.product = products.firstObject;
+            if (this.product) {
+                const yearlyDiscount = this.calculateDiscount(5, 50);
+                this.product.set('monthlyPrice', {
+                    nickname: 'Monthly',
+                    amount: 500,
+                    active: 1,
+                    description: 'Full access',
+                    currency: 'usd',
+                    interval: 'month',
+                    type: 'recurring'
+                });
+                this.product.set('yearlyPrice', {
+                    nickname: 'Yearly',
+                    amount: 5000,
+                    active: 1,
+                    currency: 'usd',
+                    description: yearlyDiscount > 0 ? `${yearlyDiscount}% discount` : 'Full access',
+                    interval: 'year',
+                    type: 'recurring'
+                });
+                yield this.saveProduct.perform();
+                this.settings.set('portalPlans', ['free', 'monthly', 'yearly']);
+                yield this.settings.save();
+            }
+
             this.pauseAndContinueTask.perform();
             return true;
         } catch (error) {

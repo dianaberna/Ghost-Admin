@@ -8,13 +8,15 @@
                 </button>
             </div>
             <div class="settings-menu-content">
-                <GhImageUploaderWithPreview
-                    @image={{this.post.featureImage}}
-                    @text={{t (concat this.post.displayName ".settings.image")}}
-                    @allowUnsplash={{true}}
-                    @update={{action "setCoverImage"}}
-                    @remove={{action "clearCoverImage"}}
-                />
+                {{#unless (feature "featureImageMeta")}}
+                    <GhImageUploaderWithPreview
+                        @image={{this.post.featureImage}}
+                        @text={{t (concat this.post.displayName ".settings.image")}}
+                        @allowUnsplash={{true}}
+                        @update={{action "setCoverImage"}}
+                        @remove={{action "clearCoverImage"}}
+                    />
+                {{/unless}}
                 <form>
                 <div class="form-group">
                     <label for="url">{{t (concat this.post.displayName ".settings.url")}}</label>
@@ -77,36 +79,10 @@
 
 
                 {{#if this.showVisibilityInput}}
-                    <GhFormGroup @errors={{this.post.errors}} @hasValidated={{this.post.hasValidated}} @property="visibility">
+                    <div class="form-group">
                         <label for="visibility-input">{{t "Post access"}}</label>
-                        <div
-                            class="gh-radio {{if this.post.isPublic "active"}}"
-                            {{on "click" (action "setVisibility" "public")}}
-                        >
-                            <div class="gh-radio-button"></div>
-                            <div class="gh-radio-content">
-                                <div class="gh-radio-label">Public</div>
-                            </div>
-                        </div>
-                        <div
-                            class="gh-radio {{if (not this.post.isPublic) "active"}}"
-                             {{on "click" (action "setVisibility" this.post.visibilitySegment)}}
-                        >
-                            <div class="gh-radio-button"></div>
-                            <div class="gh-radio-content">
-                                <div class="gh-radio-label">Members-only</div>
-                                <div class="gh-radio-desc">
-                                    <GhMembersSegmentSelect
-                                        @segment={{this.post.visibilitySegment}}
-                                        @onChange={{action "setVisibility"}}
-                                        @renderInPlace={{true}}
-                                        @hideOptionsWhenAllSelected={{true}}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                        <GhErrorMessage @errors={{this.post.errors}} @property="visibility" class="no-selection" data-test-error="visibility" />
-                    </GhFormGroup>
+                        <GhPsmVisibilityInput @post={{this.post}} @triggerId="visibility-input" />
+                    </div>
                 {{/if}}
 
                 <GhFormGroup @errors={{this.post.errors}} @hasValidated={{this.post.hasValidated}} @property="customExcerpt">
@@ -142,15 +118,15 @@
                     </li>
                     <li class="nav-list-item" {{action "showSubview" "twitter-data"}} data-test-button="twitter-data">
                         <button type="button">
-                            <b>{{t "Twitter Card"}}</b>
-                            <span>{{t "Customise structured data for Twitter"}}</span>
+                            <b>{{t "Twitter card"}}</b>
+                            <span>{{t "Customize structured data for Twitter"}}</span>
                         </button>
                         {{svg-jar "arrow-right"}}
                     </li>
                     <li class="nav-list-item" {{action "showSubview" "facebook-data"}} data-test-button="facebook-data">
                         <button type="button">
-                            <b>{{t "Facebook Card"}}</b>
-                            <span>{{t "Customise Open Graph data"}}</span>
+                            <b>{{t "Facebook card"}}</b>
+                            <span>{{t "Customize Open Graph data"}}</span>
                         </button>
                         {{svg-jar "arrow-right"}}
                     </li>
@@ -158,7 +134,7 @@
                         <li class="nav-list-item" {{action "showSubview" "email-settings"}} data-test-button="email-settings">
                             <button type="button">
                                 <b>{{t "Email newsletter"}}</b>
-                                <span>{{t "Customise email settings"}}</span>
+                                <span>{{t "Customize email settings"}}</span>
                             </button>
                             {{svg-jar "arrow-right"}}
                         </li>
@@ -224,7 +200,7 @@
                                         @focus-out={{action "setMetaTitle" this.metaTitleScratch}}
                                         @stopEnterKeyDownPropagation={{true}}
                                         data-test-field="meta-title" />
-                                    <p>{{{t "Recommended: <b>{max}</b> characters. You’ve used {charactersCount}" max=60 charactersCount=(gh-count-down-characters this.metaTitleScratch 60)}}}</p>
+                                    <p>{{t "Recommended: <b>{max}</b> characters. You’ve used {charactersCount}" max=60 charactersCount=(gh-count-down-characters this.metaTitleScratch 60) htmlSafe=true}}</p>
                                     <GhErrorMessage @errors={{this.post.errors}} @property="meta-title" />
                                 </GhFormGroup>
 
@@ -240,7 +216,7 @@
                                         @focus-out={{action "setMetaDescription" this.metaDescriptionScratch}}
                                         @stopEnterKeyDownPropagation="true"
                                         data-test-field="meta-description" />
-                                    <p>{{{t "Recommended: <b>{max}</b> characters. You’ve used {charactersCount}" max=145 charactersCount=(gh-count-down-characters this.metaDescriptionScratch 145)}}}</p>
+                                    <p>{{t "Recommended: <b>{max}</b> characters. You’ve used {charactersCount}" max=145 charactersCount=(gh-count-down-characters this.metaDescriptionScratch 145) htmlSafe=true}}</p>
                                     <GhErrorMessage @errors={{this.post.errors}} @property="meta-description" />
                                 </GhFormGroup>
 

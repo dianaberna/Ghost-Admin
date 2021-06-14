@@ -18,6 +18,7 @@ export default Component.extend({
     session: service(),
     settings: service(),
     config: service(),
+    intl: service(),
 
     post: null,
     sendTestEmailError: '',
@@ -75,11 +76,11 @@ export default Component.extend({
             const resourceId = this.post.id;
             const testEmail = this.testEmailAddress.trim();
             if (!validator.isEmail(testEmail)) {
-                this.set('sendTestEmailError', 'Please enter a valid email');
+                this.set('sendTestEmailError', this.intl.t('Please enter a valid email'));
                 return false;
             }
             if (!this.get('mailgunIsEnabled')) {
-                this.set('sendTestEmailError', 'Please verify your email settings');
+                this.set('sendTestEmailError', this.intl.t('Please verify your email settings'));
                 return false;
             }
             this.set('sendTestEmailError', '');
@@ -92,7 +93,7 @@ export default Component.extend({
             return yield this.ajax.post(url, options);
         } catch (error) {
             if (error) {
-                let message = 'Email could not be sent, verify mail settings';
+                let message = this.intl.t('Email could not be sent, verify mail settings');
 
                 // grab custom error message if present
                 if (
@@ -125,6 +126,7 @@ export default Component.extend({
                 if (email.status === 'failed') {
                     throw new EmailFailedError(email.error);
                 }
+                pollTimeout += RETRY_EMAIL_POLL_LENGTH;
             }
         }
 

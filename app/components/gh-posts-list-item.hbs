@@ -9,10 +9,10 @@
         </h3>
         <p>
             <span class="gh-content-entry-meta">
-                {{{t "By <span class=\"midgrey-l2 fw5\">{authorNames}</span>" authorNames=this.authorNames}}}
+                {{t "By <span class=\"midgrey-l2 fw5\">{authorNames}</span>" authorNames=this.authorNames htmlSafe=true}}
 
                 {{#if @post.primaryTag}}
-                    {{{t "in <span class=\"midgrey-l2 fw5\">{primaryTagName}</span>" primaryTagName=@post.primaryTag.name}}}
+                    {{t "in <span class=\"midgrey-l2 fw5\">{primaryTagName}</span>" primaryTagName=@post.primaryTag.name htmlSafe=true}}
                 {{/if}}
 
                  • {{gh-format-post-time @post.updatedAtUTC draft=true}}

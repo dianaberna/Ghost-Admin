@@ -1,5 +1,8 @@
 <div class="modal-body gh-ps-modal-body">
-    <div class="flex pa0 flex-grow-1 gh-portal-settings">
+    <div class="flex pa0 flex-grow-1 gh-portal-settings" {{did-insert (fn this.finishPreloading)}}>
+        {{#if this.isPreloading}}
+            <GhLoadingSpinner />
+        {{else}}
         <div class="gh-portal-settings-sidebar">
             <h2 class="gh-portal-settings-title">{{t "potal.Portal settings"}}</h2>
             <div class="gh-portal-form-wrapper">
@@ -29,57 +32,78 @@
                                 </div>
                             </div>
                         </GhFormGroup>
-                        {{#if this.isStripeConfigured}}
-                        <div>
-                            <div class="mb3">
-                                <h4 class="gh-portal-setting-title">{{t "portal.Prices available at signup"}}</h4>
-                            </div>
-                            <div class="form-group mb0 for-checkbox">
-                                <label
-                                    class="checkbox"
-                                    for="free-plan"
-                                >
-                                    <input
-                                        type="checkbox"
-                                        checked={{this.isFreeChecked}}
-                                        id="free-plan"
-                                        name="free-plan"
-                                        disabled={{or (not this.isStripeConfigured) (not-eq this.settings.membersSignupAccess "all")}}
-                                        class="gh-input post-settings-featured"
-                                        {{on "click" (action "toggleFreePlan" value="target.checked")}}
-                                        data-test-checkbox="featured"
+                        {{#if this.membersUtils.isStripeEnabled}}
+                            <div {{did-insert this.refreshAfterStripeConnected}}>
+                                <div class="mb3">
+                                    <h4 class="gh-portal-setting-title">{{t "portal.Prices available at signup"}}</h4>
+                                </div>
+                                <div class="form-group mb0 for-checkbox">
+                                    <label
+                                        class="checkbox"
+                                        for="free-plan"
                                     >
-                                    <span class="input-toggle-component"></span>
-                                    <p>{{t "portal.Free"}}</p>
-                                </label>
+                                        <input
+                                            type="checkbox"
+                                            checked={{this.membersUtils.isFreeChecked}}
+                                            id="free-plan"
+                                            name="free-plan"
+                                            disabled={{or
+                                                (not this.membersUtils.isStripeEnabled)
+                                                (not-eq this.settings.membersSignupAccess "all")
+                                            }}
+                                            class="gh-input post-settings-featured"
+                                            {{on "click" (action "togglePlan" "free")}}
+                                        >
+                                        <span class="input-toggle-component"></span>
+                                        <p>{{t "portal.Free"}}</p>
+                                    </label>
+                                </div>
+                                <div class="form-group mb0 for-checkbox">
+                                    <label
+                                        class="checkbox"
+                                        for="monthly-plan"
+                                    >
+                                        <input
+                                            type="checkbox"
+                                            id="monthly-plan"
+                                            name="monthly-plan"
+                                            checked={{this.isMonthlyChecked}}
+                                            disabled={{or
+                                                (not this.membersUtils.isStripeEnabled)
+                                                (not-eq this.settings.membersSignupAccess "all")
+                                            }}
+                                            class="gh-input post-settings-featured"
+                                            {{on "click" (action "togglePlan" "monthly")}}
+                                        >
+                                        <span class="input-toggle-component"></span>
+                                        <p>{{t "portal.Monthly"}}</p>
+                                    </label>
+                                </div>
+                                <div class="form-group mb0 for-checkbox">
+                                    <label
+                                        class="checkbox"
+                                        for="yearly-plan"
+                                    >
+                                        <input
+                                            type="checkbox"
+                                            id="yearly-plan"
+                                            name="yearly-plan"
+                                            checked={{this.isYearlyChecked}}
+                                            disabled={{or
+                                                (not this.membersUtils.isStripeEnabled)
+                                                (not-eq this.settings.membersSignupAccess "all")
+                                            }}
+                                            class="gh-input post-settings-featured"
+                                            {{on "click" (action "togglePlan" "yearly")}}
+                                        >
+                                        <span class="input-toggle-component"></span>
+                                        <p>{{t "portal.Yearly"}}</p>
+                                    </label>
+                                </div>
                             </div>
-                            {{#if this.prices}}
-                                {{#each this.filteredPrices as |price|}}
-                                    <div class="form-group mb0 for-checkbox">
-                                        <label class="checkbox" for="{{price.id}}">
-                                            <input
-                                                type="checkbox"
-                                                checked={{price.checked}}
-                                                id={{price.id}}
-                                                name={{price.id}}
-                                                disabled={{or
-                                                    (not this.isStripeConfigured)
-                                                    (not-eq this.settings.membersSignupAccess "all")
-                                                }}
-                                                class="gh-input post-settings-featured"
-                                                data-test-checkbox="featured"
-                                                {{on "click" (action "togglePlan" price.id)}}
-                                            />
-                                            <span class="input-toggle-component"></span>
-                                            <p>{{price.nickname}}</p>
-                                        </label>
-                                    </div>
-                                {{/each}}
-                            {{/if}}
-                        </div>
                         {{else}}
                         <div class="gh-portal-setting-no-stripe">
-                            You need to <button class="gh-btn gh-btn-link black" {{action "openStripeSettings"}}>connect to Stripe</button> to take payments
+                            You need to <button class="gh-btn gh-btn-link black" {{on "click" (action "openStripeSettings")}}>connect to Stripe</button> to take payments
                         </div>
                         {{/if}}
                     </div>
@@ -138,8 +162,8 @@
                                         >
                                             <div class="flex items-center justify-between mt2 br3 ba b--whitegrey bg-white">
                                                 <div class="gh-portal-settings-icons">
-                                                    {{#each this.defaultButtonIcons as |imgIcon| }}
-                                                        <span class="gh-portal-button-icon {{if (eq this.buttonIcon imgIcon.value) "selected-icon"}}" onclick={{action "selectDefaultIcon" imgIcon.value}}>
+                                                    {{#each this.membersUtils.defaultButtonIcons as |imgIcon| }}
+                                                        <span class="gh-portal-button-icon {{if (eq this.membersUtils.buttonIcon imgIcon.value) "selected-icon"}}" onclick={{action "selectDefaultIcon" imgIcon.value}}>
                                                             {{svg-jar imgIcon.icon}}
                                                         </span>
                                                     {{/each}}
@@ -151,13 +175,13 @@
                                                         </div>
                                                     {{else if this.customIcon}}
                                                         <img
-                                                            class="gh-portal-button-icon gh-portal-button-custom {{if (eq this.buttonIcon this.customIcon) "selected-icon"}}"
+                                                            class="gh-portal-button-icon gh-portal-button-custom {{if (eq this.membersUtils.buttonIcon this.customIcon) "selected-icon"}}"
                                                             src="{{this.customIcon}}"
                                                             onclick={{action "selectDefaultIcon" this.customIcon}}
                                                             alt="icon"
                                                             data-test-icon-img
                                                         >
-                                                        {{#if (eq this.buttonIcon this.customIcon)}}
+                                                        {{#if (eq this.membersUtils.buttonIcon this.customIcon)}}
                                                         <button type="button" class="gh-btn gh-btn-hover-red gh-portal-button-deleteicon" {{action "deleteCustomIcon"}}>
                                                             <span> {{svg-jar "trash" class="w5 h5"}} </span>
                                                         </button>
@@ -242,12 +266,13 @@
             <div class="gh-portal-preview-container {{if this.showLinksPage "hide"}}">
                 <div class="gh-portal-site-frame-cover"> </div>
                 <GhSiteIframe
-                    @guid="portal-preview-site"
+                    class="gh-portal-siteiframe"
                     @src={{this.portalPreviewUrl}}
-                    @classNames="gh-portal-siteiframe {{if this.hidePreviewFrame "invisible"}}"
-                ></GhSiteIframe>
+                    @guid={{this.portalPreviewGuid}}
+                    @invisibleUntilLoaded="portal-ready" />
             </div>
 
         </div>
+        {{/if}}
     </div>
 </div>

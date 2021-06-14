@@ -11,15 +11,20 @@
     }
 }
 
+.gh-product-cards {
+    margin: 0 0 24px;
+}
+
 .gh-product-card {
+    position:relative;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    border: 1px solid var(--whitegrey);
-    border-radius: 2px;
-    padding: 8vmin 48px;
+    align-items: flex-start;
+    justify-content: space-between;
+    border-radius: 3px;
+    padding: 24px;
+    background: white;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 4px -1px rgba(0,0,0,0.1);
 }
 
 @media (max-width: 980px) {
@@ -28,14 +33,70 @@
     }
 }
 
+.gh-product-card-editbutton {
+    position: absolute;
+    right: 24px;
+    top: 16px;
+}
+
+.gh-product-card-block {
+    flex-basis: 50%;
+}
+
+.gh-product-card-block:not(:first-of-type) {
+    border-left: 1px solid var(--whitegrey);
+    padding-left: 16px;
+}
+
 .gh-product-card-name {
-    font-size: 1.75rem;
+    font-size: 1.8rem;
+    font-weight: 600;
     margin: 0;
 }
 
+.gh-product-card-heading {
+    display: inline-block;
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
 .gh-product-card-description {
-    margin: 0 0 16px;
+    margin: 2px 0 0;
     color: var(--midgrey);
+}
+
+.gh-product-card-price {
+    margin: 0 0 2px;
+    font-size: 1.3rem;
+    color: var(--midgrey);
+}
+
+.gh-product-card-price .amount,
+.gh-product-card-price .currency {
+    font-weight: 600;
+    color: var(--darkgrey);
+}
+
+.gh-product-card-price .currency {
+    text-transform: uppercase;
+}
+
+.gh-product-cards-footer {
+    display: flex;
+    align-items: center;
+    margin-top: -7px;
+    color: var(--midgrey);
+    font-size: 1.35rem;
+}
+
+.gh-btn-add-product,
+.gh-btn-add-product:hover {
+    margin-right: 5px;
+}
+
+.gh-btn-add-product svg {
+    margin-right: 2px;
 }
 
 .gh-product-list-icon {
@@ -245,6 +306,10 @@
 /* Price details */
 .gh-product-priceform-block {
     margin-bottom: 32px;
+}
+
+.gh-product-priceform-block .form-group:last-of-type {
+    margin-bottom: 0;
 }
 
 .gh-product-priceform-pricecurrency {

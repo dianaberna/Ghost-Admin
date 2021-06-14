@@ -28,7 +28,7 @@
         {{#if this.errors}}
             <div>
                 <h2 class="mb0 mt4 f5 fw6">{{t "Errors"}}</h2>
-                <p class="mb2">{{{t "Highly recommended to fix, functionality <span>could</span> be restricted"}}}</p>
+                <p class="mb2">{{t "Highly recommended to fix, functionality <span>could</span> be restricted" htmlSafe=true}}</p>
             </div>
 
             <ul class="pa0" data-test-theme-errors>

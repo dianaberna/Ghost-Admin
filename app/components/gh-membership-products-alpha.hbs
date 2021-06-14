@@ -1,0 +1,46 @@
+<label>Products</label>
+<div class="gh-product-cards">
+{{#each this.products as |product productIdx|}}
+    <div class="gh-product-card">
+        <button class="gh-product-card-editbutton gh-btn gh-btn-text gh-btn-link green" {{action "openEditProduct" product}}>
+            <span>Edit</span>
+        </button>
+        <div class="gh-product-card-block">
+            <h3 class="gh-product-card-name">
+                {{product.name}}
+            </h3>
+            <p class="gh-product-card-description">
+                {{product.description}}
+            </p>
+            {{#if (and (eq productIdx 0) (not (eq products.length 1)))}}
+                <span class="gh-badge gh-badge-green">Available in Portal</span>
+            {{/if}}
+        </div>
+        <div class="gh-product-card-block">
+            <span class="gh-product-card-heading">Pricing</span>
+            <p class="gh-product-card-price">
+                <span class="amount">{{gh-price-amount product.monthlyPrice.amount}} </span><span class="currency">{{product.monthlyPrice.currency}}</span><span class="period">/month</span>
+            </p>
+            <p class="gh-product-card-price">
+                <span class="amount">{{gh-price-amount product.yearlyPrice.amount}} </span><span class="currency">{{product.monthlyPrice.currency}}</span><span class="period">/year</span>
+            </p>
+        </div>
+    </div>
+{{/each}}
+
+<div class="gh-product-cards-footer">
+    <button class="gh-btn gh-btn-link gh-btn-text gh-btn-icon gh-btn-add-product green" {{action "openNewProduct" product}}><span>{{svg-jar "add-stroke" class="stroke-green"}}Add product</span></button>
+    <span>&ndash; Advanced (<a href="javascript:">learn more</a>)</span>
+</div>
+</div>
+
+{{#if this.showProductModal}}
+    <GhFullscreenModal
+        @modal="product"
+        @model={{hash
+            product=this.productModel
+        }}
+        @confirm={{this.confirmProductSave}}
+        @close={{this.closeProductModal}}
+        @modifier="action wide" />
+{{/if}}

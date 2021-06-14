@@ -5,9 +5,10 @@ import {task} from 'ember-concurrency-decorators';
 import {tracked} from '@glimmer/tracking';
 
 export default class ProductController extends Controller {
-    @service settings;
     @service config;
     @service intl;
+    @service membersUtils;
+    @service settings;
 
     @tracked showLeaveSettingsModal = false;
     @tracked showPriceModal = false;
@@ -99,6 +100,11 @@ export default class ProductController extends Controller {
         price.active = true;
         price.amount = price.amount * 100;
         this.send('savePrice', price);
+    }
+
+    @action
+    openStripeConnect() {
+        alert(this.intl.t('settings.Update to use stripe-connect modal (see memberships screen)'));
     }
 
     @action

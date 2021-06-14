@@ -89,7 +89,7 @@
                         <div class="flex justify-between items-center">
                             <div>
                                 <h4 class="gh-setting-title m">{{t "members.Subscribed to newsletter"}}</h4>
-                                <p class="gh-setting-desc">{{{t "members.If disabled, member will <em>not</em> receive newsletter emails"}}}</p>
+                                <p class="gh-setting-desc">{{t "members.If disabled, member will <em>not</em> receive newsletter emails" htmlSafe=true}}</p>
                             </div>
                             <div class="for-switch">
                                 <label class="switch" for="subscribed-checkbox">
@@ -113,7 +113,7 @@
                         <GhTextarea @id="member-note" @name="note" @class="gh-member-details-textarea" @tabindex="3"
                             @value={{this.scratchMember.note}} @focus-out={{action "setProperty" "note" this.scratchMember.note}} data-test-input="member-note" />
                         <GhErrorMessage @errors={{this.member.errors}} @property="note" />
-                        <p> <p>{{{t "members.Maximum: <b>{max}</b> characters. You’ve used {count}" count=(gh-count-down-characters this.scratchMember.note 500) max=500}}}</p></p>
+                        <p> <p>{{t "members.Maximum: <b>{max}</b> characters. You’ve used {count}" count=(gh-count-down-characters this.scratchMember.note 500) max=500 htmlSafe=true}}</p></p>
                     </GhFormGroup>
                 </div>
             </div>

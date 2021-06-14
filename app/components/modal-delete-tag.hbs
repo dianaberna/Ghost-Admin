@@ -7,7 +7,7 @@
     {{#if this.tag.post_count}}
         <span class="red">{{t "This tag is attached to {posts, plural}." posts=this.tag.count.posts}} {{this.postInflection}}.</span>
     {{/if}}
-    {{{t "You're about to delete \"<strong>{name}</strong>\". This is permanent! We warned you, k?" name=this.tag.name}}}
+    {{t "You're about to delete \"<strong>{name}</strong>\". This is permanent! We warned you, k?" name=this.tag.name htmlSafe=true}}
 </div>
 
 <div class="modal-footer">

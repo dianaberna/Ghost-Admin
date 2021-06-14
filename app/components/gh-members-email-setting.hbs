@@ -7,7 +7,7 @@
                     <h4 class="gh-expandable-title">{{t "members.Email design"}}</h4>
                     <p class="gh-expandable-description">{{t "members.Customize the look and feel of email newsletters"}}</p>
                 </div>
-                <button type="button" class="gh-btn gh-btn-green" {{action (toggle "showEmailDesignSettings" this)}} data-test-toggle-membersFrom><span> {{t "common.Customize"}} </span></button>
+                <button type="button" class="gh-btn gh-btn-green" {{on "click" @toggleEmailDesignSettings}} data-test-toggle-membersFrom><span> {{t "common.Customize"}} </span></button>
             </div>
         </div>
     </section>
@@ -16,7 +16,7 @@
 <div class="gh-main-section">
     <h4 class="gh-main-section-header small bn">{{t "members.Email"}}</h4>
     <section class="gh-expandable">
-        <Settings::DefaultEmailRecipients
+        <Settings::EmailDefaultRecipients
             @expanded={{this.emailRecipientsExpanded}}
             @toggleExpansion={{this.toggleEmailRecipientsExpansion}}
         />
@@ -138,7 +138,7 @@
             <div class="gh-expandable-header">
                 <div>
                     <h4 class="gh-expandable-title">{{t "members.Email newsletter settings"}}</h4>
-                    <p class="gh-expandable-description">{{{t "members.The <a href=\"https://www.mailgun.com/\" target=\"_blank\" rel=\"nofollow noopener\">Mailgun API</a> is used for bulk email newsletter delivery. <a href=\"https://ghost.org/docs/faq/mailgun-newsletters/\" target=\"_blank\" rel=\"noopener\">Why is this required?</a>"}}}</p>
+                    <p class="gh-expandable-description">{{t "members.The <a href=\"https://www.mailgun.com/\" target=\"_blank\" rel=\"nofollow noopener\">Mailgun API</a> is used for bulk email newsletter delivery. <a href=\"https://ghost.org/docs/faq/mailgun-newsletters/\" target=\"_blank\" rel=\"noopener\">Why is this required?</a>" htmlSafe=true}}</p>
                 </div>
                 <button type="button" class="gh-btn" {{action (toggle "membersEmailOpen" this)}} data-test-toggle-membersemail>
                     <span>{{if this.membersEmailOpen (t "common.Close") (t "common.Expand")}}</span>
@@ -175,7 +175,7 @@
                     </div>
                     <div class="nt5 mb5">
                         <a href="https://app.mailgun.com/app/sending/domains" target="_blank" class="mt1 fw4 f8">
-                            {{t "members.Find your Mailgun region and domain here &raquo;"}}
+                            {{t "members.Find your Mailgun region and domain here &raquo;" htmlSafe=true}}
                         </a>
                     </div>
                     <GhFormGroup>
@@ -188,7 +188,7 @@
                             data-test-mailgun-api-key-input={{true}}
                         />
                         <a href="https://app.mailgun.com/app/account/security/api_keys" target="_blank" class="mt1 fw4 f8">
-                            {{t "members.Find your Mailgun API keys here &raquo;"}}
+                            {{t "members.Find your Mailgun API keys here &raquo;" htmlSafe=true}}
                         </a>
                     </GhFormGroup>
                 </div>
@@ -198,11 +198,3 @@
         {{/unless}}
     </section>
 </div>
-
-{{#if this.showEmailDesignSettings}}
-    <GhFullscreenModal @modifier="full-overlay portal-settings">
-        <ModalEmailDesignSettings
-            @closeModal={{action "closeEmailDesignSettings"}}
-        />
-    </GhFullscreenModal>
-{{/if}}

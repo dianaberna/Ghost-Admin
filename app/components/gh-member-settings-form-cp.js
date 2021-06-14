@@ -29,10 +29,25 @@ export default class extends Component {
         return !this.member.get('isNew') && this.membersUtils.isStripeEnabled;
     }
 
+    get isAddComplimentaryAllowed() {
+        if (!this.membersUtils.isStripeEnabled) {
+            return false;
+        }
+        let subscriptions = this.member.get('subscriptions') || [];
+        const hasZeroPriceSub = subscriptions.filter((sub) => {
+            return ['active', 'trialing', 'unpaid', 'past_due'].includes(sub.status);
+        }).find((sub) => {
+            return !sub?.price?.amount;
+        });
+        return !hasZeroPriceSub;
+    }
+
     get products() {
         let products = this.member.get('products') || [];
         let subscriptions = this.member.get('subscriptions') || [];
-        let subscriptionData = subscriptions.map((sub) => {
+        let subscriptionData = subscriptions.filter((sub) => {
+            return !!sub.price;
+        }).map((sub) => {
             return {
                 ...sub,
                 startDate: sub.start_date ? moment(sub.start_date).format('D MMM YYYY') : '-',
@@ -71,6 +86,10 @@ export default class extends Component {
         return null;
     }
 
+    get isCreatingComplimentary() {
+        return this.args.isSaveRunning;
+    }
+
     @action
     setProperty(property, value) {
         this.args.setProperty(property, value);
@@ -94,6 +113,12 @@ export default class extends Component {
     @action
     continueSubscription(subscriptionId) {
         this.continueSubscriptionTask.perform(subscriptionId);
+    }
+
+    @action
+    addCompedSubscription() {
+        this.args.setProperty('comped', true);
+        this.args.saveMember();
     }
 
     @task({drop: true})

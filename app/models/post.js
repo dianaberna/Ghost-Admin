@@ -79,7 +79,6 @@ export default Model.extend(Comparable, ValidationEngine, {
     excerpt: attr('string'),
     customExcerpt: attr('string'),
     featured: attr('boolean', {defaultValue: false}),
-    featureImage: attr('string'),
     canonicalUrl: attr('string'),
     codeinjectionFoot: attr('string', {defaultValue: ''}),
     codeinjectionHead: attr('string', {defaultValue: ''}),
@@ -92,7 +91,7 @@ export default Model.extend(Comparable, ValidationEngine, {
     twitterDescription: attr('string'),
     emailSubject: attr('string'),
     html: attr('string'),
-    visibility: attr('visibility-string'),
+    visibility: attr('string'),
     metaDescription: attr('string'),
     metaTitle: attr('string'),
     mobiledoc: attr('json-string'),
@@ -106,6 +105,10 @@ export default Model.extend(Comparable, ValidationEngine, {
     url: attr('string'),
     uuid: attr('string'),
     emailRecipientFilter: attr('members-segment-string', {defaultValue: null}),
+
+    featureImage: attr('string'),
+    featureImageAlt: attr('string'),
+    featureImageCaption: attr('string'),
 
     authors: hasMany('user', {embedded: 'always', async: false}),
     createdBy: belongsTo('user', {async: true}),
@@ -192,18 +195,6 @@ export default Model.extend(Comparable, ValidationEngine, {
             let momentValue = value ? moment(value) : null;
             this._setPublishedAtBlogStrings(momentValue);
             return this._getPublishedAtBlogTZ();
-        }
-    }),
-
-    isPublic: computed('visibility', function () {
-        return this.visibility === 'public' ? true : false;
-    }),
-
-    visibilitySegment: computed('visibility', 'isPublic', function () {
-        if (this.isPublic) {
-            return this.settings.get('defaultContentVisibility') === 'paid' ? 'status:-free' : 'status:free,status:-free';
-        } else {
-            return this.visibility;
         }
     }),
 

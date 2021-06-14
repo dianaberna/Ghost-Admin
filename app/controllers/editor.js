@@ -101,8 +101,10 @@ export default Controller.extend({
         return this.store.peekAll('snippet');
     }),
 
-    snippets: computed('_snippets.@each.isNew', function () {
-        return this._snippets.reject(snippet => snippet.get('isNew'));
+    snippets: computed('_snippets.@each.{name,isNew}', function () {
+        return this._snippets
+            .reject(snippet => snippet.get('isNew'))
+            .sort((a, b) => a.name.localeCompare(b.name));
     }),
 
     canManageSnippets: computed('session.user.{isOwnerOrAdmin,isEditor}', function () {
@@ -260,6 +262,22 @@ export default Controller.extend({
 
         updateWordCount(counts) {
             this.set('wordCount', counts);
+        },
+
+        setFeatureImage(url) {
+            this.post.set('featureImage', url);
+        },
+
+        clearFeatureImage() {
+            this.post.set('featureImage', null);
+        },
+
+        setFeatureImageAlt(text) {
+            this.post.set('featureImageAlt', text);
+        },
+
+        setFeatureImageCaption(html) {
+            this.post.set('featureImageCaption', html);
         }
     },
 

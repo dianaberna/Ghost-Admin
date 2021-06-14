@@ -6,7 +6,11 @@
 
 <div class="modal-body">
     <p>
-        {{{t "Your current plan only supports official themes. You can install them from the <a href=\"https://ghost.org/marketplace/\">Ghost theme marketplace</a>"}}}.
+        {{#if this.model.limitErrorMessage}}
+            {{html-safe this.model.limitErrorMessage}}
+        {{else}}
+            {{t "Your current plan only supports official themes. You can install them from the <a href=\"https://ghost.org/marketplace/\">Ghost theme marketplace</a>." htmlSafe=true}}
+        {{/if}}
     </p>
 </div>
 
@@ -16,6 +20,6 @@
     </button>
 
     <button {{on "click" (action "upgrade")}} class="gh-btn gh-btn-green" data-test-button="upgrade-plan">
-        <span>Upgrade</span>
+        <span>{{t "Upgrade"}}</span>
     </button>
 </div>

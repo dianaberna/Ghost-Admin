@@ -1,0 +1,29 @@
+<header class="modal-header" data-test-modal="webhook-form" {{will-destroy this.reset}}>
+    <h1 data-test-text="title">{{t "settings.Connect with Stripe"}}</h1>
+</header>
+<button class="close" href title={{t "common.Close"}} {{action "closeModal"}} {{action (optional this.noop) on="mouseDown"}}>
+    {{svg-jar "close"}}
+</button>
+
+<form>
+<div class="modal-body" {{did-insert this.updateSuccessModifier}}>
+    <GhMembersPaymentsSetting
+        @setStripeConnectIntegrationTokenSetting={{this.setStripeConnectIntegrationTokenSetting}}
+        @onConnected={{this.updateSuccessModifier}}
+        @onDisconnected={{this.updateSuccessModifier}}
+    />
+</div>
+</form>
+
+<div class="modal-footer">
+    {{#if this.settings.stripeConnectAccountId}}
+        <button
+            class="gh-btn gh-btn-black"
+            {{action "closeModal"}}
+            {{action (optional this.noop) on="mouseDown"}}
+            data-test-button="cancel-webhook"
+        >
+            <span>{{t "common.OK"}}</span>
+        </button>
+    {{/if}}
+</div>

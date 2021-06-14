@@ -76,7 +76,7 @@
                     </GhFormGroup>
 
                     <GhFormGroup @errors={{this.member.errors}} @hasValidated={{this.member.hasValidated}} @property="note" @classNames="mb0 gh-member-note">
-                        <label for="member-note">{{{t "settings.Note <span class=\"midgrey-l2 fw4\">(not visible to member)</span>"}}}</label>
+                        <label for="member-note">{{t "settings.Note <span class=\"midgrey-l2 fw4\">(not visible to member)</span>" htmlSafe=true}}</label>
                         <GhTextarea @id="member-note" @name="note" @class="gh-member-details-textarea" @tabindex="3"
                             @value={{this.scratchMember.note}} @focus-out={{action "setProperty" "note" this.scratchMember.note}} data-test-input="member-note" />
                         <GhErrorMessage @errors={{this.member.errors}} @property="note" />
@@ -88,7 +88,7 @@
                         <div class="flex justify-between items-center">
                             <div>
                                 <h4 class="gh-setting-title m">{{t "settings.Subscribed to newsletter"}}</h4>
-                                <p class="gh-setting-desc">{{{t "settings.If disabled, member will <em>not</em> receive newsletter emails"}}}</p>
+                                <p class="gh-setting-desc">{{t "settings.If disabled, member will <em>not</em> receive newsletter emails" htmlSafe=true}}</p>
                             </div>
                             <div class="for-switch">
                                 <label class="switch" for="subscribed-checkbox">
@@ -107,11 +107,28 @@
             {{#unless this.products}}
             <div class="gh-main-section-content bordered">
                 <div class="gh-cp-memberproduct-noproduct">
-                    <div class="mb2">{{t "settings.This member doesn't have any subscriptions."}}</div>
+                    {{#unless this.isCreatingComplimentary}}
+                    <div class="mb2">{{t "settings.This member doesn't have subscriptions."}}</div>
+                    {{/unless}}
+
                     {{#unless this.member.isNew}}
-                    <button type="button" class="gh-btn gh-btn-text green gh-btn-icon gh-btn-addproduct" {{action (toggle "showMemberProductModal" this)}}>
-                        <span>{{svg-jar "add"}} {{t "settings.Add subscription"}}</span>
-                    </button>
+                        {{#if this.isAddComplimentaryAllowed}}
+                            {{#if this.isCreatingComplimentary}}
+                                <GhLoadingSpinner />
+                            {{else}}
+                                {{#if (feature "multipleProducts")}}
+                                    {{!-- {{if has multiple products!}} --}}
+                                    <button type="button" class="gh-btn gh-btn-text green gh-btn-icon gh-btn-addproduct" {{action (toggle "showMemberProductModal" this)}}>
+                                        <span>{{svg-jar "add"}} {{t "settings.Add complimentary subscription"}}</span>
+                                    </button>
+                                    {{!-- {{/if}} --}}
+                                {{else}}
+                                    <button type="button" class="gh-btn gh-btn-text green gh-btn-icon gh-btn-addproduct" {{action "addCompedSubscription"}}>
+                                        <span>{{svg-jar "add"}} {{t "settings.Add complimentary subscription"}}</span>
+                                    </button>
+                                {{/if}}
+                            {{/if}}
+                        {{/if}}
                     {{/unless}}
                 </div>
             </div>
@@ -177,12 +194,17 @@
                             </span>
                         </div>
                         {{/each}}
-
-                        <div class="gh-memberproduct-list-footer">
-                        <button type="button" class="gh-btn gh-btn-text green gh-btn-icon gh-btn-addproduct" {{action (toggle "showMemberProductModal" this)}}>
-                            <span>{{svg-jar "add"}} {{t "settings.Add subscription"}}</span>
-                        </button>
-                        </div>
+                        {{#if this.isAddComplimentaryAllowed}}
+                            <div class="gh-memberproduct-list-footer {{if this.isCreatingComplimentary "min-height" ""}}">
+                                {{#if this.isCreatingComplimentary}}
+                                    <GhLoadingSpinner />
+                                {{else}}
+                                    <button type="button" class="gh-btn gh-btn-text green gh-btn-icon gh-btn-addproduct" {{action "addCompedSubscription"}}>
+                                        <span>{{svg-jar "add"}} {{t "settings.Add complimentary subscription"}}</span>
+                                    </button>
+                                {{/if}}
+                            </div>
+                        {{/if}}
                     </div>
                 </div>
             {{/each}}

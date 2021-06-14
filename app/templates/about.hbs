@@ -5,12 +5,12 @@
     <section class="view-container">
         <section class="gh-env-details">
             <ul class="gh-env-list">
-                <li class="gh-env-list-version">{{{t "<strong>Version</strong> {version}" version=this.config.version}}}</li>
-                <li>{{{t "<strong>Environment</strong> {environment}" environment=this.config.environment}}}</li>
-                <li class="gh-env-list-database-type">{{{t "<strong>Database</strong> {database}" database=this.config.database}}}</li>
-                <li>{{{t "<strong>Mail</strong> {mail}" mail=(if this.config.mail this.config.mail "Native")}}}</li>
+                <li class="gh-env-list-version">{{t "<strong>Version</strong> {version}" version=this.config.version htmlSafe=true}}</li>
+                <li>{{t "<strong>Environment</strong> {environment}" environment=this.config.environment htmlSafe=true}}</li>
+                <li class="gh-env-list-database-type">{{t "<strong>Database</strong> {database}" database=this.config.database htmlSafe=true}}</li>
+                <li>{{t "<strong>Mail</strong> {mail}" mail=(if this.config.mail this.config.mail "Native") htmlSafe=true}}</li>
                 {{#if (enable-developer-experiments)}}
-                <li>{{{t "<strong>Developer experiments</strong> Enabled"}}}</li>
+                <li>{{t "<strong>Developer experiments</strong> Enabled" htmlSafe=true}}</li>
                 {{/if}}
             </ul>
             <div class="gh-env-help">

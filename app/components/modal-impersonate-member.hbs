@@ -15,7 +15,7 @@
     </div>
 
     <p class="tc pl4 pr4">
-        {{{t "members.This is an authentication link to sign into <strong>{blogTitle}</strong> as <strong>{email}</strong>, you can send it to them if they need it, or use it to sign into their account for customer support." blogTitle=this.config.blogTitle email=this.member.email}}}
+        {{t "members.This is an authentication link to sign into <strong>{blogTitle}</strong> as <strong>{email}</strong>, you can send it to them if they need it, or use it to sign into their account for customer support." blogTitle=this.config.blogTitle email=this.member.email htmlSafe=true}}
     </p>
 
     <fieldset>
@@ -46,5 +46,5 @@
 </div>
 
 <div>
-    <p class="tc pt4 mb2">{{{t "members.This link is only valid for the next <strong>24 hours</strong>"}}}</p>
+    <p class="tc pt4 mb2">{{t "members.This link is only valid for the next <strong>24 hours</strong>" htmlSafe=true}}</p>
 </div>

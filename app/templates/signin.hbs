@@ -81,7 +81,7 @@
                     </span>
                 </GhFormGroup>
 
-                <GhTaskButton @buttonText={{t "taskButton.Sign in &rarr;"}}
+                <GhTaskButton @buttonText={{t "taskButton.Sign in &rarr;" htmlSafe=true}}
                     @task={{this.validateAndAuthenticate}}
                     @showSuccess={{false}}
                     @class="login gh-btn gh-btn-login gh-btn-block gh-btn-icon js-login-button"

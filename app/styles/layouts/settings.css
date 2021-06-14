@@ -225,7 +225,7 @@
     align-self: center;
 }
 
-.gh-setting-action .for-checkbox label, 
+.gh-setting-action .for-checkbox label,
 .gh-setting-action .for-radio label {
     padding-bottom: 0;
     margin-bottom: 0;
@@ -1378,4 +1378,526 @@ p.theme-validation-details {
 .gh-branding-settings .gh-accent-color .response {
     margin: -8px 0 0;
     font-size: 1.3rem;
+}
+
+/* Membership */
+.gh-setting-members-header {
+    position: relative;
+    background: none;
+}
+
+.gh-setting-members-canvas::before {
+    position: absolute;
+    display: block;
+    content: "";
+    top: -450px;
+    right: -250px;
+    width: 970px;
+    height: 970px;
+    border-radius: 50%;
+    z-index: 0;
+    background: var(--main-color-content-greybg);
+    opacity: 0.5;
+}
+
+@media (max-width: 1140px) {
+    .gh-setting-members-canvas::before {
+        display: none;
+    }
+}
+
+.gh-setting-members-basics {
+    display: grid;
+    grid-template-columns: auto 460px;
+    grid-gap: 32px;
+}
+
+@media (max-width: 1320px) {
+    .gh-setting-members-basics {
+        grid-gap: 0;
+    }
+}
+
+@media (max-width: 1140px) {
+    .gh-setting-members-basics {
+        display: flex;
+    }
+}
+
+.gh-setting-members-basicsform {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.gh-setting-members-basicsform .intro {
+    margin: 0;
+    font-size: 1.6rem;
+}
+
+.gh-setting-members-portalcta {
+    background: linear-gradient(to left, color-mod(var(--main-color-content-greybg) l(-3%)), var(--main-color-content-greybg));
+}
+
+.gh-setting-members-portalcta .gh-expandable-header button {
+    margin-left: 16px;
+}
+
+@media (max-width: 500px), (min-width: 1140px) and (max-width: 1260px) {
+    .gh-setting-members-portalcta .gh-expandable-header {
+        flex-direction: column;
+        align-items: inherit;
+    }
+
+    .gh-setting-members-portalcta .gh-expandable-header button {
+        margin-top: 1rem;
+        margin-left: 0;
+    }
+}
+
+.gh-setting-members-portalcta .gh-expandable-description {
+    padding-top: 2px;
+    line-height: 1.4;
+}
+
+.gh-setting-members-access {
+    margin-bottom: 30px;
+}
+
+.gh-setting-members-portalpreview {
+    justify-self: end;
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: var(--midgrey);
+}
+
+@media (max-width: 1140px) {
+    .gh-setting-members-portalpreview {
+        display: none;
+    }
+}
+
+.gh-setting-dropdown {
+    margin-top: 1.2rem;
+    cursor: pointer;
+    background: var(--white);
+}
+
+.gh-setting-dropdown[aria-disabled="true"] {
+    background: var(--whitegrey-l2);
+}
+
+.gh-setting-dropdown[aria-disabled="true"] svg path {
+    fill: var(--lightgrey-d1);
+}
+
+.gh-setting-dropdown[aria-disabled="true"] .gh-radio-label {
+    opacity: .65;
+}
+
+.gh-setting-dropdown:focus-visible {
+    outline: none;
+}
+
+.gh-setting-dropdown .ember-power-select-status-icon {
+    right: 24px;
+}
+
+.gh-setting-dropdown .gh-setting-dropdown-content {
+    display: flex;
+    align-items: center;
+    margin: 1.6rem 2.4rem 1.6rem 1rem;
+}
+
+.gh-setting-dropdown-list {
+    margin-top: -1px;
+    border-top: 1px solid var(--input-border-color) !important;
+}
+
+.gh-setting-dropdown-list .ember-power-select-option {
+    padding: 6px 8px;
+}
+
+.gh-setting-dropdown-list .gh-setting-dropdown-content {
+    display: flex;
+    align-items: center;
+    margin: 1.4rem 1rem;
+}
+
+.gh-setting-dropdown-content svg {
+    width: 3rem;
+    height: 3rem;
+    margin-right: 1.2rem;
+}
+
+.gh-setting-richdd-container {
+    margin: 36px 0;
+}
+
+.gh-setting-members-tierscontainer {
+    margin-top: 4vmin;
+}
+
+.gh-settings-members-tiersheader {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+}
+
+.gh-settings-members-tiersheader .gh-btn-stripe-status {
+    margin-bottom: 12px;
+}
+
+.gh-settings-members-tiersheader .gh-btn-stripe-status span {
+    height: 28px;
+    line-height: 28px;
+    font-size: 1.25rem;
+}
+
+.gh-setting-members-tierscontainer .gh-expandable:not(:first-of-type) {
+    margin-top: 20px;
+}
+
+.gh-settings-members-pricelabelcont {
+    display: flex;
+    align-items: baseline;
+}
+
+.gh-settings-members-pricelabelcont span {
+    margin: 0 4px;
+}
+
+.gh-settings-members-pricelabelcont span,
+.gh-settings-members-pricelabelcont div {
+    display: inline-block;
+    margin-bottom: 4px;
+}
+
+.gh-setting-members-currency {
+    position: relative;
+}
+
+.gh-setting-members-currencylabel {
+    position: absolute;
+    display: flex !important;
+    align-items: center;
+    top: 1px;
+    left: 0px;
+    background: var(--main-color-content-greybg);
+    height: 20px;
+    font-weight: 500;
+    font-size: 1.4rem;
+    color: var(--middarkgrey);
+    text-transform: uppercase;
+    pointer-events: none;
+}
+
+.gh-setting-members-currencylabel span {
+    margin-right: 0;
+}
+
+.gh-settings-members-pricelabelcont .gh-select svg {
+    position: unset;
+    margin-top: -3px;
+}
+
+.gh-settings-members-pricelabelcont .gh-select {
+    padding: 0;
+    width: 60px;
+    height: 16px;
+    background: transparent;
+    border: none;
+    margin-left: -4px;
+}
+
+.gh-settings-members-pricelabelcont .gh-select select {
+    background: transparent;
+    font-size: 1.4rem;
+    font-weight: 500;
+    border: none;
+    height: 16px;
+    width: 46px;
+    padding: 0;
+}
+
+.gh-setting-members-prices {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 20px;
+}
+
+.gh-setting-members-portal-mock {
+    display: flex;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    box-shadow:
+        0 2.8px 2.2px rgba(0, 0, 0, 0.02),
+        0 6.7px 5.3px rgba(0, 0, 0, 0.028),
+        0 12.5px 10px rgba(0, 0, 0, 0.035),
+        0 22.3px 17.9px rgba(0, 0, 0, 0.042),
+        0 41.8px 33.4px rgba(0, 0, 0, 0.05),
+        0 100px 80px rgba(0, 0, 0, 0.07)
+    ;
+    width: 420px;
+    height: 562px;
+    margin-bottom: 32px;
+    border-radius: 5px;
+    pointer-events: none;
+    transition: height 0.17s ease-out;
+}
+
+.gh-setting-members-portal-disabled {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 32px;
+    text-align: center;
+}
+
+.gh-setting-members-portal-disabled svg {
+    width: 44px;
+    height: 44px;
+}
+
+.gh-setting-members-portal-disabled svg path {
+    stroke-width: 1.2px;
+}
+
+.gh-setting-members-portal-disabled h4 {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--darkgrey);
+}
+
+.gh-setting-members-portal-disabled p {
+    max-width: 240px;
+    font-weight: 400;
+}
+
+.gh-setting-members-portal-mock .site-frame {
+    border-radius: 5px;
+}
+
+/* Stripe Connect modal */
+.fullscreen-modal-stripe-connect {
+    max-width: 860px;
+}
+
+.fullscreen-modal-stripe-connected {
+    max-width: 440px;
+}
+
+.fullscreen-modal-stripe-connect .gh-main-section {
+    margin: 0 0 -32px;
+}
+
+.fullscreen-modal-stripe-connected .gh-main-section {
+    margin-bottom: -20px;
+}
+
+.fullscreen-modal-stripe-connect:not(.fullscreen-modal-stripe-connected) .modal-footer .gh-btn {
+    display: none;
+}
+
+.fullscreen-modal-stripe-connect.fullscreen-modal-stripe-connected .modal-header {
+    display: none;
+}
+
+.gh-members-stripe-info-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.gh-members-stripe-info-header h4 {
+    font-weight: 600;
+    margin: 0;
+    padding: 0;
+    color: #555ABF;
+}
+
+.gh-members-stripe-info {
+    border-radius: 0.9rem;
+    background: color-mod(#555ABF a(12%));
+    padding: 12px;
+    width: 380px;
+    color: #555ABF;
+}
+
+.gh-members-stripe-badge {
+    width: 180px;
+}
+
+.gh-members-stripe-link,
+.gh-members-stripe-link:hover {
+    color: #555ABF;
+    text-decoration: underline;
+}
+
+.gh-members-connectbutton-container {
+    margin-right: 4px;
+}
+
+.gh-members-connectbutton-container .for-switch {
+    line-height: 1em;
+}
+
+.gh-members-connectbutton-container .for-switch label {
+    width: 36px !important
+}
+
+.gh-members-connectbutton-container .for-switch input:checked + .input-toggle-component {
+    background: #F1946A;
+}
+
+.gh-members-connect-testmodeon {
+    color: #F1946A;
+}
+
+.gh-members-stripe-connect-token {
+    background: var(--whitegrey-l2);
+    min-height: unset;
+    height: 80px;
+    font-family: var(--font-family-mono);
+    font-size: 1.3rem;
+    resize: none;
+}
+
+.gh-members-connect-testmodelabel {
+    display: inline-block;
+    background: #f8e5b9;
+    color: #983705;
+    font-size: 1.2rem;
+    font-weight: 500;
+    line-height: 1em;
+    border-radius: 999px;
+    padding: 4px 8px;
+}
+
+.gh-members-connect-savecontainer {
+    height: 0px;
+    overflow-y: hidden;
+    transition: all 0.2s ease-in-out;
+    opacity: 0;
+    margin-top: 16px;
+    margin-bottom: 0;
+}
+
+.gh-members-connect-savecontainer.expanded {
+    margin-bottom: 20px;
+}
+
+.gh-members-connect-savecontainer.expanded {
+    height: 36px;
+    opacity: 1.0;
+}
+
+.gh-stripe-connected-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.gh-stripe-connected-container .check-circle {
+    width: 60px;
+    height: 60px;
+    color: var(--green);
+    margin-top: 20px;
+}
+
+.gh-stripe-connected-container .check-circle path {
+    stroke-width: 1px;
+}
+
+.gh-stripe-connected-container h1 {
+    font-size: 2.1rem;
+    font-weight: 600;
+    letter-spacing: -.1px;
+    margin: 20px 0 4px;
+}
+
+.gh-stripe-connected-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.gh-stripe-connected-info p {
+    margin-bottom: 8px;
+}
+
+.gh-btn-stripe-disconnect {
+    align-self: flex-start;
+    margin-bottom: -34px;
+}
+
+.gh-stripe-error-hasactivesub {
+    margin: 24px 24px -8px;
+    color: var(--red);
+}
+
+@media (max-width: 500px) {
+    .gh-members-stripe-info-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .gh-members-stripe-info-header h4 {
+        order: 2;
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid var(--whitegrey);
+    }
+
+    .gh-members-stripe-badge {
+        order: 1;
+        /* margin: -10px 0 0 -10px; */
+    }
+
+    .gh-members-stripe-info {
+        width: 100%;
+    }
+}
+
+.gh-setting-nossl {
+    border-top: 1px solid var(--whitegrey-d1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 16px -24px -12px;
+}
+
+.gh-setting-nossl-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px;
+    text-align: center;
+    max-width: 520px;
+}
+
+.gh-setting-nossl-container svg {
+    width: 44px;
+    height: 44px;
+    margin-bottom: 12px;
+}
+
+.gh-setting-nossl-container svg path,
+.gh-setting-nossl-container svg rect,
+.gh-setting-nossl-container svg circle {
+    stroke-width: 1px;
+}
+
+.gh-setting-nossl-container h4 {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.gh-setting-nossl-container p {
+    margin: 8px 0 0;
+    color: var(--midgrey);
 }

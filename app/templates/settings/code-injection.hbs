@@ -27,7 +27,7 @@
 
                 <div class="gh-main-section">
                     <label for="ghost-head" class="gh-main-section-header bn">{{t "settings.Site Header"}}</label>
-                    <p class="gh-main-section-description bn">{{{t "settings.Code here will be injected into the <code>\{{ghost_head}}</code> tag on every page of the site"}}}</p>
+                    <p class="gh-main-section-description bn">{{t "settings.Code here will be injected into the <code>\{{ghost_head}}</code> tag on every page of the site" htmlSafe=true}}</p>
                     <div class="form-group settings-code">
                         <GhCmEditor @value={{this.settings.codeinjectionHead}} @id="ghost-head" @class="gh-input settings-code-editor" @name="codeInjection[ghost_head]" @type="text" @update={{action (mut this.settings.codeinjectionHead)}} />
                     </div>
@@ -35,7 +35,7 @@
 
                 <div class="gh-main-section">
                     <label for="ghost-foot" class="gh-main-section-header bn">{{t "settings.Site Footer"}}</label>
-                    <p class="gh-main-section-description bn">{{{t "settings.Code here will be injected into the <code>\{{ghost_foot}}</code> tag on every page of the site"}}}</p>
+                    <p class="gh-main-section-description bn">{{t "settings.Code here will be injected into the <code>\{{ghost_foot}}</code> tag on every page of the site" htmlSafe=true}}</p>
                     <div class="form-group settings-code">
                         <GhCmEditor @value={{this.settings.codeinjectionFoot}} @id="ghost-foot" @class="gh-input settings-code-editor" @name="codeInjection[ghost_foot]" @type="text" @update={{action (mut this.settings.codeinjectionFoot)}} />
                     </div>

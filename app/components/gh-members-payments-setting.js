@@ -3,7 +3,10 @@ import {computed} from '@ember/object';
 import {currencies} from 'ghost-admin/utils/currency';
 import {reads} from '@ember/object/computed';
 import {inject as service} from '@ember/service';
-import {task} from 'ember-concurrency';
+import {task, timeout} from 'ember-concurrency';
+
+const RETRY_PRODUCT_SAVE_POLL_LENGTH = 1000;
+const RETRY_PRODUCT_SAVE_MAX_POLL = 15 * RETRY_PRODUCT_SAVE_POLL_LENGTH;
 
 export default Component.extend({
     config: service(),
@@ -12,6 +15,7 @@ export default Component.extend({
     ghostPaths: service(),
     ajax: service(),
     settings: service(),
+    store: service(),
 
     topCurrencies: null,
     currencies: null,
@@ -227,6 +231,71 @@ export default Component.extend({
 
         yield this.ajax.delete(url);
         yield this.settings.reload();
+
+        this.onDisconnected?.();
+    }),
+
+    calculateDiscount(monthly, yearly) {
+        if (isNaN(monthly) || isNaN(yearly)) {
+            return 0;
+        }
+
+        return monthly ? 100 - Math.floor((yearly / 12 * 100) / monthly) : 0;
+    },
+
+    getActivePrice(prices, interval, amount, currency) {
+        return prices.find((price) => {
+            return (
+                price.active && price.amount === amount && price.type === 'recurring' &&
+                price.interval === interval && price.currency.toLowerCase() === currency.toLowerCase()
+            );
+        });
+    },
+
+    saveProduct: task(function* () {
+        const products = yield this.store.query('product', {include: 'monthly_price, yearly_price'});
+        this.product = products.firstObject;
+        if (this.product) {
+            const yearlyDiscount = this.calculateDiscount(5, 50);
+            this.product.set('monthlyPrice', {
+                nickname: 'Monthly',
+                amount: 500,
+                active: 1,
+                description: 'Full access',
+                currency: 'usd',
+                interval: 'month',
+                type: 'recurring'
+            });
+            this.product.set('yearlyPrice', {
+                nickname: 'Yearly',
+                amount: 5000,
+                active: 1,
+                currency: 'usd',
+                description: yearlyDiscount > 0 ? `${yearlyDiscount}% discount` : 'Full access',
+                interval: 'year',
+                type: 'recurring'
+            });
+
+            let pollTimeout = 0;
+            /** To allow Stripe config to be ready in backend, we poll the save product request */
+            while (pollTimeout < RETRY_PRODUCT_SAVE_MAX_POLL) {
+                yield timeout(RETRY_PRODUCT_SAVE_POLL_LENGTH);
+
+                try {
+                    const updatedProduct = yield this.product.save();
+                    return updatedProduct;
+                } catch (error) {
+                    if (error.payload?.errors && error.payload.errors[0].code === 'STRIPE_NOT_CONFIGURED') {
+                        pollTimeout += RETRY_PRODUCT_SAVE_POLL_LENGTH;
+                        // no-op: will try saving again as stripe is not ready
+                        continue;
+                    } else {
+                        throw error;
+                    }
+                }
+            }
+        }
+        return this.product;
     }),
 
     saveStripeSettings: task(function* () {
@@ -234,9 +303,16 @@ export default Component.extend({
         this.set('stripeConnectSuccess', null);
         if (this.get('settings.stripeConnectIntegrationToken')) {
             try {
-                const response = yield this.settings.save();
+                let response = yield this.settings.save();
+
+                yield this.saveProduct.perform();
+                this.settings.set('portalPlans', ['free', 'monthly', 'yearly']);
+                response = yield this.settings.save();
+
                 this.set('membersStripeOpen', false);
                 this.set('stripeConnectSuccess', true);
+                this.onConnected?.();
+
                 return response;
             } catch (error) {
                 if (error.payload && error.payload.errors) {
@@ -248,6 +324,10 @@ export default Component.extend({
         } else {
             this.set('stripeConnectError', this.intl.t('Please enter a secure key'));
         }
+    }).drop(),
+
+    saveSettings: task(function* () {
+        return yield this.settings.save();
     }).drop(),
 
     get liveStripeConnectAuthUrl() {

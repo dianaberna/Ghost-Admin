@@ -25,9 +25,9 @@
             {{#if this.hasWarningsOrErrors}}
                 <p>
                     {{#if this.validationErrors}}
-                        {{{t "themes.The theme <strong>\"{themeName}\"</strong> was installed successfully but we detected some errors." themeName=this.themeName}}}
+                        {{t "themes.The theme <strong>\"{themeName}\"</strong> was installed successfully but we detected some errors." themeName=this.themeName htmlSafe=true}}
                     {{eles}}
-                        {{{t "themes.The theme <strong>\"{themeName}\"</strong> was installed successfully but we detected some warnings." themeName=this.themeName}}}
+                        {{t "themes.The theme <strong>\"{themeName}\"</strong> was installed successfully but we detected some warnings." themeName=this.themeName htmlSafe=true}}
                     {{/if}}
                     {{#if this.canActivateTheme}}
                         {{#if this.validationErrors}}
@@ -41,7 +41,7 @@
                 {{#if this.validationErrors}}
                     <div>
                         <h2 class="mb0 mt4 f5 fw6">{{t "themes.Errors"}}</h2>
-                        <p class="mb2">{{{t "themes.Highly recommended to fix, functionality <strong>could</strong> be restricted"}}}</p>
+                        <p class="mb2">{{t "themes.Highly recommended to fix, functionality <strong>could</strong> be restricted" htmlSafe=true}}</p>
                     </div>
                     <ul class="pa0">
                     {{#each this.validationErrors as |error|}}
@@ -72,7 +72,7 @@
             {{/if}}
         {{else if this.displayOverwriteWarning}}
             <p>
-                {{{t "themes.The theme folder <strong>\"{fileThemeName}\"</strong> already exists. Do you want to overwrite it?" fileThemeName=this.fileThemeName}}}
+                {{t "themes.The theme folder <strong>\"{fileThemeName}\"</strong> already exists. Do you want to overwrite it?" fileThemeName=this.fileThemeName htmlSafe=true}}
             </p>
         {{else if (or this.validationErrors this.fatalValidationErrors)}}
 
@@ -98,7 +98,7 @@
             {{#if this.validationErrors}}
                 <div>
                     <h2 class="mb0 mt4 f5 fw6">{{t "themes.Errors"}}</h2>
-                    <p class="mb2">{{{t "themes.Highly recommended to fix, functionality <strong>could</strong> be restricted"}}}</p>
+                    <p class="mb2">{{t "themes.Highly recommended to fix, functionality <strong>could</strong> be restricted" htmlSafe=true}}</p>
                 </div>
                 <ul class="pa0">
                 {{#each this.validationErrors as |error|}}

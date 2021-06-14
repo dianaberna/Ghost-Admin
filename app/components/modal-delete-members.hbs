@@ -6,7 +6,7 @@
 {{#if (not this.confirmed)}}
     <div class="modal-body" data-test-state="delete-unconfirmed">
         <p>
-            {{{t "members.You're about to delete <strong data-test-text=\"delete-count\">{members, plural}</strong>." members=this.model.memberCount}}}.
+            {{t "members.You're about to delete <strong data-test-text=\"delete-count\">{members, plural}</strong>." members=this.model.memberCount htmlSafe=true}}.
             {{t "members.This is permanent! All Ghost data will be deleted, this will have no effect on subscriptions in Stripe."}}
         </p>
         <p>
@@ -28,7 +28,7 @@
             <div class="flex items-center">
                 {{svg-jar "check-circle" class="w4 h4 stroke-green mr2"}}
                 <p class="ma0 pa0">
-                    {{{t "members.<span class=\"fw6\" data-test-text=\"deleted-count\">{members, plural}</span> successfully deleted" members=this.response.stats.successful}}}
+                    {{t "members.<span class=\"fw6\" data-test-text=\"deleted-count\">{members, plural}</span> successfully deleted" members=this.response.stats.successful htmlSafe=true}}
                 </p>
             </div>
             {{#if this.response.stats.unsuccessful}}
@@ -36,7 +36,7 @@
                     {{svg-jar "warning" class="w4 h4 fill-red mr2 nudge-top--3"}}
                     <div>
                         <p class="ma0 pa0">
-                            {{{t "members.<span class=\"fw5\" data-test-text=\"invalid-count\">{members, plural}</span> failed to delete" members=this.response.stats.unsuccessful}}}
+                            {{t "members.<span class=\"fw5\" data-test-text=\"invalid-count\">{members, plural}</span> failed to delete" members=this.response.stats.unsuccessful htmlSafe=true}}
                         </p>
                     </div>
                 </div>

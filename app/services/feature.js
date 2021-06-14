@@ -53,6 +53,9 @@ export default Service.extend({
     emailAnalytics: feature('emailAnalytics'),
     nightShift: feature('nightShift', {user: true, onChange: '_setAdminTheme'}),
     launchComplete: feature('launchComplete', {user: true}),
+    matchHelper: feature('matchHelper'),
+    multipleProducts: feature('multipleProducts', {developer: true}),
+    featureImageMeta: feature('featureImageMeta', {developer: true}),
 
     _user: null,
 

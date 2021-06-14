@@ -1,1 +1,11 @@
-<iframe id="site-frame" class="site-frame {{this.classNames}}" src={{this.srcUrl}} frameborder="0" allowtransparency="true" ...attributes></iframe>
+<iframe
+    class="site-frame {{if this.isInvisible "invisible"}}"
+    src={{this.srcUrl}}
+    frameborder="0"
+    allowtransparency="true"
+    {{did-insert (optional @onInserted)}}
+    {{did-insert this.attachMessageListener}}
+    {{did-update this.resetSrcAttribute @guid}}
+    {{on "load" this.onLoad}}
+    ...attributes
+></iframe>

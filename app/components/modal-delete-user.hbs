@@ -6,14 +6,14 @@
 <div class="modal-body">
     {{#if this.user.count.posts}}
         <p>
-            {{{t "<strong>{user}</strong> and their <strong>{posts, plural}</strong> will be permanently deleted. If you don’t want to lose these posts, you should assign them to a different author." user=this.user.name posts=this.user.count.posts}}}
+            {{t "<strong>{user}</strong> and their <strong>{posts, plural}</strong> will be permanently deleted. If you don’t want to lose these posts, you should assign them to a different author." user=this.user.name posts=this.user.count.posts htmlSafe=true}}
         </p>
         <p>
             {{t "A backup will be automatically downloaded to your device before deletion."}}
         </p>
     {{else}}
         <p>
-            {{{t "<strong>{user}</strong> will be permanently deleted. A backup will be automatically downloaded to your device before deletion." user=this.user.name}}}
+            {{t "<strong>{user}</strong> will be permanently deleted. A backup will be automatically downloaded to your device before deletion." user=this.user.name htmlSafe=true}}
         </p>
     {{/if}}
 </div>

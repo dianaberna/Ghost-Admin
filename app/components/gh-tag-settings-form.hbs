@@ -18,8 +18,7 @@
                             <GhErrorMessage @errors={{this.tag.errors}} @property="accentColor" data-test-error="accentColor" />
                         </span>
                         <p class="description">
-                            {{{t "tags.Start with # to create internal tags
-                            <a href=\"https://ghost.org/help/organising-content/#private-tags\" target=\"_blank\" rel=\"noreferrer\">Learn more</a>"}}}
+                            {{t "tags.Start with # to create internal tags <a href=\"https://ghost.org/help/organising-content/#private-tags\" target=\"_blank\" rel=\"noreferrer\">Learn more</a>" htmlSafe=true}}
                         </p>
                     </GhFormGroup>
 
@@ -69,7 +68,7 @@
                 </GhFormGroup>
 
                 <GhFormGroup @class="no-margin" @errors={{this.tag.errors}} @hasValidated={{this.tag.hasValidated}} @property="description">
-                    <label for="tag-description">{{{t "tags.Description"}}}</label>
+                    <label for="tag-description">{{t "tags.Description"}}</label>
                     <GhTextarea
                         @id="tag-description"
                         @name="description"
@@ -79,7 +78,7 @@
                         @focus-out={{action "setProperty" "description" this.scratchTag.description}}
                     />
                     <GhErrorMessage @errors={{this.tag.errors}} @property="description" />
-                    <p>{{{t "tags.Raximum: <b>{count}</b> characters. You’ve used {characterCount}" count=500 characterCount=(gh-count-down-characters this.scratchTag.description 500)}}}</p>
+                    <p>{{t "tags.Raximum: <b>{count}</b> characters. You’ve used {characterCount}" count=500 characterCount=(gh-count-down-characters this.scratchTag.description 500) htmlSafe=true}}</p>
                 </GhFormGroup>
             </div>
             <GhFormGroup @class="no-margin" @errors={{this.tag.errors}} @hasValidated={{this.tag.hasValidated}} @property="featureImage">
@@ -123,7 +122,7 @@
                                 @focus-out={{action "setProperty" "metaTitle" this.scratchTag.metaTitle}}
                             />
                             <GhErrorMessage @errors={{this.tag.errors}} @property="metaTitle" />
-                            <p>{{{t "tags.Recommended: <b>{count}</b> characters. You’ve used {characterCount}" count=70 characterCount=(gh-count-down-characters this.scratchTag.metaTitle 70)}}}</p>
+                            <p>{{t "tags.Recommended: <b>{count}</b> characters. You’ve used {characterCount}" count=70 characterCount=(gh-count-down-characters this.scratchTag.metaTitle 70) htmlSafe=true}}</p>
                         </GhFormGroup>
 
                         <GhFormGroup @errors={{this.tag.errors}} @hasValidated={{this.tag.hasValidated}} @property="metaDescription">
@@ -138,7 +137,7 @@
                                 @focus-out={{action "setProperty" "metaDescription" this.scratchTag.metaDescription}}
                             />
                             <GhErrorMessage @errors={{this.tag.errors}} @property="metaDescription" />
-                            <p>{{{t "tags.Recommended: <b>{count}</b> characters. You’ve used {characterCount}" count=156 characterCount=(gh-count-down-characters this.scratchTag.metaDescription 156)}}}</p>
+                            <p>{{t "tags.Recommended: <b>{count}</b> characters. You’ve used {characterCount}" count=156 characterCount=(gh-count-down-characters this.scratchTag.metaDescription 156) htmlSafe=true}}</p>
                         </GhFormGroup>
                         <GhFormGroup @errors={{this.tag.errors}} @hasValidated={{this.tag.hasValidated}} @property="canonicalUrl">
                             <label for="canonical-url">{{t "tags.Canonical URL"}}</label>
@@ -176,7 +175,7 @@
         <div class="gh-expandable-header">
             <div>
                 <h4 class="gh-expandable-title">{{t "tags.Twitter card"}}</h4>
-                <p class="gh-expandable-description">{{t "tags.Customised structured data for Twitter."}}</p>
+                <p class="gh-expandable-description">{{t "tags.Customized structured data for Twitter."}}</p>
             </div>
             <button type="button" class="gh-btn gh-btn-expand" {{action (toggle "twitterMetadataOpen" this)}}><span>{{if this.twitterMetadataOpen (t "common.Close") (t "common.Expand")}}</span></button>
         </div>
@@ -208,7 +207,7 @@
                                 @focus-out={{action "setProperty" "twitterTitle" this.scratchTag.twitterTitle}}
                             />
                             <GhErrorMessage @errors={{this.tag.errors}} @property="twitterTitle" />
-                            <p>{{{t "tags.Recommended: <b>{count}</b> characters. You’ve used {characterCount}" count=70 characterCount=(gh-count-down-characters this.scratchTag.twitterTitle 70)}}}</p>
+                            <p>{{t "tags.Recommended: <b>{count}</b> characters. You’ve used {characterCount}" count=70 characterCount=(gh-count-down-characters this.scratchTag.twitterTitle 70) htmlSafe=true}}</p>
                         </GhFormGroup>
 
                         <GhFormGroup @errors={{this.tag.errors}} @hasValidated={{this.tag.hasValidated}} @property="twitterDesctiption">
@@ -223,7 +222,7 @@
                                 @focus-out={{action "setProperty" "twitterDescription" this.scratchTag.twitterDescription}}
                             />
                             <GhErrorMessage @errors={{this.tag.errors}} @property="twitterDescription" />
-                            <p>{{{t "tags.Recommended: <b>{count}</b> characters. You’ve used {characterCount}" count=125 characterCount=(gh-count-down-characters this.scratchTag.twitterDescription 125)}}}</p>
+                            <p>{{t "tags.Recommended: <b>{count}</b> characters. You’ve used {characterCount}" count=125 characterCount=(gh-count-down-characters this.scratchTag.twitterDescription 125) htmlSafe=true}}</p>
                         </GhFormGroup>
                     </div>
                     <div class="flex-basis-1-2-m flex-basis-1-3-l">
@@ -271,7 +270,7 @@
         <div class="gh-expandable-header">
             <div>
                 <h4 class="gh-expandable-title">{{t "tags.Facebook card"}}</h4>
-                <p class="gh-expandable-description">{{t "tags.Customise Open Graph data."}}</p>
+                <p class="gh-expandable-description">{{t "tags.Customize Open Graph data."}}</p>
             </div>
             <button type="button" class="gh-btn gh-btn-expand" {{action (toggle "facebookMetadataOpen" this)}}><span>{{if this.facebookMetadataOpen (t "common.Close") (t "common.Expand")}}</span></button>
         </div>
@@ -302,7 +301,7 @@
                                 @focus-out={{action "setProperty" "ogTitle" this.scratchTag.ogTitle}}
                             />
                             <GhErrorMessage @errors={{this.tag.errors}} @property="ogTitle" />
-                            <p>{{{t "tags.Recommended: <b>{count}</b> characters. You’ve used {characterCount}" count=100 characterCount=(gh-count-down-characters this.scratchTag.ogTitle 100)}}}</p>
+                            <p>{{t "tags.Recommended: <b>{count}</b> characters. You’ve used {characterCount}" count=100 characterCount=(gh-count-down-characters this.scratchTag.ogTitle 100) htmlSafe=true}}</p>
                         </GhFormGroup>
 
                         <GhFormGroup @errors={{this.tag.errors}} @hasValidated={{this.tag.hasValidated}} @property="ogDescription">
@@ -317,7 +316,7 @@
                                 @focus-out={{action "setProperty" "ogDescription" this.scratchTag.ogDescription}}
                             />
                             <GhErrorMessage @errors={{this.tag.errors}} @property="ogDescription" />
-                            <p>{{{t "tags.Recommended: <b>{count}</b> characters. You’ve used {characterCount}" count=65 characterCount=(gh-count-down-characters this.scratchTag.ogDescription 65)}}}</p>
+                            <p>{{t "tags.Recommended: <b>{count}</b> characters. You’ve used {characterCount}" count=65 characterCount=(gh-count-down-characters this.scratchTag.ogDescription 65) htmlSafe=true}}</p>
                         </GhFormGroup>
                     </div>
                     <div class="flex-basis-1-2-m flex-basis-1-3-l">
@@ -375,7 +374,7 @@
             {{#liquid-if this.codeInjectionOpen}}
             <div class="gh-main-section">
                 <GhFormGroup @class="gh-main-section-block settings-code" @errors={{this.tag.errors}} @hasValidated={{this.tag.hasValidated}} @property="codeinjectionHead">
-                    <label for="codeinjection-head" class="gh-tag-setting-codeheader">{{{t "tags.Tag header <code class=\"fw4 ml1\">\{{ghost_head}}</code>"}}}</label>
+                    <label for="codeinjection-head" class="gh-tag-setting-codeheader">{{t "tags.Tag header <code class=\"fw4 ml1\">\{{ghost_head}}</code>" htmlSafe=true}}</label>
                     <GhCmEditor @value={{this.scratchTag.codeinjectionHead}}
                         @id="tag-setting-codeinjection-head"
                         @class="gh-tag-setting-codeinjection"
@@ -388,7 +387,7 @@
                 </GhFormGroup>
 
                 <GhFormGroup @class="gh-main-section-block settings-code" @errors={{this.tag.errors}} @hasValidated={{this.tag.hasValidated}} @property="codeinjectionFoot">
-                    <label for="codeinjection-foot"class="gh-tag-setting-codeheader">{{{t "tags.Tag footer <code class=\"fw4 ml1\">\{{ghost_foot}}</code>"}}}</label>
+                    <label for="codeinjection-foot"class="gh-tag-setting-codeheader">{{t "tags.Tag footer <code class=\"fw4 ml1\">\{{ghost_foot}}</code>" htmlSafe=true}}</label>
                     <GhCmEditor @value={{this.scratchTag.codeinjectionFoot}}
                         @id="tag-setting-codeinjection-foot"
                         @class="gh-tag-setting-codeinjection"

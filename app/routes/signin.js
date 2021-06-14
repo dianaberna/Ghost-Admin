@@ -34,7 +34,7 @@ export default UnauthenticatedRoute.extend({
 
     buildRouteInfoMetadata() {
         return Object.assign(this._super(), {
-            titleToken: this.intl.t('pageTitleSign In')
+            titleToken: this.intl.t('pageTitle.Sign In')
         });
     }
 });

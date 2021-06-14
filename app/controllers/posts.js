@@ -75,15 +75,15 @@ export default Controller.extend({
     postsInfinityModel: alias('model'),
 
     availableTypes: computed('intl.locale', function () {
-        return TYPES.map(({name, value}) => Object({name: this.intl.t(name).toString(), value}));
+        return TYPES.map(({name, value}) => ({name: this.intl.t(name).toString(), value}));
     }),
 
     availableOrders: computed('intl.locale', function () {
-        return ORDERS.map(({name, value}) => Object({name: this.intl.t(name).toString(), value}));
+        return ORDERS.map(({name, value}) => ({name: this.intl.t(name).toString(), value}));
     }),
 
     availableVisibilities: computed('intl.locale', function () {
-        return VISIBILITIES.map(({name, value}) => Object({name: this.intl.t(name).toString(), value}));
+        return VISIBILITIES.map(({name, value}) => ({name: this.intl.t(name).toString(), value}));
     }),
 
     showingAll: computed('type', 'author', 'tag', function () {

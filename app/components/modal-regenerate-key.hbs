@@ -8,7 +8,7 @@
         {{#if (eq this.internalIntegration "zapier")}}
             {{t "You will need to locate the Ghost App within your Zapier account and click on \"Reconnect\" to enter the new Admin API Key."}}
         {{else}}
-            {{{t "You can regenerate <strong>{type} API Key</strong> any time, but any scripts or applications using it will need to be updated." type=(capitalize this.apiKey.type)}}}
+            {{t "You can regenerate <strong>{type} API Key</strong> any time, but any scripts or applications using it will need to be updated." type=(capitalize this.apiKey.type) htmlSafe=true}}
         {{/if}}
     </p>
     {{#if this.errorMessage}}

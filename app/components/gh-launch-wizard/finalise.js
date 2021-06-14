@@ -15,23 +15,41 @@ export default class GhLaunchWizardFinaliseComponent extends Component {
         this.settings.rollbackAttributes();
     }
 
+    async saveProduct() {
+        const data = this.args.getData();
+        this.product = data?.product;
+        if (this.product) {
+            const monthlyAmount = data.monthlyAmount * 100;
+            const yearlyAmount = data.yearlyAmount * 100;
+            const currency = data.currency;
+            const monthlyPrice = {
+                nickname: 'Monthly',
+                amount: monthlyAmount,
+                active: 1,
+                currency: currency,
+                interval: 'month',
+                type: 'recurring'
+            };
+            const yearlyPrice = {
+                nickname: 'Yearly',
+                amount: yearlyAmount,
+                active: 1,
+                currency: currency,
+                interval: 'year',
+                type: 'recurring'
+            };
+            this.product.set('monthlyPrice', monthlyPrice);
+            this.product.set('yearlyPrice', yearlyPrice);
+            const savedProduct = await this.product.save();
+            return savedProduct;
+        }
+    }
+
     @task
     *finaliseTask() {
         const data = this.args.getData();
-        if (data && data.product) {
-            const updatedProduct = yield data.product.save();
-            const monthlyPrice = updatedProduct.get('stripePrices').find(d => d.nickname === 'Monthly');
-            const yearlyPrice = updatedProduct.get('stripePrices').find(d => d.nickname === 'Yearly');
-            const portalPlans = this.settings.get('portalPlans') || [];
-            let allowedPlans = [...portalPlans];
-            if (data.isMonthlyChecked && monthlyPrice && !allowedPlans.includes(monthlyPrice.id)) {
-                allowedPlans.push(monthlyPrice.id);
-            }
-
-            if (data.isYearlyChecked && yearlyPrice && !allowedPlans.includes(yearlyPrice.id)) {
-                allowedPlans.push(yearlyPrice.id);
-            }
-            this.settings.set('portalPlans', allowedPlans);
+        if (data?.product) {
+            yield this.saveProduct();
             yield this.settings.save();
         }
         yield this.feature.set('launchComplete', true);

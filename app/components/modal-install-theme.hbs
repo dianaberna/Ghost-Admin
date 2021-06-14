@@ -23,7 +23,7 @@
     <div class="modal-body">
         {{#if this.isReady}}
             <p>
-                {{{t "themes.You're about to install <strong>{name}</strong> from the theme directory." name=this.themeName}}}
+                {{t "themes.You're about to install <strong>{name}</strong> from the theme directory." name=this.themeName htmlSafe=true}}
             </p>
             {{#if this.willOverwriteExisting}}
                 <p>
@@ -44,7 +44,7 @@
 
         {{#if this.willOverwriteDefault}}
             <p>
-                {{{t "themes.Sorry, the default Casper theme cannot be overwritten.<br>If you wish to make changes please download the theme and upload a renamed zip file."}}}
+                {{t "themes.Sorry, the default Casper theme cannot be overwritten.<br>If you wish to make changes please download the theme and upload a renamed zip file." htmlSafe=true}}
             </p>
         {{/if}}
 
@@ -52,12 +52,12 @@
             {{#if this.hasWarningsOrErrors}}
                 <p>
                     {{#if this.validationErrors}}
-                        {{{t "themes.The theme <strong>\"{name}\"</strong> was installed successfully but we detected some errors." name=this.themeName}}}
+                        {{t "themes.The theme <strong>\"{name}\"</strong> was installed successfully but we detected some errors." name=this.themeName htmlSafe=true}}
                         {{#unless this.theme.active}}
                             {{t "themes.You are still able to activate and use the theme but it is recommended to fix these errors before you do so."}}
                         {{/unless}}
                     {{else}}
-                        {{{t "themes.The theme <strong>\"{name}\"</strong> was installed successfully but we detected some warnings." name=this.themeName}}}
+                        {{t "themes.The theme <strong>\"{name}\"</strong> was installed successfully but we detected some warnings." name=this.themeName htmlSafe=true}}
                         {{#unless this.theme.active}}
                             {{t "themes.You are still able to activate and use the theme but it is recommended to fix these warnings before you do so."}}
                         {{/unless}}
@@ -65,7 +65,7 @@
                 </p>
             {{else}}
             {{!-- Installed with no errors --}}
-                <p>{{{t "themes.The theme <strong>\"{name}}\"</strong> was installed successfully." name=this.themeName}}}
+                <p>{{t "themes.The theme <strong>\"{name}}\"</strong> was installed successfully." name=this.themeName htmlSafe=true}}
                     {{unless this.theme.active (t "themes.Do you want to activate it now?")}}</p>
             {{/if}}
         {{/if}}
@@ -99,7 +99,7 @@
         {{#if this.validationErrors}}
             <div>
                 <h2 class="mb0 mt4 f5 fw6">{{t "themes.Errors"}}</h2>
-                <p class="mb2">{{{t "themes.Highly recommended to fix, functionality <strong>could</strong> be restricted"}}}</p>
+                <p class="mb2">{{t "themes.Highly recommended to fix, functionality <strong>could</strong> be restricted" htmlSafe=true}}</p>
             </div>
             <ul class="pa0">
                 {{#each this.validationErrors as |error|}}

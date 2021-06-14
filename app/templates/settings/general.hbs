@@ -96,7 +96,7 @@
                                 data-test-input="lang"
                             />
                             <GhErrorMessage @errors={{this.settings.errors}} @property="lang" />
-                            <p>{{{t "settings.Default: English (<strong>{defaultLocale}</strong>); you can add translation files to your theme for <a href=\"{link}\" target=\"_blank\" rel=\"noopener\">any language</a>" defaultLocale="en" link="https://ghost.org/docs/themes/helpers/translate/"}}}</p>
+                            <p>{{t "settings.Default: English (<strong>{defaultLocale}</strong>); you can add translation files to your theme for <a href=\"{link}\" target=\"_blank\" rel=\"noopener\">any language</a>" defaultLocale="en" link="https://ghost.org/docs/themes/helpers/translate/" htmlSafe=true}}</p>
                         </GhFormGroup>
                     </div>
                     {{/liquid-if}}
@@ -132,7 +132,7 @@
                                             data-test-input="metaTitle"
                                         />
                                         <GhErrorMessage @errors={{this.settings.errors}} @property="metaTitle" data-test-error="metaTitle" />
-                                        <p>{{{t "settings.Recommended: <b>{count}</b> characters. You’ve used <b>{characterCount}</b>" count=70 characterCount=(gh-count-down-characters this.settings.metaTitle 70)}}}</p>
+                                        <p>{{t "settings.Recommended: <b>{count}</b> characters. You’ve used <b>{characterCount}</b>" count=70 characterCount=(gh-count-down-characters this.settings.metaTitle 70) htmlSafe=true}}</p>
                                     </GhFormGroup>
                                     <GhFormGroup @errors={{this.settings.errors}} @hasValidated={{this.settings.hasValidated}} @property="metaDescription">
                                         <label for="metaDescription">{{t "settings.Meta description"}}</label>
@@ -146,7 +146,7 @@
                                         />
                                         <GhErrorMessage @errors={{this.settings.errors}} @property="metaDescription" data-test-error="metaDescription" />
 
-                                        <p>{{{t "settings.Recommended: <b>{count}</b> characters. You’ve used <b>{characterCount}</b>" count=156 characterCount=(gh-count-down-characters this.settings.metaDescription 156)}}}</p>
+                                        <p>{{t "settings.Recommended: <b>{count}</b> characters. You’ve used <b>{characterCount}</b>" count=156 characterCount=(gh-count-down-characters this.settings.metaDescription 156) htmlSafe=true}}</p>
                                     </GhFormGroup>
                                 </div>
                                 <div class="flex-basis-1-2-m flex-basis-1-3-l">
@@ -175,7 +175,7 @@
                 <div class="gh-expandable-header">
                     <div>
                         <h4 class="gh-expandable-title">{{t "settings.Twitter card"}}</h4>
-                        <p class="gh-expandable-description">{{t "settings.Customise structured data of your site for Twitter"}}</p>
+                        <p class="gh-expandable-description">{{t "settings.Customize structured data of your site for Twitter"}}</p>
                     </div>
                     <button type="button" class="gh-btn" {{action (toggle "twitterCardOpen" this)}} data-test-toggle-twitter><span>{{if this.twitterCardOpen (t "common.Close") (t "common.Expand")}}</span></button>
                 </div>
@@ -264,7 +264,7 @@
                 <div class="gh-expandable-header">
                     <div>
                         <h4 class="gh-expandable-title">{{t "settings.Facebook card"}}</h4>
-                        <p class="gh-expandable-description">{{t "settings.Customise structured data of your site"}}</p>
+                        <p class="gh-expandable-description">{{t "settings.Customize structured data of your site"}}</p>
                     </div>
                     <button type="button" class="gh-btn" {{action (toggle "facebookCardOpen" this)}} data-test-toggle-facebook><span>{{if this.facebookCardOpen (t "common.Close") (t "common.Expand")}}</span></button>
                 </div>
@@ -427,7 +427,7 @@
                     {{#if this.settings.isPrivate}}
                         <div class="gh-setting-content-extended pt4 pb4">
                             <span class="avoid-break-out">
-                                {{{t "settings.A private RSS feed is available at <a href=\"{privateRSSUrl}\" target=\"_blank\" rel=\"noopener\">{privateRSSUrl}</a>" privateRSSUrl=this.privateRSSUrl}}}
+                                {{t "settings.A private RSS feed is available at <a href=\"{privateRSSUrl}\" target=\"_blank\" rel=\"noopener\">{privateRSSUrl}</a>" privateRSSUrl=this.privateRSSUrl htmlSafe=true}}
                             </span>
                             <GhFormGroup @class="no-margin pt2" @errors={{this.settings.errors}} @hasValidated={{this.settings.hasValidated}} @property="password">
                                 <GhTextInput
