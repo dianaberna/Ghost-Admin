@@ -135,7 +135,7 @@ export default Component.extend({
             this._setFiles(files);
 
             if (resetInput) {
-                resetInput();
+                this.fileInput = resetInput();
             }
         },
 

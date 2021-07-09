@@ -19,9 +19,9 @@
     {{#if this.settings.stripeConnectAccountId}}
         <button
             class="gh-btn gh-btn-black"
-            {{action "closeModal"}}
+            {{action "confirm"}}
             {{action (optional this.noop) on="mouseDown"}}
-            data-test-button="cancel-webhook"
+            data-test-button="stripe-connect-ok"
         >
             <span>{{t "common.OK"}}</span>
         </button>

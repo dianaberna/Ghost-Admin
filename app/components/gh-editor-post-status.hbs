@@ -8,13 +8,27 @@
         {{else if (eq @post.email.status "submitted")}}
             and sent to {{pluralize @post.email.emailCount "member"}}
         {{/if}}
+        {{#if (feature "savedIndicator")}}
+            {{if (not @hasDirtyAttributes) "- Saved"}}
+        {{/if}}
     {{else if @post.isScheduled}}
         <time datetime="{{@post.publishedAtUTC}}" class="ml1 green f8" data-test-schedule-countdown>
-            {{t "Will be published {scheduledText}" scheduledText=this.scheduledText}}
+            {{#if @post.emailRecipientFilter}}
+                {{t "Will be published and sent to"}} <GhRecipientFilterCount @filter={{@post.emailRecipientFilter}} />
+            {{else}}
+                {{t "Will be published"}}
+            {{/if}}
+            {{this.scheduledTime}}
         </time>
+        {{#if (feature "savedIndicator")}}
+            {{if (not @hasDirtyAttributes) (t "- Saved")}}
+        {{/if}}
     {{else if @post.isNew}}
         {{t "postStatus.New"}}
     {{else}}
-    {{t "postStatus.Draft"}}
+        Draft
+        {{#if (feature "savedIndicator")}}
+            {{if (not @hasDirtyAttributes) (t "- Saved")}}
+        {{/if}}
     {{/if}}
 </div>

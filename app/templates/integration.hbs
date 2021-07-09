@@ -173,15 +173,15 @@
     </form>
 
     <section class="gh-main-section">
-            <h4 class="gh-main-section-header small">Webhooks</h4>
+            <h4 class="gh-main-section-header small">{{t "integration.webhook.Webhooks"}}</h4>
             <div class="gh-main-section-block p0">
             <table class="gh-list small">
                 <thead>
                     <tr class="gh-list-row header">
-                        <th class="gh-list-header">Name</th>
-                        <th class="gh-list-header">Event</th>
-                        <th class="gh-list-header">URL</th>
-                        <th class="gh-list-header">Last triggered</th>
+                        <th class="gh-list-header">{{t "integration.webhook.Name"}}</th>
+                        <th class="gh-list-header">{{t "integration.webhook.Event"}}</th>
+                        <th class="gh-list-header">{{t "integration.webhook.URL"}}</th>
+                        <th class="gh-list-header">{{t "integration.webhook.Last triggered"}}</th>
                         <th class="gh-list-header"></th>
                     </tr>
                 </thead>
@@ -191,7 +191,7 @@
                             <td class="gh-list-data" data-test-text="name">{{webhook.name}}</td>
                             <td class="gh-list-data" data-test-text="event">{{event-name webhook.event}}</td>
                             <td class="gh-list-data" data-test-text="targetUrl">{{webhook.targetUrl}}</td>
-                            <td class="gh-list-data" data-test-text="last-triggered">{{or webhook.lastTriggeredAtUTC "Not triggered"}}</td>
+                            <td class="gh-list-data" data-test-text="last-triggered">{{or webhook.lastTriggeredAtUTC (t "integration.webhook.Not triggered")}}</td>
                             <td class="w1 gh-list-data nowrap">
                                 <div class="child flex items-center">
                                     <LinkTo @route="integration.webhooks.edit" @models={{array this.integration webhook}} data-test-link="edit-webhook">
@@ -208,12 +208,12 @@
                         <td colspan="5" class="pa5 pt15 pb15 tc midgrey f7">
                             <div class="flex flex-column items-center">
                                 <p class="ma0 pa0 tc midgrey lh-title mt2">
-                                    No webhooks configured
+                                    {{t "integration.webhook.No webhooks configured"}}
                                 </p>
                                 <LinkTo @route="integration.webhooks.new" @model={{this.integration}} @classNames="flex items-center" data-test-link="add-webhook">
                                 <div class="flex items-center pa2 pt1">
-                                    {{svg-jar "add" class="w3 h3 fill-blue-d1"}}
-                                    <span class="ml1 blue">Add webhook</span>
+                                    {{svg-jar "add" class="w3 h3 fill-green-d1"}}
+                                    <span class="ml1 green">{{t "integration.webhook.Add webhook"}}</span>
                                 </div>
                                 </LinkTo>
                             </div>
@@ -227,8 +227,8 @@
                         <td colspan="5" class="gh-list-data">
                             <LinkTo @route="integration.webhooks.new" @model={{this.integration}} @classNames="flex items-center" data-test-link="add-webhook">
                             <div class="pt1 pb1 f7">
-                                {{svg-jar "add" class="w3 h3 fill-blue-d1"}}
-                                <span class="ml1 blue">Add webhook</span>
+                                {{svg-jar "add" class="w3 h3 fill-green-d1"}}
+                                <span class="ml1 green">{{t "integration.webhook.Add webhook"}}</span>
                             </div>
                             </LinkTo>
                         </td>
@@ -242,7 +242,7 @@
     <section class="gh-main-section">
         <div class="gh-main-section-block">
             <button class="gh-btn gh-btn-red gh-btn-icon" {{action "confirmIntegrationDeletion"}}>
-                <span> Delete integration </span>
+                <span> {{t "integration.webhook.Delete integration"}} </span>
             </button>
         </div>
     </section>

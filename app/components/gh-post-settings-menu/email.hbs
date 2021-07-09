@@ -10,7 +10,7 @@
         <div class="ba b--whitegrey bg-white br3">
             <div class="flex pa5 pt4 pb4 items-center bb b--whitegrey">
                 <div class="w16 flex flex-column items-center">
-                    <span class="db mr4 mt3">{{svg-jar "send-email" class="w7 h7 stroke-darkgrey"}}</span>
+                    <span class="db mr4 mt2">{{svg-jar "send-email" class="w6 h6 stroke-midlightgrey"}}</span>
                 </div>
                 <div class="flex flex-column justify-center">
                     <p class="ma0 pa0 midgrey">{{t "Post was sent by email to"}}</p>
@@ -32,7 +32,7 @@
                 </table>
             </div>
             <div class="pa5 pt3 pb3">
-                <p class="ma0 pa0"><button {{on "click" this.toggleEmailPreview}} class="blue">{{t "View sent email"}}</button></p>
+                <p class="ma0 pa0"><button {{on "click" this.toggleEmailPreview}} class="green">{{t "View sent email"}}</button></p>
             </div>
         </div>
     {{else if (or this.retryEmail.isRunning this.post.email.isFailure)}}

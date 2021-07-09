@@ -81,6 +81,12 @@ export default class GhBrandSettingsFormComponent extends Component {
     }
 
     @action
+    blurElement(event) {
+        event.preventDefault();
+        event.target.blur();
+    }
+
+    @action
     async updateAccentColor(event) {
         let newColor = event.target.value;
         const oldColor = this.settings.get('accentColor');

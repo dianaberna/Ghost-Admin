@@ -81,12 +81,11 @@
                     <p>{{t "tags.Raximum: <b>{count}</b> characters. You’ve used {characterCount}" count=500 characterCount=(gh-count-down-characters this.scratchTag.description 500) htmlSafe=true}}</p>
                 </GhFormGroup>
             </div>
-            <GhFormGroup @class="no-margin" @errors={{this.tag.errors}} @hasValidated={{this.tag.hasValidated}} @property="featureImage">
+            <GhFormGroup @class="gh-tag-image-uploader no-margin" @errors={{this.tag.errors}} @hasValidated={{this.tag.hasValidated}} @property="featureImage">
                 <label for="tag-image">{{t "tags.Tag image"}}</label>
                 <GhImageUploaderWithPreview
                     @image={{this.tag.featureImage}}
                     @text={{t "tags.Upload tag image"}}
-                    @class="gh-tag-image-uploader"
                     @allowUnsplash={{true}}
                     @update={{action "setCoverImage"}}
                     @remove={{action "clearCoverImage"}}
@@ -185,12 +184,11 @@
             <div class="gh-setting-content-extended">
                 <div class="gh-twitter-settings">
                     <div class="gh-twitter-settings-left flex-basis-1-2-m flex-basis-2-3-l">
-                        <GhFormGroup @errors={{this.tag.errors}} @hasValidated={{this.tag.hasValidated}} @property="twitterImage">
-                            <label for="twitter-image">Twitter image</label>
+                        <GhFormGroup @class="gh-tag-image-uploader" @errors={{this.tag.errors}} @hasValidated={{this.tag.hasValidated}} @property="twitterImage">
+                            <label for="twitter-image">{{t "tags.Twitter image"}}</label>
                             <GhImageUploaderWithPreview
                                 @image={{this.tag.twitterImage}}
                                 @text={{t "tags.Add Twitter image"}}
-                                @class="gh-tag-image-uploader"
                                 @allowUnsplash={{true}}
                                 @update={{action "setTwitterImage"}}
                                 @remove={{action "clearTwitterImage"}}
@@ -279,12 +277,11 @@
             <div class="gh-setting-content-extended">
                 <div class="gh-og-settings">
                     <div class="gh-og-settings-left flex-basis-1-2-m flex-basis-2-3-l">
-                        <GhFormGroup @errors={{this.tag.errors}} @hasValidated={{this.tag.hasValidated}} @property="ogImage">
+                        <GhFormGroup @class="gh-tag-image-uploader" @errors={{this.tag.errors}} @hasValidated={{this.tag.hasValidated}} @property="ogImage">
                             <label for="og-image">{{t "tags.Facebook image"}}</label>
                             <GhImageUploaderWithPreview
                                 @image={{this.tag.ogImage}}
                                 @text={{t "tags.Add Facebook image"}}
-                                @class="gh-tag-image-uploader"
                                 @allowUnsplash={{true}}
                                 @update={{action "setOgImage"}}
                                 @remove={{action "clearOgImage"}}

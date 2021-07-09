@@ -11,6 +11,7 @@ const VISIBILITIES = [
 export default Component.extend({
     intl: service(),
     settings: service(),
+    feature: service(),
 
     // public attrs
     post: null,
@@ -24,11 +25,19 @@ export default Component.extend({
         this.availableVisibilities = VISIBILITIES.map(({label, name}) => ({
             name, label: this.intl.t(label)
         }));
+        if (this.feature.get('multipleProducts')) {
+            this.availableVisibilities.push(
+                {label: this.intl.t('psm.A segment'), name: 'filter'}
+            );
+        }
     },
 
     actions: {
         updateVisibility(newVisibility) {
             this.post.set('visibility', newVisibility);
+            if (newVisibility !== 'filter') {
+                this.post.set('visibilityFilter', null);
+            }
         }
     }
 });

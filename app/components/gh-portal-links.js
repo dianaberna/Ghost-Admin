@@ -14,6 +14,9 @@ export default Component.extend({
     isLink: true,
     prices: null,
     copiedPrice: null,
+    copiedSignupInterval: null,
+    selectedProduct: null,
+    products: null,
 
     toggleValue: computed('isLink', function () {
         return this.isLink ? this.intl.t('portal.Data attributes') : this.intl.t('portal.Links');
@@ -21,6 +24,25 @@ export default Component.extend({
 
     sectionHeaderLabel: computed('isLink', function () {
         return this.isLink ? this.intl.t('portal.Link') : this.intl.t('portal.Data attribute');
+    }),
+    selectedProductIdPath: computed('selectedProduct', function () {
+        const selectedProduct = this.get('selectedProduct');
+        if (selectedProduct) {
+            return `/${selectedProduct.name}`;
+        }
+        return '';
+    }),
+
+    productOptions: computed('products.[]', function () {
+        if (this.get('products')) {
+            return this.get('products').map((product) => {
+                return {
+                    label: product.name,
+                    name: product.id
+                };
+            });
+        }
+        return [];
     }),
 
     init() {
@@ -31,8 +53,21 @@ export default Component.extend({
     actions: {
         toggleShowLinks() {
             this.toggleProperty('isLink');
+        },
+        setSelectedProduct(product) {
+            this.set('selectedProduct', product);
         }
     },
+    fetchProducts: task(function* () {
+        const products = yield this.store.query('product', {include: 'monthly_price,yearly_price'}) || [];
+        this.set('products', products);
+        if (products.length > 0) {
+            this.set('selectedProduct', {
+                name: products.firstObject.id,
+                label: products.firstObject.name
+            });
+        }
+    }),
     copyStaticLink: task(function* (id) {
         this.set('copiedPrice', id);
         let data = '';
@@ -44,13 +79,13 @@ export default Component.extend({
         copyTextToClipboard(data);
         yield timeout(this.isTesting ? 50 : 3000);
     }),
-    copySignupLink: task(function* (price) {
-        this.set('copiedPrice', price.id);
+    copyProductSignupLink: task(function* (interval) {
+        this.set('copiedSignupInterval', interval);
         let data = '';
         if (this.isLink) {
-            data = `#/portal/signup/${price.id}`;
+            data = `#/portal/signup${this.selectedProductIdPath}/${interval}`;
         } else {
-            data = `data-portal="signup/${price.id}"`;
+            data = `data-portal="signup${this.selectedProductIdPath}/${interval}"`;
         }
         copyTextToClipboard(data);
         yield timeout(this.isTesting ? 50 : 3000);

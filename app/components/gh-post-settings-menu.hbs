@@ -1,22 +1,14 @@
-<div class="settings-menu-container {{if (and this.isViewingSubview (not (eq this.subview "email-settings"))) "settings-menu-container-wide"}}">
+<div
+    class="settings-menu-container {{if (and this.isViewingSubview (not (eq this.subview "email-settings"))) "settings-menu-container-wide"}}"
+    {{did-insert this.setSidebarWidthFromElement}}
+    {{did-update this.setSidebarWidthFromElement this.isViewingSubview}}
+>
     <div id="entry-controls">
-        <div class="{{if this.isViewingSubview 'settings-menu-pane-out-left' 'settings-menu-pane-in'}} settings-menu settings-menu-pane">
+        <div class="settings-menu settings-menu-pane settings-menu-pane-main">
             <div class="settings-menu-header">
-                <h4>{{t (concat this.post.displayName ".settings.title")}}</h4>
-                <button aria-label={{t "common.Close"}} class="close settings-menu-header-action" {{action "closeMenus" target=this.ui}} data-test-close-settings-menu>
-                    {{svg-jar "close"}}<span class="hidden">{{t "common.Close"}}</span>
-                </button>
+                <h4>{{t (concat this.post.displayName ".settings.settings")}}</h4>
             </div>
             <div class="settings-menu-content">
-                {{#unless (feature "featureImageMeta")}}
-                    <GhImageUploaderWithPreview
-                        @image={{this.post.featureImage}}
-                        @text={{t (concat this.post.displayName ".settings.image")}}
-                        @allowUnsplash={{true}}
-                        @update={{action "setCoverImage"}}
-                        @remove={{action "clearCoverImage"}}
-                    />
-                {{/unless}}
                 <form>
                 <div class="form-group">
                     <label for="url">{{t (concat this.post.displayName ".settings.url")}}</label>
@@ -26,7 +18,7 @@
                         <a class="post-view-link" target="_blank" href="{{this.post.url}}">
                             {{t (concat this.post.displayName ".settings.view")}} {{svg-jar "external"}}
                         </a>
-                        {{else}}
+                        {{else if this.post.isScheduled}}
                         <a class="post-view-link" target="_blank" href="{{this.post.previewUrl}}">
                             {{t (concat this.post.displayName ".settings.preview")}} {{svg-jar "external"}}
                         </a>
@@ -63,7 +55,7 @@
                         @timeErrorProperty="publishedAtBlogTime"
                         @maxDate="now"
                         @disabled={{this.post.isScheduled}}
-                        @isActive={{and this.showSettingsMenu (not this.isViewingSubview)}}
+                        @isActive={{not this.isViewingSubview}}
                     />
                     {{#unless (or this.post.isDraft this.post.isPublished this.post.pastScheduledTime)}}
                     <p>{{t "Use the publish menu to re-schedule"}}</p>
@@ -79,10 +71,31 @@
 
 
                 {{#if this.showVisibilityInput}}
-                    <div class="form-group">
-                        <label for="visibility-input">{{t "Post access"}}</label>
-                        <GhPsmVisibilityInput @post={{this.post}} @triggerId="visibility-input" />
-                    </div>
+                    {{#if (feature "multipleProducts")}}
+                        <GhFormGroup @errors={{this.post.errors}} @hasValidated={{this.post.hasValidated}} @property="visibility">
+                            <label for="visibility-input">{{t "Post access"}}</label>
+                            <GhPsmVisibilityInput @post={{this.post}} @triggerId="visibility-input" />
+                        </GhFormGroup>
+
+                        {{#if (eq this.post.visibility "filter")}}
+                            <GhFormGroup @errors={{this.post.errors}} @hasValidated={{this.post.hasValidated}} @property="visibilityFilter" @class="nt3">
+                                <GhMembersSegmentSelect
+                                    @hideLabels={{true}}
+                                    @segment={{this.post.visibilitySegment}}
+                                    @onChange={{action "setVisibility"}}
+                                    @renderInPlace={{true}}
+                                    @hideDefaultSegments={{true}}
+                                    @hideOptionsWhenAllSelected={{true}}
+                                />
+                                <GhErrorMessage @errors={{this.post.errors}} @property="visibilityFilter" data-test-error="visibilityFilter" />
+                            </GhFormGroup>
+                        {{/if}}
+                    {{else}}
+                        <div class="form-group">
+                            <label for="visibility-input">{{t "Post access"}}</label>
+                            <GhPsmVisibilityInput @post={{this.post}} @triggerId="visibility-input" />
+                        </div>
+                    {{/if}}
                 {{/if}}
 
                 <GhFormGroup @errors={{this.post.errors}} @hasValidated={{this.post.hasValidated}} @property="customExcerpt">
@@ -176,9 +189,9 @@
             </div>{{! .settings-menu-content }}
         </div>{{! .post-settings-menu }}
 
-        <div class="{{if this.isViewingSubview 'settings-menu-pane-in' 'settings-menu-pane-out-right'}} settings-menu settings-menu-pane {{unless (eq this.subview "email-settings") "settings-menu-pane-wide"}}">
+        {{#if this.isViewingSubview}}
+        <div class="settings-menu settings-menu-pane {{unless (eq this.subview "email-settings") "settings-menu-pane-wide"}}">
             <div class="active">
-                {{#if this.isViewingSubview}}
                     {{#if (eq this.subview "meta-data")}}
                         <div class="settings-menu-header subview">
                             <button aria-label={{t "common.Back"}} {{action "closeSubview"}} class="back settings-menu-header-action" data-test-button="close-psm-subview">{{svg-jar "arrow-left"}}<span class="hidden">{{t "common.Back"}}</span></button>
@@ -322,7 +335,7 @@
                     {{#if (eq this.subview "email-settings")}}
                         <GhPostSettingsMenu::Email
                             @post={{this.post}}
-                            @savePostTask={{this.savePost}}
+                            @savePostTask={{this.savePostTask}}
                             @toggleEmailPreviewModal={{this.toggleEmailPreviewModal}}
                             @close={{action "closeSubview"}}
                         />
@@ -433,8 +446,8 @@
                             </form>
                         </div>
                     {{/if}}
-                {{/if}}
             </div>
         </div>
+        {{/if}}
     </div>
 </div>

@@ -191,7 +191,7 @@
                                         @text={{t "settings.Add Twitter image"}}
                                         @allowUnsplash={{true}}
                                         @update={{action (mut this.settings.twitterImage)}}
-                                        @remove={{action (mut this.settings.twitterImage "")}}
+                                        @remove={{action (mut this.settings.twitterImage) ""}}
                                     />
                                 </GhFormGroup>
                                 <GhFormGroup @errors={{this.settings.errors}} @hasValidated={{this.settings.hasValidated}} @property="twitterTitle">
@@ -281,7 +281,7 @@
                                             @text={{t "settings.Add Facebook image"}}
                                             @allowUnsplash={{true}}
                                             @update={{action (mut this.settings.ogImage)}}
-                                            @remove={{action (mut this.settings.ogImage "")}}
+                                            @remove={{action (mut this.settings.ogImage) ""}}
                                         />
                                     </GhFormGroup>
                                     <GhFormGroup @errors={{this.settings.errors}} @hasValidated={{this.settings.hasValidated}} @property="ogTitle">
@@ -407,7 +407,7 @@
                     <div>
                         <h4 class="gh-expandable-title">{{t "settings.Make this site private"}}</h4>
                         <p class="gh-expandable-description">
-                            {{t "settings.Enable protection with simple shared password. All search engine optimization and social features will be disabled."}}
+                            {{t "settings.Enable protection with a simple shared password. All search engine optimization and social features will be disabled."}}
                         </p>
                     </div>
                     <div class="for-switch">

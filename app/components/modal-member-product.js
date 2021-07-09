@@ -1,38 +1,34 @@
 import ModalComponent from 'ghost-admin/components/modal-base';
 import {action} from '@ember/object';
-import {getNonDecimal, getSymbol} from 'ghost-admin/utils/currency';
 import {inject as service} from '@ember/service';
 import {task} from 'ember-concurrency-decorators';
 import {tracked} from '@glimmer/tracking';
 
 export default class ModalMemberProduct extends ModalComponent {
-    @service
-    store
+    @service store;
+    @service ghostPaths;
+    @service ajax;
 
-    @service
-    ghostPaths
+    @tracked price;
+    @tracked product;
+    @tracked products = [];
+    @tracked selectedProduct = null;
+    @tracked loadingProducts = false;
 
-    @service
-    ajax
-
-    @tracked
-    price
-
-    @tracked
-    product
-
-    @tracked
-    products = []
-
-    constructor(...args) {
-        super(...args);
-        this.fetchProducts();
+    @task({drop: true})
+    *fetchProducts() {
+        this.products = yield this.store.query('product', {include: 'monthly_price,yearly_price'});
+        this.loadingProducts = false;
+        if (this.products.length > 0) {
+            this.selectedProduct = this.products.firstObject.id;
+        }
     }
 
-    async fetchProducts() {
-        this.products = await this.store.query('product', {include: 'stripe_prices'});
-        this.product = this.products.firstObject;
-        this.price = this.prices ? this.prices[0] : null;
+    get activeSubscriptions() {
+        const subscriptions = this.member.get('subscriptions') || [];
+        return subscriptions.filter((sub) => {
+            return ['active', 'trialing', 'unpaid', 'past_due'].includes(sub.status);
+        });
     }
 
     get member() {
@@ -43,45 +39,15 @@ export default class ModalMemberProduct extends ModalComponent {
         return !this.price || this.price.amount !== 0;
     }
 
-    get prices() {
-        if (!this.products || !this.products.length) {
-            return [];
-        }
-        if (this.product) {
-            let subscriptions = this.member.get('subscriptions') || [];
-            let activeCurrency;
-            if (subscriptions.length > 0) {
-                activeCurrency = subscriptions[0].price?.currency;
-            }
-
-            const product = this.products.find((_product) => {
-                return _product.id === this.product.id;
-            });
-            return product.stripePrices.sort((a, b) => {
-                return a.amount - b.amount;
-            }).filter((price) => {
-                return price.active;
-            }).filter((price) => {
-                if (activeCurrency) {
-                    return price.currency?.toLowerCase() === activeCurrency.toLowerCase();
-                }
-                return true;
-            }).sort((a, b) => {
-                return a.currency.localeCompare(b.currency, undefined, {ignorePunctuation: true});
-            }).map((price) => {
-                return {
-                    ...price,
-                    label: `${price.nickname} (${getSymbol(price.currency)}${getNonDecimal(price.amount)}/${price.interval})`
-                };
-            });
-        } else {
-            return [];
-        }
+    @action
+    setup() {
+        this.loadingProducts = true;
+        this.fetchProducts.perform();
     }
 
     @action
-    setProduct(product) {
-        this.product = product;
+    setProduct(productId) {
+        this.selectedProduct = productId;
     }
 
     @action
@@ -89,20 +55,54 @@ export default class ModalMemberProduct extends ModalComponent {
         this.price = price;
     }
 
-    @task({
-        drop: true
-    })
-    *addPriceTask() {
-        let url = this.ghostPaths.url.api('members', this.member.get('id'), 'subscriptions');
+    @action
+    confirmAction() {
+        return this.addProduct.perform();
+    }
 
-        let response = yield this.ajax.post(url, {
+    @action
+    close(event) {
+        event?.preventDefault?.();
+        this.closeModal();
+    }
+
+    @task({drop: true})
+    *addProduct() {
+        let url = this.ghostPaths.url.api(`members/${this.member.get('id')}`);
+        // Cancel existing active subscriptions for member
+        for (let i = 0; i < this.activeSubscriptions.length; i++) {
+            const subscription = this.activeSubscriptions[i];
+            const cancelUrl = this.ghostPaths.url.api(`members/${this.member.get('id')}/subscriptions/${subscription.id}`);
+            yield this.ajax.put(cancelUrl, {
+                data: {
+                    status: 'canceled'
+                }
+            });
+        }
+        let response = yield this.ajax.put(url, {
             data: {
-                stripe_price_id: this.price.stripe_price_id
+                members: [{
+                    id: this.member.get('id'),
+                    email: this.member.get('email'),
+                    products: [{
+                        id: this.selectedProduct
+                    }]
+                }]
             }
         });
 
         this.store.pushPayload('member', response);
         this.closeModal();
         return response;
+    }
+
+    actions = {
+        confirm() {
+            this.confirmAction(...arguments);
+        },
+        // needed because ModalBase uses .send() for keyboard events
+        closeModal() {
+            this.close();
+        }
     }
 }
