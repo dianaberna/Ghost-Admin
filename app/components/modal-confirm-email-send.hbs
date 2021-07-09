@@ -11,27 +11,11 @@
              </div>
         {{else}}
             <p>
-                {{t "Your post will be delivered to"}}
-                <strong>
-                    {{#if (eq this.model.sendEmailWhenPublished 'status:-free')}}
-                        {{!-- TODO: remove editor fallback once editors can query member counts --}}
-                        {{if this.session.user.isEditor (t "all paid members") (t "{paidMembers, plural}" paidMembers=this.memberCount)}}
-                    {{else if (eq this.model.sendEmailWhenPublished 'status:free')}}
-                        {{!-- TODO: remove editor fallback once editors can query member counts --}}
-                        {{if this.session.user.isEditor (t "all free members") (t "{freeMembers, plural}" freeMembers=this.memberCount)}}
-                    {{else if (eq this.model.sendEmailWhenPublished 'status:free,status:-free')}}
-                        {{!-- TODO: remove editor fallback once editors can query member counts --}}
-                        {{if this.session.user.isEditor (t "all members") (t "{members, plural}" members=this.memberCount)}}
-                    {{else}}
-                        {{!-- TODO: remove editor fallback once editors can query member counts --}}
-                        {{if this.session.user.isEditor (t "a custom members segment") (t "{members, plural}" members=this.memberCount)}}
-                    {{/if}}
-                </strong>
-                {{#if this.model.isScheduled}}
-                    {{t "and will be published on your site at the scheduled time. Sound good?"}}
-                {{else}}
-                    {{t "and will be published on your site. Sound good?"}}
-                {{/if}}
+            {{#if this.model.isScheduled}}
+                {{t "Your post will be delivered to <strong>{memberCount}</strong> and will be published on your site at the scheduled time. Sound good?" htmlSafe=true memberCount=this.memberCount}}
+            {{else}}
+                {{t "Your post will be delivered to <strong>{memberCount}</strong> and will be published on your site. Sound good?" htmlSafe=true memberCount=this.memberCount}}
+            {{/if}}
             </p>
         {{/if}}
     </div>

@@ -5,6 +5,7 @@ import boundOneWay from 'ghost-admin/utils/bound-one-way';
 import moment from 'moment';
 import {compare} from '@ember/utils';
 // eslint-disable-next-line ghost/ember/no-observers
+import {BLANK_DOC} from 'koenig-editor/components/koenig-editor';
 import {computed, observer} from '@ember/object';
 import {equal, filterBy, reads} from '@ember/object/computed';
 import {isBlank} from '@ember/utils';
@@ -92,9 +93,10 @@ export default Model.extend(Comparable, ValidationEngine, {
     emailSubject: attr('string'),
     html: attr('string'),
     visibility: attr('string'),
+    visibilityFilter: attr('string'),
     metaDescription: attr('string'),
     metaTitle: attr('string'),
-    mobiledoc: attr('json-string'),
+    mobiledoc: attr('json-string', {defaultValue: () => JSON.parse(JSON.stringify(BLANK_DOC))}),
     plaintext: attr('string'),
     publishedAtUTC: attr('moment-utc'),
     slug: attr('string'),
@@ -168,6 +170,27 @@ export default Model.extend(Comparable, ValidationEngine, {
             return '';
         }
         return this.get('ghostPaths.url').join(blogUrl, previewKeyword, uuid);
+    }),
+
+    isPublic: computed('visibility', function () {
+        return this.visibility === 'public' ? true : false;
+    }),
+
+    visibilitySegment: computed('visibility', 'visibilityFilter', 'isPublic', function () {
+        if (this.isPublic) {
+            return this.settings.get('defaultContentVisibility') === 'paid' ? 'status:-free' : 'status:free,status:-free';
+        } else {
+            if (this.visibility === 'members') {
+                return 'status:free,status:-free';
+            }
+            if (this.visibility === 'paid') {
+                return 'status:-free';
+            }
+            if (this.visibility === 'filter') {
+                return this.visibilityFilter;
+            }
+            return this.visibility;
+        }
     }),
 
     // check every second to see if we're past the scheduled time

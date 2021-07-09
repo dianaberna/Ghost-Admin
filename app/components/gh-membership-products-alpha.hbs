@@ -1,9 +1,9 @@
-<label>Products</label>
+<label>{{t "members.Products"}}</label>
 <div class="gh-product-cards">
 {{#each this.products as |product productIdx|}}
     <div class="gh-product-card">
         <button class="gh-product-card-editbutton gh-btn gh-btn-text gh-btn-link green" {{action "openEditProduct" product}}>
-            <span>Edit</span>
+            <span>{{t "common.Edit"}}</span>
         </button>
         <div class="gh-product-card-block">
             <h3 class="gh-product-card-name">
@@ -12,24 +12,42 @@
             <p class="gh-product-card-description">
                 {{product.description}}
             </p>
-            {{#if (and (eq productIdx 0) (not (eq products.length 1)))}}
-                <span class="gh-badge gh-badge-green">Available in Portal</span>
+        </div>
+        <div class="gh-product-card-block benefits-block">
+            <h4>Benefits <span class="counter">({{if product.benefits.length product.benefits.length "0"}})</span></h4>
+            {{#if product.benefits.length}}
+            <ul class="benefits">
+                {{#each product.benefits as |benefit|}}
+                    <li>{{svg-jar "check"}} {{benefit.name}} </li>
+                {{/each}}
+            </ul>
+            {{else}}
+            <p class="gh-product-card-description">{{t "members.No benefits added for this product."}}</p>
             {{/if}}
         </div>
         <div class="gh-product-card-block">
-            <span class="gh-product-card-heading">Pricing</span>
-            <p class="gh-product-card-price">
-                <span class="amount">{{gh-price-amount product.monthlyPrice.amount}} </span><span class="currency">{{product.monthlyPrice.currency}}</span><span class="period">/month</span>
-            </p>
-            <p class="gh-product-card-price">
-                <span class="amount">{{gh-price-amount product.yearlyPrice.amount}} </span><span class="currency">{{product.monthlyPrice.currency}}</span><span class="period">/year</span>
-            </p>
+            <div class="gh-product-price-container">
+                <div class="gh-product-card-price">
+                    <div class="flex items-baseline">
+                        <span class="amount">{{gh-price-amount product.monthlyPrice.amount}}</span>
+                        <span class="currency">{{product.monthlyPrice.currency}}</span>
+                    </div>
+                    <div class="period">{{t "members.Monthly"}}</div>
+                </div>
+                <div class="gh-product-card-price">
+                    <div class="flex items-baseline">
+                        <span class="amount">{{gh-price-amount product.yearlyPrice.amount}}</span>
+                        <span class="currency">{{product.monthlyPrice.currency}}</span>
+                    </div>
+                    <div class="period">{{t "members.Yearly"}}</div>
+                </div>
+            </div>
         </div>
     </div>
 {{/each}}
 
 <div class="gh-product-cards-footer">
-    <button class="gh-btn gh-btn-link gh-btn-text gh-btn-icon gh-btn-add-product green" {{action "openNewProduct" product}}><span>{{svg-jar "add-stroke" class="stroke-green"}}Add product</span></button>
+    <button class="gh-btn gh-btn-link gh-btn-text gh-btn-icon gh-btn-add-product green" {{action "openNewProduct" product}}><span>{{svg-jar "add-stroke" class="stroke-green"}}{{t "members.Add product"}}</span></button>
     <span>&ndash; Advanced (<a href="javascript:">learn more</a>)</span>
 </div>
 </div>
@@ -42,5 +60,5 @@
         }}
         @confirm={{this.confirmProductSave}}
         @close={{this.closeProductModal}}
-        @modifier="action wide" />
+        @modifier="edit-product action wide" />
 {{/if}}

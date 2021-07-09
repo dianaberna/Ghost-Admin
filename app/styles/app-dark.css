@@ -83,6 +83,7 @@
     --whitegrey: #1c1e21;
     --blue: color-mod(#3eb0ef l(+5%) s(+5%));
 
+    --main-bg-color: #151719;
     --dark-main-bg-color: #151719;
     --hairline-color-1: #272a30;
     --hairline-color-2: #626D79;
@@ -289,15 +290,15 @@ input:focus,
 
 /* ---------------------------------------------------------------------- */
 
-.gh-expandable-header .gh-btn:not(.gh-btn-white):not(.gh-btn-green):not(.gh-btn-blue):not(.gh-btn-red),
-.gh-expandable-content .gh-btn:not(.gh-btn-white):not(.gh-btn-green):not(.gh-btn-blue):not(.gh-btn-red),
-.gh-main-section-content.grey .gh-btn:not(.gh-btn-white):not(.gh-btn-green):not(.gh-btn-blue):not(.gh-btn-red) {
+.gh-expandable-header .gh-btn:not(.gh-btn-white):not(.gh-btn-green):not(.gh-btn-blue):not(.gh-btn-red):not(.gh-btn-text):not(.gh-btn-link),
+.gh-expandable-content .gh-btn:not(.gh-btn-white):not(.gh-btn-green):not(.gh-btn-blue):not(.gh-btn-red):not(.gh-btn-text):not(.gh-btn-link),
+.gh-main-section-content.grey .gh-btn:not(.gh-btn-white):not(.gh-btn-green):not(.gh-btn-blue):not(.gh-btn-red):not(.gh-btn-text):not(.gh-btn-link) {
     background: var(--lightgrey);
 }
 
-.gh-expandable-header .gh-btn:not(.gh-btn-white):not(.gh-btn-green):not(.gh-btn-blue):not(.gh-btn-red):hover,
-.gh-expandable-content .gh-btn:not(.gh-btn-white):not(.gh-btn-green):not(.gh-btn-blue):not(.gh-btn-red):hover,
-.gh-main-section-content.grey .gh-btn:not(.gh-btn-white):not(.gh-btn-green):not(.gh-btn-blue):not(.gh-btn-red):hover {
+.gh-expandable-header .gh-btn:not(.gh-btn-white):not(.gh-btn-green):not(.gh-btn-blue):not(.gh-btn-red):not(.gh-btn-text):not(.gh-btn-link):hover,
+.gh-expandable-content .gh-btn:not(.gh-btn-white):not(.gh-btn-green):not(.gh-btn-blue):not(.gh-btn-red):not(.gh-btn-text):not(.gh-btn-link):hover,
+.gh-main-section-content.grey .gh-btn:not(.gh-btn-white):not(.gh-btn-green):not(.gh-btn-blue):not(.gh-btn-red):not(.gh-btn-text):not(.gh-btn-link):hover {
     background: var(--lightgrey-l1);
 }
 
@@ -434,10 +435,6 @@ input:focus,
     color: var(--midgrey);
 }
 
-.gh-editor-header-small {
-    background: var(--dark-main-bg-color);
-}
-
 .gh-markdown-editor .CodeMirror-cursor {
     border-color: #fff;
 }
@@ -494,7 +491,6 @@ input:focus,
     background: var(--lightgrey);
 }
 
-.settings-menu-expanded .content-cover,
 .mobile-menu-expanded .content-cover {
     background: transparent;
 }
@@ -700,6 +696,12 @@ input:focus,
 }
 
 /* Editor  */
+@media (max-width: 1024px) {
+    .gh-editor-header {
+        background-color: var(--dark-main-bg-color);
+    }
+}
+
 .gh-editor-back-button {
     background: var(--dark-main-bg-color);
 }
@@ -709,7 +711,11 @@ input:focus,
 }
 
 .gh-editor-preview-trigger {
-    background: var(--dark-main-bg-color);
+    background: var(--dark-main-bg-color) !important;
+}
+
+.gh-editor-preview-trigger:hover {
+    background: var(--whitegrey) !important;
 }
 
 .gh-btn-editor {
@@ -908,7 +914,7 @@ input:focus,
     box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.01), 0 1px 2px rgba(0, 0, 0, 0.05);
     outline: none;
 }
-    
+
 .gh-dashboard-btn:hover {
     background: var(--white);
 }

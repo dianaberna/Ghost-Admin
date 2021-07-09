@@ -1,7 +1,9 @@
 import EmberObject, {action} from '@ember/object';
 import ModalBase from 'ghost-admin/components/modal-base';
+import ProductBenefitItem from '../models/product-benefit-item';
 import classic from 'ember-classic-decorator';
 import {currencies, getCurrencyOptions, getSymbol} from 'ghost-admin/utils/currency';
+import {A as emberA} from '@ember/array';
 import {isEmpty} from '@ember/utils';
 import {inject as service} from '@ember/service';
 import {task} from 'ember-concurrency-decorators';
@@ -28,6 +30,8 @@ export default class ModalProductPrice extends ModalBase {
     @tracked currency = 'usd';
     @tracked errors = EmberObject.create();
     @tracked stripePlanError = '';
+    @tracked benefits = [];
+    @tracked newBenefit = null;
 
     confirm() {}
 
@@ -51,6 +55,11 @@ export default class ModalProductPrice extends ModalBase {
         if (yearlyPrice) {
             this.stripeYearlyAmount = (yearlyPrice.amount / 100);
         }
+        this.benefits = this.product.get('benefits') || emberA([]);
+        this.newBenefit = ProductBenefitItem.create({
+            isNew: true,
+            name: ''
+        });
     }
 
     get title() {
@@ -72,6 +81,7 @@ export default class ModalProductPrice extends ModalBase {
 
     @action
     close(event) {
+        this.reset();
         event?.preventDefault?.();
         this.closeModal();
     }
@@ -79,6 +89,12 @@ export default class ModalProductPrice extends ModalBase {
     setCurrency(event) {
         const newCurrency = event.value;
         this.currency = newCurrency;
+    }
+
+    reset() {
+        this.newBenefit = ProductBenefitItem.create({isNew: true, name: ''});
+        const savedBenefits = this.product.benefits.filter(benefit => !!benefit.id);
+        this.product.set('benefits', savedBenefits);
     }
 
     @task({drop: true})
@@ -90,6 +106,11 @@ export default class ModalProductPrice extends ModalBase {
         if (this.stripePlanError) {
             return;
         }
+
+        if (!this.newBenefit.get('isBlank')) {
+            yield this.send('addBenefit', this.newBenefit);
+        }
+
         const monthlyAmount = this.stripeMonthlyAmount * 100;
         const yearlyAmount = this.stripeYearlyAmount * 100;
         this.product.set('monthlyPrice', {
@@ -108,8 +129,10 @@ export default class ModalProductPrice extends ModalBase {
             interval: 'year',
             type: 'recurring'
         });
-        const savedProduct = yield this.product.save();
-        yield this.confirm(savedProduct);
+        this.product.set('benefits', this.benefits);
+        yield this.product.save();
+
+        yield this.confirm();
         this.send('closeModal');
     }
 
@@ -128,7 +151,37 @@ export default class ModalProductPrice extends ModalBase {
         }
     }
 
+    addNewBenefitItem(item) {
+        item.set('isNew', false);
+        this.benefits.pushObject(item);
+
+        this.newBenefit = ProductBenefitItem.create({isNew: true, name: ''});
+    }
+
     actions = {
+        addBenefit(item) {
+            return item.validate().then(() => {
+                this.addNewBenefitItem(item);
+            });
+        },
+        deleteBenefit(item) {
+            if (!item) {
+                return;
+            }
+            this.benefits.removeObject(item);
+        },
+        reorderItems() {
+            this.product.set('benefits', this.benefits);
+        },
+        updateLabel(label, benefitItem) {
+            if (!benefitItem) {
+                return;
+            }
+
+            if (benefitItem.get('name') !== label) {
+                benefitItem.set('name', label);
+            }
+        },
         confirm() {
             this.confirmAction(...arguments);
         },

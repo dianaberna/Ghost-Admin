@@ -1,4 +1,4 @@
-<div class="mb4">
+<div class="mb4 gh-default-post-access">
     <div class="gh-expandable-header">
         <div>
             <h4 class="gh-expandable-title">{{t "psm.Default post access"}}</h4>
@@ -23,4 +23,16 @@
             </div>
         </div>
     </PowerSelect>
+    {{#if this.hasVisibilityFilter}}
+        <div class="mt2">
+            <GhMembersSegmentSelect
+                @hideLabels={{true}}
+                @segment={{this.settings.defaultContentVisibility}}
+                @onChange={{action "setVisibility"}}
+                @renderInPlace={{true}}
+                @hideDefaultSegments={{true}}
+                @hideOptionsWhenAllSelected={{true}}
+            />
+        </div>
+    {{/if}}
 </div>

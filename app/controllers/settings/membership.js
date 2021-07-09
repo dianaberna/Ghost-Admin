@@ -16,6 +16,7 @@ const CURRENCIES = currencies.map((currency) => {
 
 export default class MembersAccessController extends Controller {
     @service config;
+    @service feature;
     @service membersUtils;
     @service settings;
     @service store;
@@ -308,30 +309,45 @@ export default class MembersAccessController extends Controller {
 
     @task({drop: true})
     *fetchProducts() {
-        this.products = yield this.store.query('product', {include: 'monthly_price,yearly_price'});
+        this.products = yield this.store.query('product', {include: 'monthly_price,yearly_price,benefits'});
         this.product = this.products.firstObject;
         this.setupPortalProduct(this.product);
     }
 
     @task({drop: true})
     *saveSettingsTask(options) {
-        yield this.validateStripePlans({updatePortalPreview: false});
-
-        if (this.stripePlanError && !this.config.get('enableDeveloperExperiments')) {
-            return;
+        if (!this.settings.get('defaultContentVisibility')) {
+            const oldValue = this.settings.changedAttributes().defaultContentVisibility?.[0];
+            if (oldValue) {
+                this.settings.set('defaultContentVisibility', oldValue);
+            }
         }
 
-        if (this.settings.get('errors').length !== 0) {
-            return;
-        }
-        if (!this.config.get('enableDeveloperExperiments')) {
+        if (!this.feature.get('multipleProducts')) {
+            yield this.validateStripePlans({updatePortalPreview: false});
+
+            if (this.stripePlanError) {
+                return;
+            }
+
+            if (this.settings.get('errors').length !== 0) {
+                return;
+            }
+
             yield this.saveProduct();
+            const result = yield this.settings.save();
+
+            this.updatePortalPreview(options);
+
+            return result;
+        } else {
+            if (this.settings.get('errors').length !== 0) {
+                return;
+            }
+            const result = yield this.settings.save();
+            this.updatePortalPreview(options);
+            return result;
         }
-        const result = yield this.settings.save();
-
-        this.updatePortalPreview(options);
-
-        return result;
     }
 
     async saveProduct() {

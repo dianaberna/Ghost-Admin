@@ -191,9 +191,7 @@
                         <div>
                             <h4 class="gh-expandable-title">{{t "settings.Google OAuth for staff users"}}</h4>
                             <p class="gh-expandable-description">
-                                Allow people to sign into Ghost Admin using Google SSO,
-                                {{!-- TODO: create an help desk article and update the url here --}}
-                                <a href="#" target="_blank" rel="noopener">docs here</a>
+                                {{t "settings.Allow people to sign into Ghost Admin using Google SSO, <a href=\"#\" target=\"_blank\" rel=\"noopener\">docs here</a>" htmlSafe=true}}
                             </p>
                         </div>
                         <div class="for-switch">
@@ -211,11 +209,11 @@
                     </div>
                     <div class="gh-expandable-content">
                         {{#if this.isOAuthEnabled}}
-                            <div class="gh-setting-content-extended pt2 pb4">
-                                <a href="https://console.developers.google.com/" target="_blank" rel="noopener" class="gh-btn gh-btn-white mb4"><span>{{svg-jar "google-favicon"}}Configure Google OAuth</span></a>
+                            <div class="gh-setting-content-extended gh-labs-sso-settings pt2 pb4">
+                                <a href="https://console.developers.google.com/" target="_blank" rel="noopener" class="gh-btn gh-btn-white mb4"><span>{{svg-jar "google-favicon"}}{{t "settings.Configure Google OAuth"}}</span></a>
                                 <GhFormGroup @class="no-margin pt2" @errors={{this.settings.errors}} @hasValidated={{this.settings.hasValidated}} @property="password">
                                     <div class="form-group">
-                                        <label for="aouth-client-id">Google OAuth Client ID</label>
+                                        <label for="aouth-client-id">{{t "settings.Google OAuth Client ID"}}</label>
                                         <GhTextInput
                                             id="oauth-client-id"
                                             @value={{readonly this.settings.oauthClientId}}
@@ -226,7 +224,7 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="oauth-client-secret">Google OAuth Client Secret</label>
+                                        <label for="oauth-client-secret">{{t "settings.Google OAuth Client Secret"}}</label>
                                         <GhTextInput
                                             id="oauth-client-secret"
                                             @value={{readonly this.settings.oauthClientSecret}}
@@ -245,7 +243,7 @@
                         <div>
                             <h4 class="gh-expandable-title">{{t "settings.Match helper"}}</h4>
                             <p class="gh-expandable-description">
-                               Experimental <code>\{{match}}</code> helper for themes.
+                                {{t "settings.Experimental <code>\{{match}}</code> helper for themes" htmlSafe=true}}
                             </p>
                         </div>
                         <div class="for-switch">
@@ -256,9 +254,9 @@
                 <div class="gh-expandable-block">
                     <div class="gh-expandable-header">
                         <div>
-                            <h4 class="gh-expandable-title">{{t "settings.Multiple Products"}}</h4>
+                            <h4 class="gh-expandable-title">{{t "settings.Multiple products"}}</h4>
                             <p class="gh-expandable-description">
-                               Allow multiple products on site.
+                                {{t "settings.Allow multiple products on site"}}
                             </p>
                         </div>
                         <div class="for-switch">
@@ -269,13 +267,26 @@
                 <div class="gh-expandable-block">
                     <div class="gh-expandable-header">
                         <div>
-                            <h4 class="gh-expandable-title">{{t "settings.Feature image redesign with caption support"}}</h4>
+                            <h4 class="gh-expandable-title">{{t "settings.Gated content in emails"}}</h4>
                             <p class="gh-expandable-description">
-                               Moves feature image uploader to top of editor screen and adds alt/caption input.
+                                {{t "settings.Experimental feature to gate email card only to free/paid members"}}
                             </p>
                         </div>
                         <div class="for-switch">
-                           <GhFeatureFlag @flag="featureImageMeta" />
+                           <GhFeatureFlag @flag="emailCardSegments" />
+                        </div>
+                    </div>
+                </div>
+                <div class="gh-expandable-block">
+                    <div class="gh-expandable-header">
+                        <div>
+                            <h4 class="gh-expandable-title">{{t "settings.Show saved state in editor"}}</h4>
+                            <p class="gh-expandable-description">
+                                {{t "settings.Post status in editor shows \"- Saved\" when a post has no unsaved changes"}}
+                            </p>
+                        </div>
+                        <div class="for-switch">
+                           <GhFeatureFlag @flag="savedIndicator" />
                         </div>
                     </div>
                 </div>

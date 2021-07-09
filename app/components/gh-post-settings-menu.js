@@ -1,12 +1,12 @@
 import Component from '@ember/component';
-import SettingsMenuMixin from 'ghost-admin/mixins/settings-menu-component';
 import boundOneWay from 'ghost-admin/utils/bound-one-way';
 import moment from 'moment';
+import {action} from '@ember/object';
 import {alias, or} from '@ember/object/computed';
 import {computed} from '@ember/object';
 import {inject as service} from '@ember/service';
 
-export default Component.extend(SettingsMenuMixin, {
+export default Component.extend({
     feature: service(),
     store: service(),
     config: service(),
@@ -18,9 +18,11 @@ export default Component.extend(SettingsMenuMixin, {
     settings: service(),
     ui: service(),
 
+    tagName: '',
+
     post: null,
 
-    _showSettingsMenu: false,
+    isViewingSubview: false,
 
     canonicalUrlScratch: alias('post.canonicalUrlScratch'),
     customExcerptScratch: alias('post.customExcerptScratch'),
@@ -66,32 +68,27 @@ export default Component.extend(SettingsMenuMixin, {
         return urlParts.join(' > ');
     }),
 
-    didReceiveAttrs() {
-        this._super(...arguments);
+    willDestroyElement() {
+        let post = this.post;
+        let errors = post.get('errors');
 
-        // fired when menu is closed
-        if (!this.showSettingsMenu && this._showSettingsMenu) {
-            let post = this.post;
-            let errors = post.get('errors');
-
-            // reset the publish date if it has an error
-            if (errors.has('publishedAtBlogDate') || errors.has('publishedAtBlogTime')) {
-                post.set('publishedAtBlogTZ', post.get('publishedAtUTC'));
-                post.validate({attribute: 'publishedAtBlog'});
-            }
+        // reset the publish date if it has an error
+        if (errors.has('publishedAtBlogDate') || errors.has('publishedAtBlogTime')) {
+            post.set('publishedAtBlogTZ', post.get('publishedAtUTC'));
+            post.validate({attribute: 'publishedAtBlog'});
         }
 
-        this._showSettingsMenu = this.showSettingsMenu;
+        this.setSidebarWidthVariable(0);
     },
 
     actions: {
         showSubview(subview) {
-            this._super(...arguments);
+            this.set('isViewingSubview', true);
             this.set('subview', subview);
         },
 
         closeSubview() {
-            this._super(...arguments);
+            this.set('isViewingSubview', false);
             this.set('subview', null);
         },
 
@@ -108,7 +105,7 @@ export default Component.extend(SettingsMenuMixin, {
                 return;
             }
 
-            this.savePost.perform().catch((error) => {
+            this.savePostTask.perform().catch((error) => {
                 this.showError(error);
                 this.post.rollbackAttributes();
             });
@@ -118,7 +115,7 @@ export default Component.extend(SettingsMenuMixin, {
          * triggered by user manually changing slug
          */
         updateSlug(newSlug) {
-            return this.updateSlug
+            return this.updateSlugTask
                 .perform(newSlug)
                 .catch((error) => {
                     this.showError(error);
@@ -136,7 +133,25 @@ export default Component.extend(SettingsMenuMixin, {
                 post.validate({property: 'publishedAtBlog'});
             } else {
                 post.set('publishedAtBlogDate', dateString);
-                return this.savePost.perform();
+                return this.savePostTask.perform();
+            }
+        },
+
+        async setVisibility(segment) {
+            this.post.set('visibilityFilter', segment);
+            try {
+                await this.post.validate({property: 'visibility'});
+                await this.post.validate({property: 'visibilityFilter'});
+                if (this.post.changedAttributes().visibilityFilter) {
+                    await this.savePostTask.perform();
+                }
+            } catch (e) {
+                if (!e) {
+                    // validation error
+                    return;
+                }
+
+                throw e;
             }
         },
 
@@ -149,7 +164,7 @@ export default Component.extend(SettingsMenuMixin, {
                 post.validate({property: 'publishedAtBlog'});
             } else {
                 post.set('publishedAtBlogTime', time);
-                return this.savePost.perform();
+                return this.savePostTask.perform();
             }
         },
 
@@ -163,7 +178,7 @@ export default Component.extend(SettingsMenuMixin, {
 
             post.set('customExcerpt', excerpt);
 
-            return post.validate({property: 'customExcerpt'}).then(() => this.savePost.perform());
+            return post.validate({property: 'customExcerpt'}).then(() => this.savePostTask.perform());
         },
 
         setHeaderInjection(code) {
@@ -176,7 +191,7 @@ export default Component.extend(SettingsMenuMixin, {
 
             post.set('codeinjectionHead', code);
 
-            return post.validate({property: 'codeinjectionHead'}).then(() => this.savePost.perform());
+            return post.validate({property: 'codeinjectionHead'}).then(() => this.savePostTask.perform());
         },
 
         setFooterInjection(code) {
@@ -189,7 +204,7 @@ export default Component.extend(SettingsMenuMixin, {
 
             post.set('codeinjectionFoot', code);
 
-            return post.validate({property: 'codeinjectionFoot'}).then(() => this.savePost.perform());
+            return post.validate({property: 'codeinjectionFoot'}).then(() => this.savePostTask.perform());
         },
 
         setMetaTitle(metaTitle) {
@@ -211,7 +226,7 @@ export default Component.extend(SettingsMenuMixin, {
                     return;
                 }
 
-                return this.savePost.perform();
+                return this.savePostTask.perform();
             });
         },
 
@@ -234,7 +249,7 @@ export default Component.extend(SettingsMenuMixin, {
                     return;
                 }
 
-                return this.savePost.perform();
+                return this.savePostTask.perform();
             });
         },
 
@@ -257,7 +272,7 @@ export default Component.extend(SettingsMenuMixin, {
                     return;
                 }
 
-                return this.savePost.perform();
+                return this.savePostTask.perform();
             });
         },
 
@@ -280,7 +295,7 @@ export default Component.extend(SettingsMenuMixin, {
                     return;
                 }
 
-                return this.savePost.perform();
+                return this.savePostTask.perform();
             });
         },
 
@@ -303,7 +318,7 @@ export default Component.extend(SettingsMenuMixin, {
                     return;
                 }
 
-                return this.savePost.perform();
+                return this.savePostTask.perform();
             });
         },
 
@@ -326,7 +341,7 @@ export default Component.extend(SettingsMenuMixin, {
                     return;
                 }
 
-                return this.savePost.perform();
+                return this.savePostTask.perform();
             });
         },
 
@@ -349,7 +364,7 @@ export default Component.extend(SettingsMenuMixin, {
                     return;
                 }
 
-                return this.savePost.perform();
+                return this.savePostTask.perform();
             });
         },
 
@@ -360,7 +375,7 @@ export default Component.extend(SettingsMenuMixin, {
                 return;
             }
 
-            this.savePost.perform().catch((error) => {
+            this.savePostTask.perform().catch((error) => {
                 this.showError(error);
                 this.post.rollbackAttributes();
             });
@@ -373,7 +388,7 @@ export default Component.extend(SettingsMenuMixin, {
                 return;
             }
 
-            this.savePost.perform().catch((error) => {
+            this.savePostTask.perform().catch((error) => {
                 this.showError(error);
                 this.post.rollbackAttributes();
             });
@@ -386,7 +401,7 @@ export default Component.extend(SettingsMenuMixin, {
                 return;
             }
 
-            this.savePost.perform().catch((error) => {
+            this.savePostTask.perform().catch((error) => {
                 this.showError(error);
                 this.post.rollbackAttributes();
             });
@@ -399,7 +414,7 @@ export default Component.extend(SettingsMenuMixin, {
                 return;
             }
 
-            this.savePost.perform().catch((error) => {
+            this.savePostTask.perform().catch((error) => {
                 this.showError(error);
                 this.post.rollbackAttributes();
             });
@@ -412,7 +427,7 @@ export default Component.extend(SettingsMenuMixin, {
                 return;
             }
 
-            this.savePost.perform().catch((error) => {
+            this.savePostTask.perform().catch((error) => {
                 this.showError(error);
                 this.post.rollbackAttributes();
             });
@@ -425,7 +440,7 @@ export default Component.extend(SettingsMenuMixin, {
                 return;
             }
 
-            this.savePost.perform().catch((error) => {
+            this.savePostTask.perform().catch((error) => {
                 this.showError(error);
                 this.post.rollbackAttributes();
             });
@@ -447,7 +462,7 @@ export default Component.extend(SettingsMenuMixin, {
                 return;
             }
 
-            this.savePost.perform().catch((error) => {
+            this.savePostTask.perform().catch((error) => {
                 this.showError(error);
                 post.rollbackAttributes();
             });
@@ -465,5 +480,14 @@ export default Component.extend(SettingsMenuMixin, {
         if (error) {
             this.notifications.showAPIError(error);
         }
+    },
+
+    setSidebarWidthFromElement: action(function (element) {
+        const width = element.getBoundingClientRect().width;
+        this.setSidebarWidthVariable(width);
+    }),
+
+    setSidebarWidthVariable(width) {
+        document.documentElement.style.setProperty('--editor-sidebar-width', `${width}px`);
     }
 });

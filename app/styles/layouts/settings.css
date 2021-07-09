@@ -119,9 +119,9 @@
 
 .gh-settings-main-grid .gh-setting-group p {
     color: var(--midgrey);
-    margin: 0;
+    margin: 4px 0 0;
     padding: 0;
-    line-height: 1.5em;
+    line-height: 1.4em;
 }
 
 @media (max-width: 1100px) {
@@ -253,13 +253,6 @@
 .gh-setting-content-extended .gh-btn span {
     height: 36px;
     line-height: 36px;
-}
-
-.gh-setting-content-extended svg {
-    position: relative;
-    bottom: 1px;
-    width: 18px;
-    margin-right: 8px;
 }
 
 .gh-setting-liquid-section .liquid-container,
@@ -504,6 +497,10 @@
 .td-item-overlay:hover .td-item-action {
     visibility: visible;
     opacity: 1;
+}
+
+.td-item-action.gh-btn {
+    width: 80px;
 }
 
 @media (max-width: 1400px) {
@@ -1534,6 +1531,18 @@ p.theme-validation-details {
     margin: 36px 0;
 }
 
+.gh-default-post-access .ember-power-select-multiple-trigger {
+    padding: 8px;
+}
+
+.gh-default-post-access .segment-totals {
+    display: none;
+}
+
+.gh-setting-members-access .ember-power-select-status-icon {
+    right: 20px;
+}
+
 .gh-setting-members-tierscontainer {
     margin-top: 4vmin;
 }
@@ -1556,74 +1565,6 @@ p.theme-validation-details {
 
 .gh-setting-members-tierscontainer .gh-expandable:not(:first-of-type) {
     margin-top: 20px;
-}
-
-.gh-settings-members-pricelabelcont {
-    display: flex;
-    align-items: baseline;
-}
-
-.gh-settings-members-pricelabelcont span {
-    margin: 0 4px;
-}
-
-.gh-settings-members-pricelabelcont span,
-.gh-settings-members-pricelabelcont div {
-    display: inline-block;
-    margin-bottom: 4px;
-}
-
-.gh-setting-members-currency {
-    position: relative;
-}
-
-.gh-setting-members-currencylabel {
-    position: absolute;
-    display: flex !important;
-    align-items: center;
-    top: 1px;
-    left: 0px;
-    background: var(--main-color-content-greybg);
-    height: 20px;
-    font-weight: 500;
-    font-size: 1.4rem;
-    color: var(--middarkgrey);
-    text-transform: uppercase;
-    pointer-events: none;
-}
-
-.gh-setting-members-currencylabel span {
-    margin-right: 0;
-}
-
-.gh-settings-members-pricelabelcont .gh-select svg {
-    position: unset;
-    margin-top: -3px;
-}
-
-.gh-settings-members-pricelabelcont .gh-select {
-    padding: 0;
-    width: 60px;
-    height: 16px;
-    background: transparent;
-    border: none;
-    margin-left: -4px;
-}
-
-.gh-settings-members-pricelabelcont .gh-select select {
-    background: transparent;
-    font-size: 1.4rem;
-    font-weight: 500;
-    border: none;
-    height: 16px;
-    width: 46px;
-    padding: 0;
-}
-
-.gh-setting-members-prices {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-gap: 20px;
 }
 
 .gh-setting-members-portal-mock {
@@ -1679,6 +1620,76 @@ p.theme-validation-details {
 .gh-setting-members-portal-mock .site-frame {
     border-radius: 5px;
 }
+
+.gh-settings-members-pricelabelcont {
+    display: flex;
+    align-items: baseline;
+}
+
+.gh-settings-members-pricelabelcont span {
+    margin: 0 4px;
+}
+
+.gh-settings-members-pricelabelcont span,
+.gh-settings-members-pricelabelcont div {
+    display: inline-block;
+    margin-bottom: 4px;
+}
+
+.gh-settings-members-pricelabelcont .gh-select svg {
+    position: unset;
+    margin-top: -3px;
+}
+
+.gh-settings-members-pricelabelcont .gh-select {
+    padding: 0;
+    width: 60px;
+    height: 16px;
+    background: transparent;
+    border: none;
+    margin-left: -4px;
+}
+
+.gh-settings-members-pricelabelcont .gh-select select {
+    background: transparent;
+    font-size: 1.4rem;
+    font-weight: 500;
+    border: none;
+    height: 16px;
+    width: 46px;
+    padding: 0;
+}
+
+.gh-setting-members-prices {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 20px;
+}
+
+.gh-setting-members-currency {
+    position: relative;
+}
+
+.gh-setting-members-currencylabel {
+    position: absolute;
+    display: flex !important;
+    align-items: center;
+    top: 1px;
+    left: 0px;
+    background: var(--main-color-content-greybg);
+    height: 20px;
+    font-weight: 500;
+    font-size: 1.4rem;
+    color: var(--middarkgrey);
+    text-transform: uppercase;
+    pointer-events: none;
+}
+
+.gh-setting-members-currencylabel span {
+    margin-right: 0;
+    pointer-events: none;
+}
+
 
 /* Stripe Connect modal */
 .fullscreen-modal-stripe-connect {

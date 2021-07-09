@@ -3,6 +3,7 @@ import {inject as service} from '@ember/service';
 export default class MembersUtilsService extends Service {
     @service config;
     @service settings;
+    @service feature;
 
     get isMembersEnabled() {
         return this.settings.get('membersSignupAccess') !== 'none';
@@ -87,6 +88,7 @@ export default class MembersUtilsService extends Service {
             monthlyPrice,
             yearlyPrice,
             portalPlans = this.settings.get('portalPlans'),
+            portalProducts = this.settings.get('portalProducts'),
             currency,
             membersSignupAccess = this.settings.get('membersSignupAccess')
         } = overrides;
@@ -110,6 +112,10 @@ export default class MembersUtilsService extends Service {
 
         if (portalPlans) {
             settingsParam.append('portalPrices', encodeURIComponent(portalPlans));
+        }
+
+        if (portalProducts && this.feature.get('multipleProducts')) {
+            settingsParam.append('portalProducts', encodeURIComponent(portalProducts));
         }
 
         if (this.settings.get('accentColor') === '' || this.settings.get('accentColor')) {

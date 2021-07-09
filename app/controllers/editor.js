@@ -11,7 +11,7 @@ import {get} from '@ember/object';
 import {htmlSafe} from '@ember/template';
 import {isBlank} from '@ember/utils';
 import {isArray as isEmberArray} from '@ember/array';
-import {isHostLimitError} from 'ghost-admin/services/ajax';
+import {isHostLimitError, isServerUnreachableError} from 'ghost-admin/services/ajax';
 import {isInvalidError} from 'ember-ajax/errors';
 import {isVersionMismatchError} from 'ghost-admin/services/ajax';
 import {inject as service} from '@ember/service';
@@ -41,7 +41,10 @@ PostModel.eachAttribute(function (name) {
 
 export default Controller.extend({
     application: controller(),
+
+    config: service(),
     feature: service(),
+    membersCountCache: service(),
     notifications: service(),
     router: service(),
     slugGenerator: service(),
@@ -53,7 +56,7 @@ export default Controller.extend({
     /* public properties -----------------------------------------------------*/
 
     leaveEditorTransition: null,
-    shouldFocusEditor: false,
+    shouldFocusTitle: false,
     showDeletePostModal: false,
     showLeaveEditorModal: false,
     showReAuthenticateModal: false,
@@ -61,6 +64,7 @@ export default Controller.extend({
     showPostPreviewModal: false,
     showUpgradeModal: false,
     showDeleteSnippetModal: false,
+    showSettingsMenu: false,
     hostLimitError: null,
     // koenig related properties
     wordcount: null,
@@ -79,7 +83,7 @@ export default Controller.extend({
     willPublish: boundOneWay('post.isPublished'),
     willSchedule: boundOneWay('post.isScheduled'),
 
-    // updateSlug and save should always be enqueued so that we don't run into
+    // updateSlugTask and saveTask should always be enqueued so that we don't run into
     // problems with concurrency, for example when Cmd-S is pressed whilst the
     // cursor is in the slug field - that would previously trigger a simultaneous
     // slug update and save resulting in ember data errors and inconsistent save
@@ -115,9 +119,9 @@ export default Controller.extend({
         return false;
     }),
 
-    _autosaveRunning: computed('_autosave.isRunning', '_timedSave.isRunning', function () {
-        let autosave = this.get('_autosave.isRunning');
-        let timedsave = this.get('_timedSave.isRunning');
+    _autosaveRunning: computed('_autosaveTask.isRunning', '_timedSaveTask.isRunning', function () {
+        let autosave = this.get('_autosaveTask.isRunning');
+        let timedsave = this.get('_timedSaveTask.isRunning');
 
         return autosave || timedsave;
     }),
@@ -133,9 +137,9 @@ export default Controller.extend({
             this.set('post.scratch', mobiledoc);
 
             // save 3 seconds after last edit
-            this._autosave.perform();
+            this._autosaveTask.perform();
             // force save at 60 seconds
-            this._timedSave.perform();
+            this._timedSaveTask.perform();
         },
         updateTitleScratch(title) {
             this.set('post.titleScratch', title);
@@ -157,14 +161,14 @@ export default Controller.extend({
         },
 
         save(options) {
-            return this.save.perform(options);
+            return this.saveTask.perform(options);
         },
 
         // used to prevent unexpected background saves. Triggered when opening
         // publish menu, starting a manual save, and when leaving the editor
         cancelAutosave() {
-            this._autosave.cancelAll();
-            this._timedSave.cancelAll();
+            this._autosaveTask.cancelAll();
+            this._timedSaveTask.cancelAll();
         },
 
         toggleLeaveEditorModal(transition) {
@@ -191,9 +195,9 @@ export default Controller.extend({
                 // if an autosave is scheduled, cancel it, save then transition
                 if (this._autosaveRunning) {
                     this.send('cancelAutosave');
-                    this.autosave.cancelAll();
+                    this.autosaveTask.cancelAll();
 
-                    return this.autosave.perform().then(() => {
+                    return this.autosaveTask.perform().then(() => {
                         transition.retry();
                     });
                 }
@@ -266,20 +270,46 @@ export default Controller.extend({
 
         setFeatureImage(url) {
             this.post.set('featureImage', url);
+
+            if (this.post.isDraft) {
+                this.autosaveTask.perform();
+            }
         },
 
         clearFeatureImage() {
             this.post.set('featureImage', null);
+            this.post.set('featureImageAlt', null);
+            this.post.set('featureImageCaption', null);
+
+            if (this.post.isDraft) {
+                this.autosaveTask.perform();
+            }
         },
 
         setFeatureImageAlt(text) {
             this.post.set('featureImageAlt', text);
+
+            if (this.post.isDraft) {
+                this.autosaveTask.perform();
+            }
         },
 
         setFeatureImageCaption(html) {
             this.post.set('featureImageCaption', html);
+
+            if (this.post.isDraft) {
+                this.autosaveTask.perform();
+            }
         }
     },
+
+    toggleSettingsMenu: action(function () {
+        this.set('showSettingsMenu', !this.showSettingsMenu);
+    }),
+
+    closeSettingsMenu: action(function () {
+        this.set('showSettingsMenu', false);
+    }),
 
     saveSnippet: action(function (snippet) {
         let snippetRecord = this.store.createRecord('snippet', snippet);
@@ -313,9 +343,9 @@ export default Controller.extend({
     /* Public tasks ----------------------------------------------------------*/
 
     // separate task for autosave so that it doesn't override a manual save
-    autosave: task(function* () {
-        if (!this.get('save.isRunning')) {
-            return yield this.save.perform({
+    autosaveTask: task(function* () {
+        if (!this.get('saveTask.isRunning')) {
+            return yield this.saveTask.perform({
                 silent: true,
                 backgroundSave: true
             });
@@ -324,7 +354,7 @@ export default Controller.extend({
 
     // save tasks cancels autosave before running, although this cancels the
     // _xSave tasks  that will also cancel the autosave task
-    save: task(function* (options = {}) {
+    saveTask: task(function* (options = {}) {
         let prevStatus = this.get('post.status');
         let isNew = this.get('post.isNew');
         let status;
@@ -392,13 +422,13 @@ export default Controller.extend({
         this.set('post.emailSubject', this.get('post.emailSubjectScratch'));
 
         if (!this.get('post.slug')) {
-            this.saveTitle.cancelAll();
+            this.saveTitleTask.cancelAll();
 
-            yield this.generateSlug.perform();
+            yield this.generateSlugTask.perform();
         }
 
         try {
-            let post = yield this._savePost.perform(options);
+            let post = yield this._savePostTask.perform(options);
 
             post.set('statusScratch', null);
 
@@ -417,6 +447,13 @@ export default Controller.extend({
 
             return post;
         } catch (error) {
+            this.set('post.status', prevStatus);
+
+            if (error === undefined && this.post.errors.length === 0) {
+                // "handled" error from _saveTask
+                return;
+            }
+
             // trigger upgrade modal if forbidden(403) error
             if (isHostLimitError(error)) {
                 this.post.rollbackAttributes();
@@ -430,8 +467,6 @@ export default Controller.extend({
                 this.send('error', error);
                 return;
             }
-
-            this.set('post.status', prevStatus);
 
             if (!options.silent) {
                 let errorOrMessages = error || this.get('post.errors.messages');
@@ -447,7 +482,7 @@ export default Controller.extend({
     /*
      * triggered by a user manually changing slug
      */
-    updateSlug: task(function* (_newSlug) {
+    updateSlugTask: task(function* (_newSlug) {
         let slug = this.get('post.slug');
         let newSlug, serverSlug;
 
@@ -497,14 +532,14 @@ export default Controller.extend({
             return;
         }
 
-        return yield this._savePost.perform();
+        return yield this._savePostTask.perform();
     }).group('saveTasks'),
 
     // used in the PSM so that saves are sequential and don't trigger collision
     // detection errors
-    savePost: task(function* () {
+    savePostTask: task(function* () {
         try {
-            return yield this._savePost.perform();
+            return yield this._savePostTask.perform();
         } catch (error) {
             if (error === undefined) {
                 // validation error
@@ -521,10 +556,24 @@ export default Controller.extend({
     }).group('saveTasks'),
 
     // convenience method for saving the post and performing post-save cleanup
-    _savePost: task(function* (options) {
+    _savePostTask: task(function* (options) {
         let {post} = this;
 
-        yield post.save(options);
+        try {
+            yield post.save(options);
+        } catch (error) {
+            if (isServerUnreachableError(error)) {
+                const [prevStatus, newStatus] = this.post.changedAttributes().status || [this.post.status, this.post.status];
+                this._showErrorAlert(prevStatus, newStatus, error);
+
+                // simulate a validation error so we don't end up on a 500 screen
+                throw undefined;
+            }
+
+            throw error;
+        }
+
+        this.notifications.closeAlerts('post.save');
 
         // remove any unsaved tags
         // NOTE: `updateTags` changes `hasDirtyAttributes => true`.
@@ -551,12 +600,12 @@ export default Controller.extend({
         return post;
     }),
 
-    saveTitle: task(function* () {
+    saveTitleTask: task(function* () {
         let post = this.post;
         let currentTitle = post.get('title');
         let newTitle = post.get('titleScratch').trim();
 
-        if (currentTitle && newTitle && newTitle === currentTitle) {
+        if ((currentTitle && newTitle && newTitle === currentTitle) || (!currentTitle && !newTitle)) {
             return;
         }
 
@@ -566,17 +615,17 @@ export default Controller.extend({
         // generate a slug if a post is new and doesn't have a title yet or
         // if the title is still '(Untitled)'
         if ((post.get('isNew') && !currentTitle) || currentTitle === this.intl.t(DEFAULT_TITLE).toString()) {
-            yield this.generateSlug.perform();
+            yield this.generateSlugTask.perform();
         }
 
         if (this.get('post.isDraft')) {
-            yield this.autosave.perform();
+            yield this.autosaveTask.perform();
         }
 
         this.ui.updateDocumentTitle();
     }),
 
-    generateSlug: task(function* () {
+    generateSlugTask: task(function* () {
         let title = this.get('post.titleScratch');
 
         // Only set an "untitled" slug once per post
@@ -601,7 +650,7 @@ export default Controller.extend({
     }).enqueue(),
 
     // load supplementel data such as the members count in the background
-    backgroundLoader: task(function* () {
+    backgroundLoaderTask: task(function* () {
         try {
             let membersResponse = yield this.store.query('member', {limit: 1, filter: 'subscribed:true'});
             this.set('memberCount', get(membersResponse, 'meta.pagination.total'));
@@ -618,8 +667,7 @@ export default Controller.extend({
     setPost(post) {
         // don't do anything else if we're setting the same post
         if (post === this.post) {
-            // set autofocus as change signal to the persistent editor on new->edit
-            this.set('shouldFocusEditor', post.get('isNew'));
+            this.set('shouldFocusTitle', post.get('isNew'));
             return;
         }
 
@@ -627,10 +675,10 @@ export default Controller.extend({
         this.reset();
 
         this.set('post', post);
-        this.backgroundLoader.perform();
+        this.backgroundLoaderTask.perform();
 
-        // autofocus the editor if we have a new post
-        this.set('shouldFocusEditor', post.get('isNew'));
+        // autofocus the title if we have a new post
+        this.set('shouldFocusTitle', post.get('isNew'));
 
         // need to set scratch values because they won't be present on first
         // edit of the post
@@ -726,10 +774,11 @@ export default Controller.extend({
 
         this.set('post', null);
         this.set('hasDirtyAttributes', false);
-        this.set('shouldFocusEditor', false);
+        this.set('shouldFocusTitle', false);
         this.set('leaveEditorTransition', null);
         this.set('showLeaveEditorModal', false);
         this.set('showPostPreviewModal', false);
+        this.set('showSettingsMenu', false);
         this.set('wordCount', null);
 
         // remove the onbeforeunload handler as it's only relevant whilst on
@@ -740,29 +789,29 @@ export default Controller.extend({
     /* Private tasks ---------------------------------------------------------*/
 
     // save 3 seconds after the last edit
-    _autosave: task(function* () {
+    _autosaveTask: task(function* () {
         if (!this._canAutosave) {
             return;
         }
 
         // force an instant save on first body edit for new posts
         if (this.get('post.isNew')) {
-            return this.autosave.perform();
+            return this.autosaveTask.perform();
         }
 
         yield timeout(AUTOSAVE_TIMEOUT);
-        this.autosave.perform();
+        this.autosaveTask.perform();
     }).restartable(),
 
     // save at 60 seconds even if the user doesn't stop typing
-    _timedSave: task(function* () {
+    _timedSaveTask: task(function* () {
         if (!this._canAutosave) {
             return;
         }
 
         while (config.environment !== 'test' && true) {
             yield timeout(TIMEDSAVE_TIMEOUT);
-            this.autosave.perform();
+            this.autosaveTask.perform();
         }
     }).drop(),
 
@@ -852,7 +901,7 @@ export default Controller.extend({
         notifications.showNotification(message, {type: 'success', actions: (actions && actions.htmlSafe()), delayed});
     },
 
-    _showScheduledNotification(delayed) {
+    async _showScheduledNotification(delayed) {
         let {
             publishedAtUTC,
             emailRecipientFilter,
@@ -861,25 +910,24 @@ export default Controller.extend({
         let publishedAtBlogTZ = moment.tz(publishedAtUTC, this.settings.get('timezone'));
 
         let title = this.intl.t('postBadge.Scheduled');
-        let description = ['Will be published'];
+        let description = [this.intl.t('editor.publish.Will be published')];
 
         if (emailRecipientFilter && emailRecipientFilter !== 'none') {
-            description.push('and delivered to');
-            description.push(`<span><strong>${emailRecipientFilter} members</strong></span>`);
+            const recipientCount = await this.membersCountCache.countString(`subscribed:true+(${emailRecipientFilter})`);
+            description.push(this.intl.t(`editor.publish.and delivered to <span><strong>{count}</strong></span>`, {count: recipientCount, htmlSafe: true}));
         }
 
-        description.push(`on <span><strong>${publishedAtBlogTZ.format('MMM Do')}</strong></span>`);
+        description.push(this.intl.t(`editor.publish.on <span><strong>{on}</strong></span>`, {on: publishedAtBlogTZ.format('MMM Do'), htmlSafe: true}));
 
-        description.push(`at <span><strong>${publishedAtBlogTZ.format('HH:mm')}</strong>`);
         if (publishedAtBlogTZ.utcOffset() === 0) {
-            description.push('(UTC)</span>');
+            description.push(this.intl.t(`editor.publish.at <span><strong>{at}</strong>(UTC)</span>`, {at: publishedAtBlogTZ.format('HH:mm'), htmlSafe: true}));
         } else {
-            description.push(`(UTC${publishedAtBlogTZ.format('Z').replace(/([+-])0/, '$1').replace(/:00/, '')})</span>`);
+            description.push(this.intl.t(`editor.publish.at <span><strong>{at}</strong>(UTC{utc})</span>`, {at: publishedAtBlogTZ.format('HH:mm'), utc: publishedAtBlogTZ.format('Z').replace(/([+-])0/, '$1').replace(/:00/, ''), htmlSafe: true}));
         }
 
         description = description.join(' ').htmlSafe();
 
-        let actions = `<a href="${previewUrl}" target="_blank">${this.intl.t('View Preview')}</a>`.htmlSafe();
+        let actions = `<a href="${previewUrl}" target="_blank">${this.intl.t('editor.View Preview')}</a>`.htmlSafe();
 
         return this.notifications.showNotification(title, {description, actions, type: 'success', delayed});
     },
@@ -893,7 +941,9 @@ export default Controller.extend({
             return toString.call(str) === '[object String]';
         }
 
-        if (error && isString(error)) {
+        if (isServerUnreachableError(error)) {
+            errorMessage = this.intl.t('editor.errors.Unable to connect, please check your connection and try again');
+        } else if (error && isString(error)) {
             errorMessage = error;
         } else if (error && isEmberArray(error)) {
             // This is here because validation errors are returned as an array
@@ -902,7 +952,7 @@ export default Controller.extend({
         } else if (error && error.payload && error.payload.errors && error.payload.errors[0].message) {
             return this.notifications.showAPIError(error, {key: 'post.save'});
         } else {
-            errorMessage = this.intl.t('Unknown Error');
+            errorMessage = this.intl.t('editor.errors.Unknown Error');
         }
 
         message += `: ${errorMessage}`;

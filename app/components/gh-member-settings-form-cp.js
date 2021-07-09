@@ -15,6 +15,8 @@ export default class extends Component {
     ajax
     @service
     store
+    @service
+    feature
 
     constructor(...args) {
         super(...args);
@@ -32,6 +34,9 @@ export default class extends Component {
     get isAddComplimentaryAllowed() {
         if (!this.membersUtils.isStripeEnabled) {
             return false;
+        }
+        if (this.feature.get('multipleProducts')) {
+            return true;
         }
         let subscriptions = this.member.get('subscriptions') || [];
         const hasZeroPriceSub = subscriptions.filter((sub) => {
@@ -52,6 +57,7 @@ export default class extends Component {
                 ...sub,
                 startDate: sub.start_date ? moment(sub.start_date).format('D MMM YYYY') : '-',
                 validUntil: sub.current_period_end ? moment(sub.current_period_end).format('D MMM YYYY') : '-',
+                cancellationReason: sub.cancellation_reason,
                 price: {
                     ...sub.price,
                     currencySymbol: getSymbol(sub.price.currency),
@@ -111,6 +117,11 @@ export default class extends Component {
     }
 
     @action
+    removeComplimentary(productId) {
+        this.removeComplimentaryTask.perform(productId);
+    }
+
+    @action
     continueSubscription(subscriptionId) {
         this.continueSubscriptionTask.perform(subscriptionId);
     }
@@ -128,6 +139,26 @@ export default class extends Component {
         let response = yield this.ajax.put(url, {
             data: {
                 cancel_at_period_end: true
+            }
+        });
+
+        this.store.pushPayload('member', response);
+        return response;
+    }
+
+    @task({drop: true})
+    *removeComplimentaryTask(productId) {
+        let url = this.ghostPaths.url.api(`members/${this.member.get('id')}`);
+        let products = this.member.get('products') || [];
+        const updatedProducts = products.filter(product => product.id !== productId).map(product => ({id: product.id}));
+
+        let response = yield this.ajax.put(url, {
+            data: {
+                members: [{
+                    id: this.member.get('id'),
+                    email: this.member.get('email'),
+                    products: updatedProducts
+                }]
             }
         });
 
